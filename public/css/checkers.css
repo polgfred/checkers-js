@@ -1,0 +1,101 @@
+/* board */
+
+#board-container {
+  float: left;
+}
+
+#board {
+  margin: 0px;
+  padding: 0px;
+  border-collapse: collapse;
+  border-spacing: 0px;
+  border: 1px solid #444;
+}
+
+#board td {
+  margin: 0px;
+  padding: 0px;
+  border: 1px solid #444;
+  width: 42px;
+  height: 42px;
+  text-align: center;
+}
+
+#board td.on {
+  background-color: #fff;
+}
+
+#board td.piece-pb {
+  background: url(../images/pb.png) no-repeat center;
+}
+
+#board td.piece-pr {
+  background: url(../images/pr.png) no-repeat center;
+}
+
+#board td.piece-kb {
+  background: url(../images/kb.png) no-repeat center;
+}
+
+#board td.piece-kr {
+  background: url(../images/kr.png) no-repeat center;
+}
+
+#board td.on.dojoDndContainerOver {
+/*  background-color: #cb8;*/
+}
+
+#board td.off {
+  background-color: #bbb;
+}
+
+#board img {
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  vertical-align: middle;
+}
+
+/* DND */
+
+body.dojoDndMove #board td.on.dojoDndTarget {
+  background-color: #cb8;
+}
+
+.dojoDndAvatarHeader {
+  display: none;
+}
+
+.dojoDndAvatarItem td {
+  background-color: #800;
+  height: 20px;
+}
+
+.dojoDndAvatarItem img {
+  width: 20px;
+  height: 20px;
+}
+
+.dojoDndAvatarCanDrop .dojoDndAvatarItem td {
+  background-color: #080;
+}
+
+/* history */
+
+#move-history {
+  margin-left: 360px;
+  border-collapse: collapse;
+  border: 1px solid #aaa;
+}
+
+#move-history th {
+  border: 1px solid #aaa;
+}
+
+#move-history th, #move-history td {
+  width: 200px;
+  text-align: left;
+  font-size: 12px;
+  border-left: 1px solid #aaa;
+  border-right: 1px solid #aaa;
+}
