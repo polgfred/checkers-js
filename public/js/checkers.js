@@ -32,24 +32,24 @@ dojo.declare('SquareSource', dojo.dnd.Source, {
 
 dojo.declare('Game', null, {
   pieceImages: {
-     '1': 'pb.png',
-     '2': 'kb.png',
-    '-1': 'pr.png',
-    '-2': 'kr.png'
+     '1': 'pr.png',
+     '2': 'kr.png',
+    '-1': 'pw.png',
+    '-2': 'kw.png'
   },
 
   constructor: function () {
     this._side  = 1;
     this._board = [
-      [  1,  0,  1,  0,  1,  0,  1,  0 ],
-      [  0,  1,  0,  1,  0,  1,  0,  1 ],
-      [  1,  0,  1,  0,  1,  0,  1,  0 ],
-      [  0,  0,  0,  0,  0,  0,  0,  0 ],
-      [  0,  0,  0,  0,  0,  0,  0,  0 ],
       [  0, -1,  0, -1,  0, -1,  0, -1 ],
       [ -1,  0, -1,  0, -1,  0, -1,  0 ],
-      [  0, -1,  0, -1,  0, -1,  0, -1 ]
-    ];
+      [  0, -1,  0, -1,  0, -1,  0, -1 ],
+      [  0,  0,  0,  0,  0,  0,  0,  0 ],
+      [  0,  0,  0,  0,  0,  0,  0,  0 ],
+      [  1,  0,  1,  0,  1,  0,  1,  0 ],
+      [  0,  1,  0,  1,  0,  1,  0,  1 ],
+      [  1,  0,  1,  0,  1,  0,  1,  0 ]
+    ].reverse();
 
     var rules = new Rules(this._board, this._side);
     this.updatePlayMap(rules.collectPlays());
@@ -168,12 +168,17 @@ dojo.declare('Game', null, {
   },
 
   onPlayComplete: function () {
+    console.log(this._move);
+    
+  },
+
+  xxxonPlayComplete: function () {
     // show human move
     var hist = dojo.query('#move-history tbody')[0];
     var hrow = dojo.create('tr', {}, hist);
     this.putHistory(hrow, this._move);
     // get next move from the server
-    /*dojo.xhrGet({
+    dojo.xhrGet({
       url: '/play',
       handleAs: 'json',
       content: {move: dojo.toJson(this._move)},
@@ -182,8 +187,7 @@ dojo.declare('Game', null, {
         this.putHistory(hrow, res.move);
         this.updatePlayMap(res.plays);
       })
-    });*/
-    console.log(this._move);
+    });
   },
 
   isPlay: function (x, y, nx, ny) {
@@ -203,7 +207,8 @@ dojo.declare('Game', null, {
   },
 
   updatePlayMap: function (plays) {
-   this._playMap = {};
+    this._move = [];
+    this._playMap = {};
     dojo.forEach(plays, function (play) {
       this.injectPlay(this._playMap, play);
     }, this);
