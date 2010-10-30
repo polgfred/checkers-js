@@ -157,3 +157,79 @@ dojo.declare('Rules', null, {
     return plays;
   }
 });
+
+dojo.declare('Player', Rules, {
+  ptable: [
+    [ 00, 00, 00, 00, 00, 00, 00, 00 ],
+    [ 75, 00, 78, 00, 78, 00, 75, 00 ],
+    [ 00, 67, 00, 72, 00, 72, 00, 67 ],
+    [ 61, 00, 67, 00, 67, 00, 61, 00 ],
+    [ 00, 58, 00, 61, 00, 61, 00, 58 ],
+    [ 56, 00, 58, 00, 58, 00, 56, 00 ],
+    [ 00, 55, 00, 56, 00, 56, 00, 55 ],
+    [ 55, 00, 58, 00, 58, 00, 55, 00 ]
+  ].reverse(),
+
+  ktable: [
+    [ 00, 92, 00, 85, 00, 85, 00, 85 ],
+    [ 92, 00, 92, 00, 92, 00, 92, 00 ],
+    [ 00, 92, 00, 99, 00, 99, 00, 85 ],
+    [ 85, 00, 99, 00, 99, 00, 92, 00 ],
+    [ 00, 92, 00, 99, 00, 99, 00, 85 ],
+    [ 85, 00, 99, 00, 99, 00, 92, 00 ],
+    [ 00, 92, 00, 92, 00, 92, 00, 92 ],
+    [ 85, 00, 85, 00, 85, 00, 92, 00 ]
+  ].reverse(),
+
+  constructor: function (board, side) {
+    this.level = 3;
+    this.value = 0;
+  },
+
+  evaluate: function () {
+    var score = 0;
+
+    for (var y = 0; y < 8; ++y) {
+      for (var x = 0; x < 8; ++x) {
+        switch (this.board[y][x]) {
+          case 0:
+            score += 0;
+            break;
+          case 1:
+            score += this.ptable[y][x];
+            break;
+          case -1:
+            score -= this.ptable[7-y][7-x];
+            break;
+          case 2:
+            score += this.ktable[y][x];
+            break;
+          case -2:
+            score -= this.ktable[7-y][7-x];
+            break;
+        }
+      }
+    }
+
+    return score;
+  },
+
+  leader: "-------",
+
+  run: function () {
+    this.myPlays(function (play) {
+      //console.log(this.leader.substr(0, 3-this.level), JSON.stringify(play), this.evaluate());
+
+      if (this.level == 0) {
+      } else {
+        this.side = -this.side;
+        --this.level;
+
+        this.run();
+
+        ++this.level;
+        this.side = -this.side;
+      }
+    });
+  }
+});
