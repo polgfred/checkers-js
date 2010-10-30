@@ -16,7 +16,7 @@
   width: 42px;
   height: 42px;
   border: 1px solid #121;
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 #board td.on {
@@ -41,7 +41,7 @@
 
 body.dojoDndMove #board td.on.dojoDndTarget {
   -webkit-transition: background 0.5s;
-  background-color: #eee;
+  background-color: #8fc;
 }
 
 .dojoDndAvatar {
@@ -68,7 +68,7 @@ body.dojoDndMove #board td.on.dojoDndTarget {
 }
 
 .dojoDndAvatarCanDrop .dojoDndAvatarItem td {
-  background-color: #fff;
+  background-color: #eee;
 }
 
 /* history */
