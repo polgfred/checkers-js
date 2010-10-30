@@ -1,35 +1,3 @@
-// the global game object
-var GAME;
-dojo.addOnLoad(function () {
-  GAME = new Game();
-});
-
-dojo.declare('SquareSource', dojo.dnd.Source, {
-  singular: true, // don't allow multiple selection regardless of key state
-  autoSync: true, // always sync up node list with square contents
-
-  constructor: function (node, x, y) {
-    // keep track of the coords for this square
-    this.x = x;
-    this.y = y;
-  },
-
-  copyState: function () {
-    // never allow pieces to be copied
-    return false;
-  },
-
-  checkAcceptance: function (source) {
-    // whether the drop is a valid move
-    return GAME.isPlay(source.x, source.y, this.x, this.y);
-  },
-
-  onDrop: function (source) {
-    // let the game do it
-    GAME.handleDrop(source.x, source.y, this.x, this.y);
-  }
-});
-
 dojo.declare('Game', null, {
   pieceImages: {
      '1': 'pr.png',
@@ -39,8 +7,8 @@ dojo.declare('Game', null, {
   },
 
   constructor: function () {
-    this._side  = 1;
-    this._board = [
+    this.side  = 1;
+    this.board = [
       [  0, -1,  0, -1,  0, -1,  0, -1 ],
       [ -1,  0, -1,  0, -1,  0, -1,  0 ],
       [  0, -1,  0, -1,  0, -1,  0, -1 ],
@@ -51,7 +19,7 @@ dojo.declare('Game', null, {
       [  1,  0,  1,  0,  1,  0,  1,  0 ]
     ].reverse();
 
-    var rules = new Rules(this._board, this._side);
+    var rules = new Rules(this.board, this.side);
     this.updatePlayMap(rules.collectPlays());
     this.setupBoard();
   },
@@ -63,8 +31,8 @@ dojo.declare('Game', null, {
       handleAs: 'json',
       load: dojo.hitch(this, function (res) {
         // set up the game attributes
-        this._side = res.side;
-        this._board = res.board;
+        this.side = res.side;
+        this.board = res.board;
         this.setupBoard();
         this.updatePlayMap(res.plays);
       })
@@ -83,14 +51,14 @@ dojo.declare('Game', null, {
         if ((x + y) % 2 == 0) {
           // create playable square
           var td = dojo.create('td', {'class': 'on'}, tr);
-          var p = this._board[y][x];
+          var p = this.board[y][x];
           if (p != 0) {
             // create image tag for piece
             var img = dojo.create('img', {'class': 'dojoDndItem'}, td);
             img.src = '../images/' + this.pieceImages[p];
           }
           // create the drag/drop source
-          new SquareSource(td, x, y);
+          new Game.SquareSource(td, this, x, y);
         } else {
           // create non-playable square
           dojo.create('td', {'class': 'off'}, tr);
@@ -122,20 +90,20 @@ dojo.declare('Game', null, {
     if (!playMap) return;
     this.movePiece(x, y, nx, ny);
     // keep track of this move
-    if (this._move.length == 0) {
-      this._move.push(x);
-      this._move.push(y);
+    if (this.move.length == 0) {
+      this.move.push(x);
+      this.move.push(y);
     }
-    this._move.push(nx);
-    this._move.push(ny);
+    this.move.push(nx);
+    this.move.push(ny);
     // see if any plays remain
-    this._playMap = {};
+    this.playMap = {};
     if (playMap == true) {
       // move complete
       this.onPlayComplete();
     } else if (playMap) {
       // still your move
-      this._playMap[nx + ',' + ny] = playMap;
+      this.playMap[nx + ',' + ny] = playMap;
     }
   },
 
@@ -147,15 +115,15 @@ dojo.declare('Game', null, {
 
   movePiece: function (x, y, nx, ny) {
     // move the piece
-    var p = this.promote(ny, this._board[y][x]);
-    this._board[y][x] = 0;
-    this._board[ny][nx] = p;
+    var p = this.promote(ny, this.board[y][x]);
+    this.board[y][x] = 0;
+    this.board[ny][nx] = p;
     this.moveImg(x, y, nx, ny, p);
     if (Math.abs(nx - x) == 2) {
       // remove the jumped piece
       var mx = (x + nx) / 2;
       var my = (y + ny) / 2
-      this._board[my][mx] = 0;
+      this.board[my][mx] = 0;
       this.removeImg(mx, my);
     }
   },
@@ -168,7 +136,7 @@ dojo.declare('Game', null, {
   },
 
   onPlayComplete: function () {
-    console.log(this._move);
+    console.log(this.move);
     
   },
 
@@ -176,12 +144,12 @@ dojo.declare('Game', null, {
     // show human move
     var hist = dojo.query('#move-history tbody')[0];
     var hrow = dojo.create('tr', {}, hist);
-    this.putHistory(hrow, this._move);
+    this.putHistory(hrow, this.move);
     // get next move from the server
     dojo.xhrGet({
       url: '/play',
       handleAs: 'json',
-      content: {move: dojo.toJson(this._move)},
+      content: {move: dojo.toJson(this.move)},
       load: dojo.hitch(this, function (res) {
         this.moveAll(res.move);
         this.putHistory(hrow, res.move);
@@ -192,7 +160,7 @@ dojo.declare('Game', null, {
 
   isPlay: function (x, y, nx, ny) {
     // whether this is a valid move
-    var fromMap = this._playMap[x + ',' + y];
+    var fromMap = this.playMap[x + ',' + y];
     if (fromMap) return fromMap[nx + ',' + ny];
   },
 
@@ -207,10 +175,10 @@ dojo.declare('Game', null, {
   },
 
   updatePlayMap: function (plays) {
-    this._move = [];
-    this._playMap = {};
+    this.move = [];
+    this.playMap = {};
     dojo.forEach(plays, function (play) {
-      this.injectPlay(this._playMap, play);
+      this.injectPlay(this.playMap, play);
     }, this);
   },
 
@@ -224,3 +192,36 @@ dojo.declare('Game', null, {
     }
   }
 });
+
+dojo.declare('Game.SquareSource', dojo.dnd.Source, {
+  singular: true, // don't allow multiple selection regardless of key state
+  autoSync: true, // always sync up node list with square contents
+
+  constructor: function (node, game, x, y) {
+    this.game = game;
+    this.x    = x;
+    this.y    = y;
+  },
+
+  copyState: function () {
+    // never allow pieces to be copied
+    return false;
+  },
+
+  checkAcceptance: function (source) {
+    // whether the drop is a valid move
+    return this.game.isPlay(source.x, source.y, this.x, this.y);
+  },
+
+  onDrop: function (source) {
+    // delegate to the game object
+    this.game.handleDrop(source.x, source.y, this.x, this.y);
+  }
+});
+
+// the global game object
+var GAME;
+dojo.addOnLoad(function () {
+  GAME = new Game();
+});
+
