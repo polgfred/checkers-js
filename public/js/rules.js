@@ -34,7 +34,7 @@ dojo.declare('Rules', null, {
           }
         }
       }
-    } else {
+    } else if (this.side == -1) {
       for (var y = 7; y >= 0; --y) {
         for (var x = 7; x >= 0; --x) {
           var p = this.board[y][x];
@@ -192,16 +192,16 @@ dojo.declare('Player', Rules, {
     for (var y = 0; y < 8; ++y) {
       for (var x = 0; x < 8; ++x) {
         switch (this.board[y][x]) {
-          case 0:
+          case  0:
             score += 0;
             break;
-          case 1:
+          case  1:
             score += this.ptable[y][x];
             break;
           case -1:
             score -= this.ptable[7-y][7-x];
             break;
-          case 2:
+          case  2:
             score += this.ktable[y][x];
             break;
           case -2:
@@ -214,22 +214,33 @@ dojo.declare('Player', Rules, {
     return score;
   },
 
-  leader: "-------",
+  noop: function () {
+  },
 
   run: function () {
+    var bestScore;
+    var bestPlay;
+    var score;
+
     this.myPlays(function (play) {
-      //console.log(this.leader.substr(0, 3-this.level), JSON.stringify(play), this.evaluate());
-
-      if (this.level == 0) {
+      if (this.level < 1 && !this.myJumps(this.noop)) {
+        score = this.evaluate();
       } else {
+        this.level--;
         this.side = -this.side;
-        --this.level;
-
-        this.run();
-
-        ++this.level;
+        score = this.run()[1];
+        this.level++;
         this.side = -this.side;
       }
+
+      if (bestScore === undefined ||
+          (this.side ==  1 && score > bestScore) ||
+          (this.side == -1 && score < bestScore)) {
+        bestScore = score;
+        bestPlay  = play;
+      }
     });
+
+    return [bestPlay, bestScore];
   }
 });
