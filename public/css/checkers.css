@@ -8,8 +8,8 @@
   border-collapse: separate;
   border-spacing: 1px;
   border: 5px solid #121;
-  border-radius: 3px;
-  -webkit-box-shadow: 3px 3px 3px #222;
+  border-radius: 2px;
+  -webkit-box-shadow: 3px 3px 6px #222;
 }
 
 #board td {
@@ -45,8 +45,8 @@ body.dojoDndMove #board td.on.dojoDndTarget {
 }
 
 .dojoDndAvatar {
-  border-collapse: collapse;
   border-spacing: 0px;
+  -webkit-box-shadow: 3px 3px 6px #222;
 }
 
 .dojoDndAvatarHeader {
@@ -54,7 +54,6 @@ body.dojoDndMove #board td.on.dojoDndTarget {
 }
 
 .dojoDndAvatarItem td {
-  border-radius: 3px;
   background-color: #4a9570;
   width: 31px;
   height: 31px;
