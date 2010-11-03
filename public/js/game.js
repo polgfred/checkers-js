@@ -7,6 +7,7 @@ dojo.declare('Game', null, {
   },
 
   constructor: function () {
+    // set up the starting position
     this.side  = 1;
     this.board = [
       [  0, -1,  0, -1,  0, -1,  0, -1 ],
@@ -18,10 +19,8 @@ dojo.declare('Game', null, {
       [  0,  1,  0,  1,  0,  1,  0,  1 ],
       [  1,  0,  1,  0,  1,  0,  1,  0 ]
     ].reverse();
-
-    var rules = new Rules(this.board, this.side);
-    this.updatePlayMap(rules.collectPlays());
     this.setupBoard();
+    this.updatePlayMap();
   },
 
   xhrStartup: function () {
@@ -44,13 +43,13 @@ dojo.declare('Game', null, {
     var table = dojo.byId('board');
     // create the table rows
     for (var y = 7; y >= 0; y--) {
-      var tr = dojo.create('tr', {}, table);
+      var tr = dojo.create('tr', {'class': 'y' + y}, table);
       // create the table cells
       for (var x = 0; x <= 7; x++) {
         // test that the square is playable
         if ((x + y) % 2 == 0) {
           // create playable square
-          var td = dojo.create('td', {'class': 'on'}, tr);
+          var td = dojo.create('td', {'class': 'x' + x}, tr);
           var p = this.board[y][x];
           if (p != 0) {
             // create image tag for piece
@@ -61,26 +60,21 @@ dojo.declare('Game', null, {
           new Game.SquareSource(td, this, x, y);
         } else {
           // create non-playable square
-          dojo.create('td', {'class': 'off'}, tr);
+          dojo.create('td', {}, tr);
         }
       }
     }
   },
 
   moveImg: function (x, y, nx, ny, p) {
-    var tr  = dojo.query('#board tr')[7 - y];
-    var td  = dojo.query('> td', tr)[x];
-    var img = dojo.query('> img', td)[0];
-    var ntr = dojo.query('#board tr')[7 - ny];
-    var ntd = dojo.query('> td', ntr)[nx];
+    var img = dojo.query(dojo.replace('#board tr.y{0} td.x{1} img', [y, x]))[0];
+    var ntd = dojo.query(dojo.replace('#board tr.y{0} td.x{1}', [ny, nx]))[0];
     dojo.place(img, ntd);
     if (p) img.src = '../images/' + this.pieceImages[p];
   },
 
   removeImg: function (x, y) {
-    var tr  = dojo.query('#board tr')[7 - y];
-    var td  = dojo.query('> td', tr)[x];
-    var img = dojo.query('> img', td)[0];
+    var img = dojo.query(dojo.replace('#board tr.y{0} td.x{1} img', [y, x]))[0];
     dojo.destroy(img);
   },
 
@@ -175,9 +169,10 @@ dojo.declare('Game', null, {
   },
 
   updatePlayMap: function (plays) {
+    var rules = new Rules(this.board, this.side);
     this.move = [];
     this.playMap = {};
-    dojo.forEach(plays, function (play) {
+    dojo.forEach(rules.collectPlays(), function (play) {
       this.injectPlay(this.playMap, play);
     }, this);
   },
