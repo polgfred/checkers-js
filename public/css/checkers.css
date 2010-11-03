@@ -19,17 +19,18 @@
   border-radius: 2px;
 }
 
-#board td.on {
+#board td {
+  background-color: #ffb;
+}
+
+#board td.dojoDndContainer {
   -webkit-transition: background 0.5s;
   background-color: #486;
 }
 
-#board td.on.dojoDndContainerOver {
-/*  background-color: #cb8;*/
-}
-
-#board td.off {
-  background-color: #ffb;
+#board td.dojoDndContainerOver {
+  -webkit-transition: background 0.5s;
+  background-color: #6c9;
 }
 
 #board img {
@@ -39,7 +40,7 @@
 
 /* DND */
 
-body.dojoDndMove #board td.on.dojoDndTarget {
+body.dojoDndMove #board td.dojoDndTarget {
   -webkit-transition: background 0.5s;
   background-color: #8fc;
 }
