@@ -33,7 +33,7 @@
 }
 
 #board td.dojoDndTargetDisabled {
-  background-color: #33664c;
+  background-color: #3d7a5b;
 }
 
 #board img {
@@ -48,7 +48,7 @@ body.dojoDndMove #board td.dojoDndTarget {
 }
 
 body.dojoDndMove #board td.dojoDndTarget.dojoDndContainerOver {
-  background-color: #8fc;
+  background-color: #cfe;
 }
 
 body.dojoDndMove #board td.dojoDndSourceMoved img {
