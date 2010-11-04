@@ -20,55 +20,52 @@
 }
 
 #board td {
+  -webkit-transition: background 0.5s;
   background-color: #ffb;
 }
 
 #board td.dojoDndContainer {
-  -webkit-transition: background 0.5s;
   background-color: #486;
 }
 
 #board td.dojoDndContainerOver {
-  -webkit-transition: background 0.5s;
   background-color: #6c9;
 }
 
+#board td.dojoDndTargetDisabled {
+  background-color: #33664c;
+}
+
 #board img {
-  margin: 1px;
   vertical-align: middle;
+  margin: 1px;
 }
 
 /* DND */
 
 body.dojoDndMove #board td.dojoDndTarget {
-  -webkit-transition: background 0.5s;
+  background-color: #6c9;
+}
+
+body.dojoDndMove #board td.dojoDndTarget.dojoDndContainerOver {
   background-color: #8fc;
 }
 
-.dojoDndAvatar {
-  border-spacing: 0px;
-  -webkit-box-shadow: 3px 3px 6px #222;
+body.dojoDndMove #board td.dojoDndSourceMoved img {
+  visibility: hidden;
 }
 
 .dojoDndAvatarHeader {
   display: none;
 }
 
-.dojoDndAvatarItem td {
-  background-color: #4a9570;
-  width: 31px;
-  height: 31px;
-}
-
 .dojoDndAvatarItem img {
   margin: 1px;
-  width: 30px;
-  height: 30px;
-  vertical-align: middle;
+  width: 40px;
+  height: 40px;
 }
 
 .dojoDndAvatarCanDrop .dojoDndAvatarItem td {
-  background-color: #eee;
 }
 
 /* history */

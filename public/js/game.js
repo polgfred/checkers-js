@@ -1,3 +1,9 @@
+(function () {
+  var manager = dojo.dnd.manager();
+  manager.OFFSET_X = 2;
+  manager.OFFSET_Y = 2;
+}());
+
 dojo.declare('Game', null, {
   pieceImages: {
      '1': 'pr.png',
