@@ -1,0 +1,90 @@
+* {
+  font-size: 10px;
+  font-style: normal;
+  font-weight: normal;
+  font-family: 'Lucida Grande', Verdana;
+}
+
+h1 {
+  font-size: 14px;
+}
+
+h2 {
+  font-size: 12px;
+}
+
+div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td {
+  margin: 0;
+  padding: 0;
+}
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+fieldset, img {
+  border: 0;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+#board-container {
+  float: left;
+
+  table#board {
+    border-collapse: separate;
+    border-spacing: 1px;
+    border: 5px solid #121;
+    -webkit-border-radius: 2px;
+    -webkit-box-shadow: 3px 3px 6px #222;
+  
+    td {
+      width: 42px;
+      height: 42px;
+      border: 1px solid #122;
+      background-color: #ffb;
+      -webkit-border-radius: 2px;
+      -webkit-transition: background 0.5s;
+  
+      &.dojoDndContainer {
+        background-color: #486;
+      }
+      &.dojoDndContainerOver {
+        background-color: #6c9;
+      }
+      &.dojoDndTargetDisabled {
+        background-color: #3d7a5b;
+      }
+    }
+    img {
+      vertical-align: middle;
+      margin: 1px;
+    }
+  }
+}
+
+body.dojoDndMove #board-container table#board td {
+  &.dojoDndTarget {
+    background-color: #6c9;
+    &.dojoDndContainerOver {
+      background-color: #cfe;
+    }
+  }
+  &.dojoDndSourceMoved img {
+    visibility: hidden;
+  }
+}
+
+.dojoDndAvatar {
+  .dojoDndAvatarHeader {
+    display: none;
+  }
+  .dojoDndAvatarItem img {
+    margin: 1px;
+    width: 40px;
+    height: 40px;
+  }
+}
