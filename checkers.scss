@@ -31,32 +31,34 @@ ol, ul {
   list-style: none;
 }
 
+$sq: #486;
+$sq_un: #ffb;
+$border: $sq / 4;
+$shadow: #222;
+
 #board-container {
   float: left;
 
   table#board {
     border-collapse: separate;
     border-spacing: 1px;
-    border: 5px solid #121;
+    border: 5px solid $border;
     -webkit-border-radius: 2px;
-    -webkit-box-shadow: 3px 3px 6px #222;
-  
+    -webkit-box-shadow: 3px 3px 6px $shadow;
+
     td {
       width: 42px;
       height: 42px;
-      border: 1px solid #122;
-      background-color: #ffb;
+      border: 1px solid $border;
+      background-color: $sq_un;
       -webkit-border-radius: 2px;
       -webkit-transition: background 0.5s;
   
       &.dojoDndContainer {
-        background-color: #486;
+        background-color: $sq;
       }
       &.dojoDndContainerOver {
-        background-color: #6c9;
-      }
-      &.dojoDndTargetDisabled {
-        background-color: #3d7a5b;
+        background-color: $sq * 1.5;
       }
     }
     img {
@@ -68,10 +70,13 @@ ol, ul {
 
 body.dojoDndMove #board-container table#board td {
   &.dojoDndTarget {
-    background-color: #6c9;
+    background-color: $sq * 1.5;
     &.dojoDndContainerOver {
-      background-color: #cfe;
+      background-color: $sq * 2;
     }
+  }
+  &.dojoDndTargetDisabled {
+    background-color: $sq * 0.8;
   }
   &.dojoDndSourceMoved img {
     visibility: hidden;

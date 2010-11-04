@@ -29,30 +29,30 @@ ol, ul {
   #board-container table#board {
     border-collapse: separate;
     border-spacing: 1px;
-    border: 5px solid #121;
+    border: 5px solid #112219;
     -webkit-border-radius: 2px;
-    -webkit-box-shadow: 3px 3px 6px #222; }
+    -webkit-box-shadow: 3px 3px 6px #222222; }
     #board-container table#board td {
       width: 42px;
       height: 42px;
-      border: 1px solid #122;
-      background-color: #ffb;
+      border: 1px solid #112219;
+      background-color: #ffffbb;
       -webkit-border-radius: 2px;
       -webkit-transition: background 0.5s; }
       #board-container table#board td.dojoDndContainer {
-        background-color: #486; }
+        background-color: #448866; }
       #board-container table#board td.dojoDndContainerOver {
-        background-color: #6c9; }
-      #board-container table#board td.dojoDndTargetDisabled {
-        background-color: #3d7a5b; }
+        background-color: #66cc99; }
     #board-container table#board img {
       vertical-align: middle;
       margin: 1px; }
 
 body.dojoDndMove #board-container table#board td.dojoDndTarget {
-  background-color: #6c9; }
+  background-color: #66cc99; }
   body.dojoDndMove #board-container table#board td.dojoDndTarget.dojoDndContainerOver {
-    background-color: #cfe; }
+    background-color: #88ffcc; }
+body.dojoDndMove #board-container table#board td.dojoDndTargetDisabled {
+  background-color: #366c51; }
 body.dojoDndMove #board-container table#board td.dojoDndSourceMoved img {
   visibility: hidden; }
 
