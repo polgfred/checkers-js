@@ -36,10 +36,14 @@ $sq_un: #ffb;
 $border: $sq / 4;
 $shadow: #222;
 
+body {
+  margin: 20px;
+}
+
 #board-container {
   float: left;
 
-  table#board {
+  #board {
     border-collapse: separate;
     border-spacing: 1px;
     border: 5px solid $border;
@@ -53,30 +57,28 @@ $shadow: #222;
       background-color: $sq_un;
       -webkit-border-radius: 2px;
       -webkit-transition: background 0.5s;
-  
-      &.dojoDndContainer {
+
+      &.dojoDndContainer, &.dojoDndContainerOver {
         background-color: $sq;
       }
-      &.dojoDndContainerOver {
-        background-color: $sq * 1.5;
+
+      img {
+        vertical-align: middle;
+        margin: 1px;
       }
-    }
-    img {
-      vertical-align: middle;
-      margin: 1px;
     }
   }
 }
 
-body.dojoDndMove #board-container table#board td {
+body.dojoDndMove #board-container #board td {
   &.dojoDndTarget {
-    background-color: $sq * 1.5;
+    background-color: $sq * 1.25;
     &.dojoDndContainerOver {
       background-color: $sq * 2;
     }
   }
   &.dojoDndTargetDisabled {
-    background-color: $sq * 0.8;
+    background-color: $sq * 0.85;
   }
   &.dojoDndSourceMoved img {
     visibility: hidden;
@@ -84,12 +86,14 @@ body.dojoDndMove #board-container table#board td {
 }
 
 .dojoDndAvatar {
+  opacity: 0.85;
+
   .dojoDndAvatarHeader {
     display: none;
   }
   .dojoDndAvatarItem img {
     margin: 1px;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
   }
 }

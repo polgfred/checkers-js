@@ -24,41 +24,44 @@ fieldset, img {
 ol, ul {
   list-style: none; }
 
+body {
+  margin: 20px; }
+
 #board-container {
   float: left; }
-  #board-container table#board {
+  #board-container #board {
     border-collapse: separate;
     border-spacing: 1px;
     border: 5px solid #112219;
     -webkit-border-radius: 2px;
     -webkit-box-shadow: 3px 3px 6px #222222; }
-    #board-container table#board td {
+    #board-container #board td {
       width: 42px;
       height: 42px;
       border: 1px solid #112219;
       background-color: #ffffbb;
       -webkit-border-radius: 2px;
       -webkit-transition: background 0.5s; }
-      #board-container table#board td.dojoDndContainer {
+      #board-container #board td.dojoDndContainer, #board-container #board td.dojoDndContainerOver {
         background-color: #448866; }
-      #board-container table#board td.dojoDndContainerOver {
-        background-color: #66cc99; }
-    #board-container table#board img {
-      vertical-align: middle;
-      margin: 1px; }
+      #board-container #board td img {
+        vertical-align: middle;
+        margin: 1px; }
 
-body.dojoDndMove #board-container table#board td.dojoDndTarget {
-  background-color: #66cc99; }
-  body.dojoDndMove #board-container table#board td.dojoDndTarget.dojoDndContainerOver {
+body.dojoDndMove #board-container #board td.dojoDndTarget {
+  background-color: #55aa7f; }
+  body.dojoDndMove #board-container #board td.dojoDndTarget.dojoDndContainerOver {
     background-color: #88ffcc; }
-body.dojoDndMove #board-container table#board td.dojoDndTargetDisabled {
-  background-color: #366c51; }
-body.dojoDndMove #board-container table#board td.dojoDndSourceMoved img {
+body.dojoDndMove #board-container #board td.dojoDndTargetDisabled {
+  background-color: #397356; }
+body.dojoDndMove #board-container #board td.dojoDndSourceMoved img {
   visibility: hidden; }
 
-.dojoDndAvatar .dojoDndAvatarHeader {
-  display: none; }
-.dojoDndAvatar .dojoDndAvatarItem img {
-  margin: 1px;
-  width: 40px;
-  height: 40px; }
+.dojoDndAvatar {
+  opacity: 0.85; }
+  .dojoDndAvatar .dojoDndAvatarHeader {
+    display: none; }
+  .dojoDndAvatar .dojoDndAvatarItem img {
+    margin: 1px;
+    width: 36px;
+    height: 36px; }
