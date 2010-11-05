@@ -127,9 +127,8 @@ dojo.declare('Game.SquareSource', dojo.dnd.Source, {
 });
 
 dojo.declare('Game.Player', null, {
-  constructor: function (game, side) {
+  constructor: function (game) {
     this.game = game;
-    this.side = side;
   }
 });
 
