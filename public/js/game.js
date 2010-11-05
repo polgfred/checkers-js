@@ -7,8 +7,11 @@ dojo.declare('Game', null, {
   },
 
   constructor: function () {
-    this.players = [new Game.HumanPlayer(this, 1), new Game.HumanPlayer(this, -1)];
     this.side = 1;
+    this.players = [
+      new Game.HumanPlayer(this,  1),
+      new Game.HumanPlayer(this, -1)
+    ];
     this.board = [
       [  0, -1,  0, -1,  0, -1,  0, -1 ],
       [ -1,  0, -1,  0, -1,  0, -1,  0 ],
@@ -24,6 +27,7 @@ dojo.declare('Game', null, {
   },
 
   setupBoard: function () {
+    this.sources = [];
     var table = dojo.byId('board');
     for (var y = 7; y >= 0; y--) {
       var tr = dojo.create('tr', {'class': 'y' + y}, table);
@@ -35,7 +39,7 @@ dojo.declare('Game', null, {
             var img = dojo.create('img', {'class': 'dojoDndItem'}, td);
             img.src = '../images/' + this.pieceImages[p];
           }
-          new Game.SquareSource(td, this, x, y);
+          this.sources.push(new Game.SquareSource(td, this, x, y));
         } else {
           dojo.create('td', {}, tr);
         }
@@ -43,16 +47,16 @@ dojo.declare('Game', null, {
     }
   },
 
-  currentPlayer: function () {
-    return this.players[this.side == 1 ? 0 : 1];
-  },
-
   play: function () {
     console.log('player', this.side);
-    this.currentPlayer().play().then(dojo.hitch(this, function () {
-      this.side = -this.side;
-      this.play();
-    }));
+    this.current = this.players[this.side == 1 ? 0 : 1];
+    this.current.play();
+  },
+
+  onPlayComplete: function (move) {
+    console.log('  played', JSON.stringify(move));
+    this.side = -this.side;
+    this.play();
   },
 
   moveImg: function (x, y, nx, ny, p) {
@@ -68,15 +72,6 @@ dojo.declare('Game', null, {
   removeImg: function (x, y) {
     var img = dojo.query(dojo.replace('#board tr.y{0} td.x{1} img', [y, x]))[0];
     dojo.destroy(img);
-  },
-
-  isPlay: function (x, y, nx, ny) {
-    return this.currentPlayer().isPlay(x, y, nx, ny);
-  },
-
-  handleDrop: function (x, y, nx, ny) {
-    this.movePiece(x, y, nx, ny);
-    this.currentPlayer().handleDrop(x, y, nx, ny);
   },
 
   promote: function (ny, p) {
@@ -114,8 +109,8 @@ dojo.declare('Game.SquareSource', dojo.dnd.Source, {
 
   constructor: function (node, game, x, y) {
     this.game = game;
-    this.x    = x;
-    this.y    = y;
+    this.x = x;
+    this.y = y;
   },
 
   copyState: function () {
@@ -123,11 +118,11 @@ dojo.declare('Game.SquareSource', dojo.dnd.Source, {
   },
 
   checkAcceptance: function (source) {
-    return this.game.isPlay(source.x, source.y, this.x, this.y);
+    return this.game.current.isPlay(source.x, source.y, this.x, this.y);
   },
 
   onDrop: function (source) {
-    this.game.handleDrop(source.x, source.y, this.x, this.y);
+    this.game.current.handleDrop(source.x, source.y, this.x, this.y);
   }
 });
 
@@ -142,24 +137,17 @@ dojo.declare('Game.HumanPlayer', Game.Player, {
   play: function () {
     this.move = [];
     this.updatePlayMap();
-    Game.SquareSource.prototype.isSource = true; // enable dragging
-
-    this.promise = new dojo.Deferred();
-    return this.promise;
+    this.updateDragSources();
   },
 
-  onPlayComplete: function () {
-    Game.SquareSource.prototype.isSource = false;
-    console.log('  moved', JSON.stringify(this.move));
-    this.promise.resolve();
-  },
-
-  isPlay: function (x, y, nx, ny) {
-    var fromMap = this.playMap[x + ',' + y];
-    if (fromMap) return fromMap[nx + ',' + ny];
+  onComplete: function () {
+    this.clearDragSources();
+    this.game.onPlayComplete(this.move);
   },
 
   handleDrop: function (x, y, nx, ny) {
+    this.game.movePiece(x, y, nx, ny);
+
     // keep track of this move
     if (this.move.length == 0) {
       this.move.push(x);
@@ -172,28 +160,52 @@ dojo.declare('Game.HumanPlayer', Game.Player, {
     var playMap = this.isPlay(x, y, nx, ny);
     this.playMap = {};
     if (playMap == true) {
-      this.onPlayComplete();
+      this.onComplete();
     } else if (playMap) {
       this.playMap[nx + ',' + ny] = playMap;
+      this.updateDragSources();
     }
   },
 
   updatePlayMap: function (plays) {
+    function injectPlay(playMap, play) {
+      var key = play[0] + ',' + play[1];
+      if (play.length == 2) {
+        playMap[key] = true;
+      } else {
+        playMap[key] = playMap[key] || {};
+        injectPlay(playMap[key], play.slice(2));
+      }
+    }
+
     var rules = new Rules.Base(this.game.board, this.game.side);
     this.move = [];
     this.playMap = {};
     dojo.forEach(rules.collectPlays(), function (play) {
-      this.injectPlay(this.playMap, play);
+      injectPlay(this.playMap, play);
     }, this);
   },
 
-  injectPlay: function (playMap, play) {
-    var key = play[0] + ',' + play[1];
-    if (play.length == 2) {
-      playMap[key] = true;
-    } else {
-      playMap[key] = playMap[key] || {};
-      this.injectPlay(playMap[key], play.slice(2));
+  updateDragSources: function () {
+    dojo.forEach(this.game.sources, function (source) {
+      if ((source.x + ',' + source.y) in this.playMap) {
+        source.isSource = true;
+      } else {
+        delete source.isSource;
+      }
+    }, this);
+  },
+
+  clearDragSources: function () {
+    dojo.forEach(this.game.sources, function (source) {
+      delete source.isSource;
+    });
+  },
+
+  isPlay: function (x, y, nx, ny) {
+    var fromMap = this.playMap[x + ',' + y];
+    if (fromMap) {
+      return fromMap[nx + ',' + ny];
     }
   }
 });
