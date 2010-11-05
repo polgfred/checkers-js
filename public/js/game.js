@@ -9,8 +9,8 @@ dojo.declare('Game', null, {
   constructor: function () {
     this.side = 1;
     this.players = [
-      new Game.HumanPlayer(this,  1),
-      new Game.HumanPlayer(this, -1)
+      new Game.HumanPlayer(this),
+      new Game.HumanPlayer(this)
     ];
     this.board = [
       [  0, -1,  0, -1,  0, -1,  0, -1 ],
