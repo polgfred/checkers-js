@@ -1,4 +1,4 @@
-dojo.declare('Rules', null, {
+dojo.declare('Rules.Base', null, {
   dirsMap: {
      '1': [[ 1,  1], [-1,  1]],
      '2': [[ 1,  1], [-1,  1], [ 1, -1], [-1, -1]],
@@ -158,7 +158,7 @@ dojo.declare('Rules', null, {
   }
 });
 
-dojo.declare('Player', Rules, {
+dojo.declare('Rules.Player', Rules.Base, {
   ptable: [
     [ 00, 00, 00, 00, 00, 00, 00, 00 ],
     [ 75, 00, 78, 00, 78, 00, 75, 00 ],
