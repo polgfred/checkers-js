@@ -220,4 +220,3 @@ dojo.addOnLoad(function () {
   GAME = new Game();
   GAME.play();
 });
-
