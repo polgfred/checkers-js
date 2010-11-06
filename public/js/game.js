@@ -10,7 +10,7 @@ dojo.declare('Game', null, {
     this.side = 1;
     this.players = [
       new Game.HumanPlayer(this),
-      new Game.HumanPlayer(this)
+      new Game.MechanicalPlayer(this)
     ];
     this.board = [
       [  0, -1,  0, -1,  0, -1,  0, -1 ],
@@ -91,13 +91,6 @@ dojo.declare('Game', null, {
       var my = (y + ny) / 2
       this.board[my][mx] = 0;
       this.removeImg(mx, my);
-    }
-  },
-
-  moveAll: function (move) {
-    this.movePiece(move[0], move[1], move[2], move[3]);
-    if (move.length > 4) {
-      this.moveAll(move.slice(2));
     }
   }
 });
@@ -205,6 +198,22 @@ dojo.declare('Game.HumanPlayer', Game.Player, {
     var fromMap = this.playMap[x + ',' + y];
     if (fromMap) {
       return fromMap[nx + ',' + ny];
+    }
+  }
+});
+
+dojo.declare('Game.MechanicalPlayer', Game.Player, {
+  play: function () {
+    this.player = new Rules.Player(this.game.board, this.game.side);
+    var move = this.player.run()[0];
+    this.moveAll(move);
+    this.game.onPlayComplete(move);
+  },
+
+  moveAll: function (move) {
+    this.game.movePiece(move[0], move[1], move[2], move[3]);
+    if (move.length > 4) {
+      this.moveAll(move.slice(2));
     }
   }
 });
