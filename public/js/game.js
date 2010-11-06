@@ -204,10 +204,16 @@ dojo.declare('Game.HumanPlayer', Game.Player, {
 
 dojo.declare('Game.MechanicalPlayer', Game.Player, {
   play: function () {
-    this.player = new Rules.Player(this.game.board, this.game.side);
-    var move = this.player.run()[0];
-    this.moveAll(move);
-    this.game.onPlayComplete(move);
+    var worker = new Worker('../js/aiWorker.js');
+    dojo.connect(worker, 'message', dojo.hitch(this, function (event) {
+      var move = event.data.move;
+      this.moveAll(move);
+      this.game.onPlayComplete(move);
+    }));
+    worker.postMessage({
+      board: this.game.board,
+      side: this.game.side
+    });
   },
 
   moveAll: function (move) {
