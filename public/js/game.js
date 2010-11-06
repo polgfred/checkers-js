@@ -203,17 +203,19 @@ dojo.declare('Game.HumanPlayer', Game.Player, {
 });
 
 dojo.declare('Game.MechanicalPlayer', Game.Player, {
+  constructor: function (game) {
+    this.worker = new Worker('../js/aiWorker.js');
+    dojo.connect(this.worker, 'message', dojo.hitch(this, this.onComplete));
+  },
+
   play: function () {
-    var worker = new Worker('../js/aiWorker.js');
-    dojo.connect(worker, 'message', dojo.hitch(this, function (event) {
-      var move = event.data.move;
-      this.moveAll(move);
-      this.game.onPlayComplete(move);
-    }));
-    worker.postMessage({
-      board: this.game.board,
-      side: this.game.side
-    });
+    this.worker.postMessage({ board: this.game.board, side: this.game.side });
+  },
+
+  onComplete: function (event) {
+    var move = event.data.move;
+    this.moveAll(move);
+    this.game.onPlayComplete(move);
   },
 
   moveAll: function (move) {
