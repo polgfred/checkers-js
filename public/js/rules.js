@@ -70,7 +70,8 @@ Rules.Base.prototype = Object.create(Object.prototype, {
           var m = this.board[my][mx];
           var n = this.board[ny][nx];
 
-          if ((m * this.side) < 0 && n == 0) {
+          if (n == 0 && ((this.side ==  1 && m < 0) ||
+                         (this.side == -1 && m > 0))) {
             found = true;
 
             var promoted = (p == 1 && ny == 7) || (p == -1 && ny == 0);
@@ -218,21 +219,20 @@ Rules.Player.prototype = Object.create(Rules.Base.prototype, {
       for (var y = 0; y < 8; ++y) {
         for (var x = 0; x < 8; ++x) {
           switch (this.board[y][x]) {
-            case  0:
-              score += 0;
-            break;
             case  1:
               score += this.ptable[y][x];
-            break;
+              break;
             case -1:
               score -= this.ptable[7-y][7-x];
-            break;
+              break;
             case  2:
               score += this.ktable[y][x];
-            break;
+              break;
             case -2:
               score -= this.ktable[7-y][7-x];
-            break;
+              break;
+            default:
+              break;
           }
         }
       }
@@ -248,11 +248,13 @@ Rules.Player.prototype = Object.create(Rules.Base.prototype, {
       var score;
 
       this.myPlays(function (play) {
+        this.side = -this.side;
+
         if (this.level < 1 && !this.myJumps(function () {})) {
+          this.side = -this.side;
           score = this.evaluate();
         } else {
           this.level--;
-          this.side = -this.side;
           score = this.run()[1];
           this.level++;
           this.side = -this.side;
@@ -260,9 +262,9 @@ Rules.Player.prototype = Object.create(Rules.Base.prototype, {
 
         if (bestScore === undefined ||
             (this.side ==  1 && score > bestScore) ||
-                (this.side == -1 && score < bestScore)) {
+            (this.side == -1 && score < bestScore)) {
           bestScore = score;
-        bestPlay  = play;
+          bestPlay  = play;
         }
       });
 
