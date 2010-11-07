@@ -1,1 +1,3 @@
-Just check out the code and fire up /public/html/checkers.html in a local browser. Yep, that's it.
+Check out the code and serve up /public/html/checkers.html from a local web server.
+
+This has to be served up from a web server: web workers don't work with file:// URLs.
