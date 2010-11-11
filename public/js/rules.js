@@ -203,7 +203,7 @@ Rules.Base.prototype = Object.create(Object.prototype, {
 
 Rules.Player = function (board, side) {
   Rules.Base.call(this, board, side);
-  this.level = 5;
+  this.level = 6;
   this.value = 0;
 };
 
