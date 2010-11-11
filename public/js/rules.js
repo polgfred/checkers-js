@@ -3,6 +3,7 @@ Rules = {};
 Rules.Base = function (board, side) {
   this.board = board;
   this.side = side;
+  this.setupCounts();
 };
 
 Rules.Base.prototype = Object.create(Object.prototype, {
@@ -12,6 +13,24 @@ Rules.Base.prototype = Object.create(Object.prototype, {
        '2': [[ 1,  1], [-1,  1], [ 1, -1], [-1, -1]],
       '-1': [[-1, -1], [ 1, -1]],
       '-2': [[-1, -1], [ 1, -1], [-1,  1], [ 1,  1]]
+    }
+  },
+
+  setupCounts: {
+    value: function () {
+      this.dcount = 0;
+      this.lcount = 0;
+
+      for (var y = 0; y < 8; ++y) {
+        for (var x = 0; x < 8; ++x) {
+          var p = this.board[y][x];
+          if (p > 0) {
+            ++this.dcount;
+          } else if (p < 0) {
+            ++this.lcount;
+          }
+        }
+      }
     }
   },
 
@@ -58,6 +77,7 @@ Rules.Base.prototype = Object.create(Object.prototype, {
   doJumps: {
     value: function (x, y, p, current, block) {
       var found = false;
+      var oppCount = this.side == 1 ? 'lcount' : 'dcount';
 
       this.doDirs(p, function (dx, dy) {
         var mx =  x + dx;
@@ -81,6 +101,7 @@ Rules.Base.prototype = Object.create(Object.prototype, {
             this.board[y][x]   = 0;
             this.board[my][mx] = 0;
             this.board[ny][nx] = q;
+            --this[oppCount];
 
             if (promoted || !this.doJumps(nx, ny, p, ncurrent, block)) {
               block.call(this, ncurrent);
@@ -89,6 +110,7 @@ Rules.Base.prototype = Object.create(Object.prototype, {
             this.board[y][x]   = p;
             this.board[my][mx] = m;
             this.board[ny][nx] = 0;
+            ++this[oppCount];
           }
         }
       });
@@ -267,6 +289,12 @@ Rules.Player.prototype = Object.create(Rules.Base.prototype, {
           bestPlay  = play;
         }
       });
+
+      if (bestScore === undefined) {
+        bestScore = this.side == 1 ?
+          (this.dcount == 0 ? -Infinity : 0) :
+          (this.lcount == 0 ?  Infinity : 0);
+      }
 
       return [bestPlay, bestScore];
     }
