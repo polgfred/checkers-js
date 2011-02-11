@@ -21,8 +21,8 @@ Rules.Base.prototype = Object.create(Object.prototype, {
       this.dcount = 0;
       this.lcount = 0;
 
-      for (var y = 0; y < 8; ++y) {
-        for (var x = 0; x < 8; ++x) {
+      for (var y = 0; y < 8; y++) {
+        for (var x = 0; x < 8; x++) {
           var p = this.board[y][x];
           if (p > 0) {
             ++this.dcount;
@@ -38,7 +38,7 @@ Rules.Base.prototype = Object.create(Object.prototype, {
     value: function (p, block) {
       var dirs = this.dirsMap[p];
 
-      for (var i = 0; i < dirs.length; ++i) {
+      for (var i = 0; i < dirs.length; i++) {
         var dir = dirs[i];
         var dx  = dir[0];
         var dy  = dir[1];
@@ -51,8 +51,8 @@ Rules.Base.prototype = Object.create(Object.prototype, {
   doSquares: {
     value: function (block) {
       if (this.side == 1) {
-        for (var y = 0; y < 8; ++y) {
-          for (var x = 0; x < 8; ++x) {
+        for (var y = 0; y < 8; y++) {
+          for (var x = 0; x < 8; x++) {
             var p = this.board[y][x];
 
             if (p > 0) {
@@ -61,8 +61,8 @@ Rules.Base.prototype = Object.create(Object.prototype, {
           }
         }
       } else if (this.side == -1) {
-        for (var y = 7; y >= 0; --y) {
-          for (var x = 7; x >= 0; --x) {
+        for (var y = 7; y >= 0; y--) {
+          for (var x = 7; x >= 0; x--) {
             var p = this.board[y][x];
 
             if (p < 0) {
@@ -101,7 +101,7 @@ Rules.Base.prototype = Object.create(Object.prototype, {
             this.board[y][x]   = 0;
             this.board[my][mx] = 0;
             this.board[ny][nx] = q;
-            --this[oppCount];
+            this[oppCount]--;
 
             if (promoted || !this.doJumps(nx, ny, p, ncurrent, block)) {
               block.call(this, ncurrent);
@@ -110,7 +110,7 @@ Rules.Base.prototype = Object.create(Object.prototype, {
             this.board[y][x]   = p;
             this.board[my][mx] = m;
             this.board[ny][nx] = 0;
-            ++this[oppCount];
+            this[oppCount]++;
           }
         }
       });
@@ -238,8 +238,8 @@ Rules.Player.prototype = Object.create(Rules.Base.prototype, {
     value: function () {
       var score = 0;
 
-      for (var y = 0; y < 8; ++y) {
-        for (var x = 0; x < 8; ++x) {
+      for (var y = 0; y < 8; y++) {
+        for (var x = 0; x < 8; x++) {
           switch (this.board[y][x]) {
             case  1:
               score += this.ptable[y][x];
