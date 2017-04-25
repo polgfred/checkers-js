@@ -1,16 +1,9 @@
-* {
-  font-size: 10px;
-  font-style: normal;
-  font-weight: normal;
-  font-family: 'Lucida Grande', Verdana;
-}
-
 h1 {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 h2 {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td {
@@ -52,6 +45,9 @@ body {
       -webkit-transition: background 0.5s;
       &.playable {
         background-color: #448866;
+        &.dragging {
+          background-color: #88ffcc;
+        }
       }
       img {
         vertical-align: middle;
