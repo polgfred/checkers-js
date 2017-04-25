@@ -2,52 +2,66 @@
   font-size: 10px;
   font-style: normal;
   font-weight: normal;
-  font-family: 'Lucida Grande', Verdana; }
+  font-family: 'Lucida Grande', Verdana;
+}
 
 h1 {
-  font-size: 14px; }
+  font-size: 14px;
+}
 
 h2 {
-  font-size: 12px; }
+  font-size: 12px;
+}
 
 div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td {
   margin: 0;
-  padding: 0; }
+  padding: 0;
+}
 
 table {
   border-spacing: 0;
-  border-collapse: collapse; }
+  border-collapse: collapse;
+}
 
 fieldset, img {
-  border: 0; }
+  border: 0;
+}
 
 ol, ul {
-  list-style: none; }
+  list-style: none;
+}
 
 body {
-  margin: 20px; }
+  margin: 20px;
+}
 
 #board-container {
-  float: left; }
-  #board-container #board {
+  float: left;
+  #board {
     border-collapse: separate;
     border-spacing: 1px;
     border: 4px solid #112219;
     -webkit-border-radius: 2px;
-    -webkit-box-shadow: 3px 3px 6px #888; }
-    #board-container #board td {
+    -webkit-box-shadow: 3px 3px 6px #888;
+    td {
       width: 42px;
       height: 42px;
       border: 1px solid #112219;
       background-color: #ffffbb;
       -webkit-border-radius: 2px;
-      -webkit-transition: background 0.5s; }
-      #board-container #board td.playable {
-        background-color: #448866; }
-      #board-container #board td img {
+      -webkit-transition: background 0.5s;
+      &.playable {
+        background-color: #448866;
+      }
+      img {
         vertical-align: middle;
-        margin: 1px; }
+        margin: 1px;
+      }
+    }
+  }
+}
 
+/*
 body.dojoDndMove #board-container #board td.dojoDndTarget {
   background-color: #55aa7f; }
   body.dojoDndMove #board-container #board td.dojoDndTarget.dojoDndContainerOver {
@@ -65,3 +79,4 @@ body.dojoDndMove #board-container #board td.dojoDndSourceMoved img {
     margin: 1px;
     width: 36px;
     height: 36px; }
+*/
