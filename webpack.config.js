@@ -1,17 +1,17 @@
 var path = require('path');
 
 module.exports = {
-  entry: './build.js',
+  entry: './main.js',
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js'
   },
-  //devtool: 'inline-source-map',
+  devtool: 'cheap-module-source-map',
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
-        loaders: [ 'babel' ],
+        use: [ 'babel-loader' ],
         exclude: [ path.resolve(__dirname, 'node_modules') ]
       }
     ]

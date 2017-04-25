@@ -4,6 +4,7 @@
   "description": "",
   "main": "build.js",
   "scripts": {
+    "test": "mocha --compilers js:babel-core/register",
     "build": "webpack",
     "watch": "webpack --watch",
     "start": "webpack-dev-server --hot --inline"
@@ -15,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
     "babel-loader": "^6.4.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
@@ -22,6 +24,8 @@
     "babel-polyfill": "^6.23.0",
     "babel-preset-latest": "^6.24.1",
     "babel-preset-react": "^6.24.1",
+    "expect.js": "^0.3.1",
+    "mocha": "^3.3.0",
     "webpack": "^2.4.1",
     "webpack-dev-server": "^2.4.2"
   },
