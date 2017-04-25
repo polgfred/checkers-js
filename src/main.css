@@ -32,9 +32,9 @@ body {
   #board-container #board {
     border-collapse: separate;
     border-spacing: 1px;
-    border: 5px solid #112219;
+    border: 4px solid #112219;
     -webkit-border-radius: 2px;
-    -webkit-box-shadow: 3px 3px 6px #222222; }
+    -webkit-box-shadow: 3px 3px 6px #888; }
     #board-container #board td {
       width: 42px;
       height: 42px;
@@ -42,7 +42,7 @@ body {
       background-color: #ffffbb;
       -webkit-border-radius: 2px;
       -webkit-transition: background 0.5s; }
-      #board-container #board td.dojoDndContainer, #board-container #board td.dojoDndContainerOver {
+      #board-container #board td.playable {
         background-color: #448866; }
       #board-container #board td img {
         vertical-align: middle;
