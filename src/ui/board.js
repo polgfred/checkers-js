@@ -36,7 +36,7 @@ export default class Board extends Component {
   }
 
   renderSquares(y) {
-    let { board, canDrag, canDrop } = this.props, elems = [];
+    let { board, canDrag, canDrop, handleDrop } = this.props, elems = [];
 
     for (let x = 0; x <= 7; ++x) {
       let p = board[y][x], piece;
@@ -46,7 +46,7 @@ export default class Board extends Component {
       }
 
       if ((x + y) % 2 == 0) {
-        elems.push(<Square key={x} x={x} y={y} p={p} canDrop={canDrop}>
+        elems.push(<Square key={x} x={x} y={y} p={p} canDrop={canDrop} handleDrop={handleDrop}>
           { piece }
         </Square>);
       } else {
@@ -66,7 +66,7 @@ class EmptySquare extends Component {
 
 @DropTarget('piece', {
   canDrop: (props, monitor) => props.canDrop(props, monitor.getItem()),
-  drop: (props, monitor) => {}
+  drop: (props, monitor) => props.handleDrop(props, monitor.getItem())
 }, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
   canDrop: monitor.canDrop(),

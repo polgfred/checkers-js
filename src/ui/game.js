@@ -18,7 +18,7 @@ export default class Game extends Component {
       player: 'human'
     };
 
-    Object.assign(this.state, this.setupRules(this.state));
+    this.setupRules(this.state);
   }
 
   initialBoard() {
@@ -44,12 +44,11 @@ export default class Game extends Component {
   }
 
   setupRules(state) {
-    let { board, side } = state,
-        rules = new Rules(board, side),
-        plays = rules.collectPlays(),
-        current = [];
+    let { board, side } = state;
 
-    return { rules, plays, current };
+    state.rules = new Rules(board, side);
+    state.plays = state.rules.collectPlays();
+    state.current = [];
   }
 
   @autobind
@@ -79,8 +78,34 @@ export default class Game extends Component {
   }
 
   @autobind
-  handleDrop() {
+  handleDrop(props, item) {
+    let { plays } = this.state,
+        { x: nx, y: ny } = props,
+        { x, y } = item;
 
+    if (this.canDrop(props, item)) {
+      this.setState(state => {
+        let { board, side } = state, p = board[y][x];
+
+        // make the move
+        board[y][x] = 0;
+        board[ny][nx] = p;
+        if (Math.abs(nx - x) == 2) {
+          let mx = (x + nx) / 2, my = (y + ny) / 2;
+          board[my][mx] = 0;
+        }
+
+        // build the next state
+        let nstate = {
+          board: board,
+          side: -side,
+          player: 'human'
+        }
+
+        this.setupRules(nstate);
+        return nstate;
+      });
+    }
   }
 }
 
