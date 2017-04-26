@@ -83,9 +83,10 @@ class Square extends Component {
     let { x, y, p, connectDropTarget, canDrop, isOver } = this.props;
 
     return connectDropTarget(
-      <td className={classNames({ 'playable': true,
-                                  'droppable': canDrop,
-                                  'hovering': isOver })}>
+      <td className={classNames({
+            'playable': true,
+            'can-drop': canDrop,
+            'is-over': isOver })}>
         { this.props.children }
       </td>);
   }
@@ -115,6 +116,9 @@ class Piece extends Component {
 
   render() {
     let { p, connectDragSource, isDragging } = this.props;
-    return connectDragSource(<img src={pieceImages[p]} />);
+    return connectDragSource(
+      <img src={pieceImages[p]} className={classNames({
+                                  'is-dragging': isDragging
+                                  })} />);
   }
 }
