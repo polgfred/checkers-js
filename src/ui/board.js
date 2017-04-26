@@ -64,16 +64,10 @@ class EmptySquare extends Component {
   }
 }
 
-let dropTarget = {
-  canDrop(props, monitor) {
-    return props.canDrop(props, monitor.getItem());
-  },
-
-  drop(props, monitor) {
-  }
-};
-
-@DropTarget('piece', dropTarget, (connect, monitor) => ({
+@DropTarget('piece', {
+  canDrop: (props, monitor) => props.canDrop(props, monitor.getItem()),
+  drop: (props, monitor) => {}
+}, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
   canDrop: monitor.canDrop(),
   isOver: monitor.isOver()
@@ -92,17 +86,10 @@ class Square extends Component {
   }
 }
 
-let dragSource = {
-  canDrag(props) {
-    return props.canDrag(props);
-  },
-
-  beginDrag(props, monitor) {
-    return { x: props.x, y: props.y };
-  }
-};
-
-@DragSource('piece', dragSource, (connect, monitor) => ({
+@DragSource('piece', {
+  canDrag: (props) => props.canDrag(props),
+  beginDrag: (props) => ({ x: props.x, y: props.y })
+}, (connect, monitor) => ({
   connectDragSource: connect.dragSource(),
   connectDragPreview: connect.dragPreview(),
   isDragging: monitor.isDragging()
