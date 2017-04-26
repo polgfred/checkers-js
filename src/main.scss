@@ -1,33 +1,3 @@
-h1 {
-  font-size: 16px;
-}
-
-h2 {
-  font-size: 14px;
-}
-
-div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td {
-  margin: 0;
-  padding: 0;
-}
-
-table {
-  border-spacing: 0;
-  border-collapse: collapse;
-}
-
-fieldset, img {
-  border: 0;
-}
-
-ol, ul {
-  list-style: none;
-}
-
-body {
-  margin: 20px;
-}
-
 #board-container {
   float: left;
   margin-left: 100px;
@@ -36,16 +6,16 @@ body {
     border-collapse: separate;
     border-spacing: 1px;
     border: 4px solid #122;
+    border-radius: 2px;
+    box-shadow: 3px 3px 6px #888;
     transform: translateY(-100px) rotateX(45deg);
-    -webkit-border-radius: 2px;
-    -webkit-box-shadow: 3px 3px 6px #888;
     td {
-      width: 62px;
-      height: 62px;
-      border: 1px solid #122;
       background-color: #ffb;
-      -webkit-border-radius: 2px;
-      -webkit-transition: background 0.5s;
+      border: 1px solid #122;
+      border-radius: 2px;
+      height: 62px;
+      transition: background 0.5s;
+      width: 62px;
       &.playable {
         background-color: #486;
         &.is-over {
