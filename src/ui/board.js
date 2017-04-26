@@ -43,21 +43,27 @@ export default class Board extends Component {
 
     for (let y = 7; y >= 0; --y) {
       elems.push(<tr key={y}>
-        { this.renderCells(y) }
+        { this.renderSquares(y) }
       </tr>);
     }
 
     return elems;
   }
 
-  renderCells(y) {
-    let { board } = this.props, elems = [];
+  renderSquares(y) {
+    let { board, canDrag, canDrop } = this.props, elems = [];
 
     for (let x = 0; x <= 7; ++x) {
-      let p = board[y][x];
+      let p = board[y][x], piece;
+
+      if (p != 0) {
+        piece = <Piece x={x} y={y} p={p} canDrag={canDrag} />;
+      }
 
       if ((x + y) % 2 == 0) {
-        elems.push(<Square key={x} x={x} y={y} p={p} />);
+        elems.push(<Square key={x} x={x} y={y} p={p} canDrop={canDrop}>
+          { piece }
+        </Square>);
       } else {
         elems.push(<EmptySquare key={x} />);
       }
@@ -75,12 +81,10 @@ class EmptySquare extends Component {
 
 let dropTarget = {
   canDrop(props, monitor) {
-    let { nx, ny, canPlay } = props, { x, y, p } = monitor.getItem();
-    return true; //canPlay(x, y, nx, ny);
+    return props.canDrop(props, monitor.getItem());
   },
 
   drop(props, monitor) {
-    let { nx, ny } = props, { x, y, p } = monitor.getItem();
   }
 };
 
@@ -91,19 +95,24 @@ let dropTarget = {
 }))
 class Square extends Component {
   render() {
-    let { x, y, p, connectDropTarget, isOver } = this.props,
-        cls = classNames('playable', { dragging: isOver });
+    let { x, y, p, connectDropTarget, canDrop, isOver } = this.props;
+
     return connectDropTarget(
-      <td className={cls}>
-        { p != 0 && <Piece x={x} y={y} p={p} /> }
+      <td className={classNames({ 'playable': true,
+                                  'droppable': canDrop,
+                                  'hovering': isOver })}>
+        { this.props.children }
       </td>);
   }
 }
 
 let dragSource = {
-  beginDrag(props) {
-    let { x, y, p } = props;
-    return { x, y, p };
+  canDrag(props) {
+    return props.canDrag(props);
+  },
+
+  beginDrag(props, monitor) {
+    return { x: props.x, y: props.y };
   }
 };
 

@@ -45,8 +45,9 @@ body {
       -webkit-transition: background 0.5s;
       &.playable {
         background-color: #448866;
-        &.dragging {
+        &.droppable {
           background-color: #88ffcc;
+          &.hovering {}
         }
       }
       img {

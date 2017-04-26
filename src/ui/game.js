@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import autobind from 'autobind-decorator';
 
 import Rules from '../rules';
 import Player from '../player';
@@ -9,8 +10,13 @@ export default class Game extends Component {
   constructor() {
     super();
 
-    let board = this.initialBoard(), side = 1, rules = new Rules(board, side);
-    this.state = { board, side, rules };
+    this.state = {
+      side: 1,
+      board: this.initialBoard(),
+      player: 'human'
+    };
+
+    Object.assign(this.state, this.setupRules(this.state));
   }
 
   initialBoard() {
@@ -28,7 +34,51 @@ export default class Game extends Component {
 
   render() {
     let { board, side } = this.state;
-    return <Board board={board} side={side} />;
+
+    return <Board board={board} side={side}
+                  canDrag={this.canDrag}
+                  canDrop={this.canDrop}
+                  handleDrop={this.handleDrop} />;
+  }
+
+  setupRules(state) {
+    let { board, side } = state,
+        rules = new Rules(board, side),
+        plays = rules.collectPlays(),
+        current = [];
+
+    return { rules, plays, current };
+  }
+
+  @autobind
+  canDrag(props) {
+    let { player, plays } = this.state,
+        { x, y } = props;
+
+    // if computer's turn, don't allow dragging at all
+    if (player == 'computer') {
+      return false;
+    }
+
+    return !!plays.find(play => play[0] == x && play[1] == y);
+  }
+
+  @autobind
+  canDrop(props, item) {
+    let { plays } = this.state,
+        { x: nx, y: ny } = props,
+        { x, y } = item;
+
+    return !!plays.find(play =>
+              play[0] == x &&
+              play[1] == y &&
+              play[2] == nx &&
+              play[3] == ny);
+  }
+
+  @autobind
+  handleDrop() {
+
   }
 }
 
