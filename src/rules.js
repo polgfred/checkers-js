@@ -1,7 +1,5 @@
 'use strict';
 
-import 'babel-polyfill';
-
 const dirsMap = new Map();
 dirsMap.set(1, [[ 1,  1 ], [ -1,  1 ]]);
 dirsMap.set(2, [[ 1,  1 ], [ -1,  1 ], [ 1, -1 ], [ -1, -1 ]]);
