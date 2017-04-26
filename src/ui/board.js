@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { DragDropContext, DragSource, DropTarget } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
+import classNames from 'classnames';
 
 const pieceImages = new Map();
 pieceImages[+1] = 'src/images/pr.png';
@@ -85,13 +86,15 @@ let dropTarget = {
 
 @DropTarget('piece', dropTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
+  canDrop: monitor.canDrop(),
   isOver: monitor.isOver()
 }))
 class Square extends Component {
   render() {
-    let { x, y, p, connectDropTarget, isOver } = this.props;
+    let { x, y, p, connectDropTarget, isOver } = this.props,
+        cls = classNames('playable', { dragging: isOver });
     return connectDropTarget(
-      <td className={`playable ${isOver ? 'dragging' : ''}`}>
+      <td className={cls}>
         { p != 0 && <Piece x={x} y={y} p={p} /> }
       </td>);
   }
