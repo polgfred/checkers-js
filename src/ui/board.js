@@ -6,10 +6,10 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import classNames from 'classnames';
 
 const pieceImages = new Map();
-pieceImages[+1] = 'src/images/pr.png';
-pieceImages[+2] = 'src/images/kr.png';
-pieceImages[-1] = 'src/images/pw.png';
-pieceImages[-2] = 'src/images/kw.png';
+pieceImages[+1] = 'src/images/red-piece.svg';
+pieceImages[+2] = 'src/images/red-king.svg';
+pieceImages[-1] = 'src/images/white-piece.svg';
+pieceImages[-2] = 'src/images/white-king.svg';
 
 @DragDropContext(HTML5Backend)
 export default class Board extends Component {

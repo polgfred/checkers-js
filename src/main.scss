@@ -37,8 +37,8 @@ body {
     -webkit-border-radius: 2px;
     -webkit-box-shadow: 3px 3px 6px #888;
     td {
-      width: 42px;
-      height: 42px;
+      width: 62px;
+      height: 62px;
       border: 1px solid #122;
       background-color: #ffb;
       -webkit-border-radius: 2px;
@@ -56,8 +56,10 @@ body {
         }
       }
       img {
-        vertical-align: middle;
+        height: 60px;
         margin: 1px;
+        vertical-align: middle;
+        width: 60px;
         &.is-dragging {
           visibility: hidden;
         }
