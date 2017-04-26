@@ -1,3 +1,5 @@
+'use strict';
+
 import 'babel-polyfill';
 
 import React from 'react';

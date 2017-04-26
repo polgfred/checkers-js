@@ -1,3 +1,5 @@
+'use strict';
+
 import React, { Component } from 'react';
 import { DragDropContext, DragSource, DropTarget } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
