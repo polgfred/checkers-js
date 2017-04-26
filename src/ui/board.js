@@ -13,23 +13,6 @@ pieceImages[-2] = 'src/images/kw.png';
 
 @DragDropContext(HTML5Backend)
 export default class Board extends Component {
-  static defaultProps = {
-    // initial checkerboard setup
-    board: [
-      [  0, -1,  0, -1,  0, -1,  0, -1 ],
-      [ -1,  0, -1,  0, -1,  0, -1,  0 ],
-      [  0, -1,  0, -1,  0, -1,  0, -1 ],
-      [  0,  0,  0,  0,  0,  0,  0,  0 ],
-      [  0,  0,  0,  0,  0,  0,  0,  0 ],
-      [  1,  0,  1,  0,  1,  0,  1,  0 ],
-      [  0,  1,  0,  1,  0,  1,  0,  1 ],
-      [  1,  0,  1,  0,  1,  0,  1,  0 ]
-    ].reverse(),
-
-    // red to start
-    side: 1
-  }
-
   render() {
     return <div id="board-container">
       <table id="board">
