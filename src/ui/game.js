@@ -1,3 +1,51 @@
+import React, { Component } from 'react';
+
+import Rules from '../rules';
+import Player from '../player';
+
+import Board from './board';
+
+export default class Game extends Component {
+  constructor() {
+    super();
+
+    let board = this.initialBoard(), side = 1, rules = new Rules(board, side);
+    this.state = { board, side, rules };
+  }
+
+  initialBoard() {
+    return [
+      [  0, -1,  0, -1,  0, -1,  0, -1 ],
+      [ -1,  0, -1,  0, -1,  0, -1,  0 ],
+      [  0, -1,  0, -1,  0, -1,  0, -1 ],
+      [  0,  0,  0,  0,  0,  0,  0,  0 ],
+      [  0,  0,  0,  0,  0,  0,  0,  0 ],
+      [  1,  0,  1,  0,  1,  0,  1,  0 ],
+      [  0,  1,  0,  1,  0,  1,  0,  1 ],
+      [  1,  0,  1,  0,  1,  0,  1,  0 ]
+    ].reverse();
+  }
+
+  render() {
+    let { board, side } = this.state;
+    return <Board board={board} side={side} />;
+  }
+}
+
+class BasePlayer {
+}
+
+class HumanPlayer extends BasePlayer {
+  play() {
+  }
+}
+
+class MachinePlayer extends BasePlayer {
+  play() {
+  }
+}
+
+/*
 dojo.declare('Game', null, {
   pieceImages: {
      '1': 'pr.png',
@@ -237,3 +285,4 @@ dojo.addOnLoad(function () {
   GAME = new Game();
   GAME.play();
 });
+*/

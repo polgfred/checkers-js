@@ -56,9 +56,9 @@ export default class Board extends Component {
       let p = board[y][x];
 
       if ((x + y) % 2 == 0) {
-        elems.push(<Cell key={x} x={x} y={y} p={p} />);
+        elems.push(<Square key={x} x={x} y={y} p={p} />);
       } else {
-        elems.push(<td key={x} />);
+        elems.push(<EmptySquare key={x} />);
       }
     }
 
@@ -66,43 +66,56 @@ export default class Board extends Component {
   }
 }
 
+class EmptySquare extends Component {
+  render() {
+    return <td />;
+  }
+}
+
 let dropTarget = {
+  canDrop(props, monitor) {
+    let { nx, ny, canPlay } = props, { x, y, p } = monitor.getItem();
+    return true; //canPlay(x, y, nx, ny);
+  },
+
   drop(props, monitor) {
+    let { nx, ny } = props, { x, y, p } = monitor.getItem();
   }
 };
 
-function dropCollect(connect, monitor) {
-  return {
-    connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver()
-  };
-}
-
-@DropTarget('piece', dropTarget, dropCollect)
-class Cell extends Component {
+@DropTarget('piece', dropTarget, (connect, monitor) => ({
+  connectDropTarget: connect.dropTarget(),
+  isOver: monitor.isOver()
+}))
+class Square extends Component {
   render() {
     let { x, y, p, connectDropTarget, isOver } = this.props;
-    return connectDropTarget(<td className={`playable ${isOver ? 'dragging' : ''}`}>
-      { p != 0 && <Piece p={p} /> }
-    </td>);
+    return connectDropTarget(
+      <td className={`playable ${isOver ? 'dragging' : ''}`}>
+        { p != 0 && <Piece x={x} y={y} p={p} /> }
+      </td>);
   }
 }
 
 let dragSource = {
   beginDrag(props) {
-    return {};
+    let { x, y, p } = props;
+    return { x, y, p };
   }
 };
 
-function dragCollect(connect, monitor) {
-  return {
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging()
-  };
-}
-
-@DragSource('piece', dragSource, dragCollect)
+@DragSource('piece', dragSource, (connect, monitor) => ({
+  connectDragSource: connect.dragSource(),
+  connectDragPreview: connect.dragPreview(),
+  isDragging: monitor.isDragging()
+}))
 class Piece extends Component {
+  componentDidMount() {
+    let { p, connectDragPreview } = this.props, img = new Image();
+    img.src = pieceImages[p];
+    connectDragPreview(img);
+  }
+
   render() {
     let { p, connectDragSource, isDragging } = this.props;
     return connectDragSource(<img src={pieceImages[p]} />);
