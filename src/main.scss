@@ -30,10 +30,13 @@ body {
 
 #board-container {
   float: left;
+  margin-left: 100px;
+  perspective: 800px;
   #board {
     border-collapse: separate;
     border-spacing: 1px;
     border: 4px solid #122;
+    transform: translateY(-100px) rotateX(45deg);
     -webkit-border-radius: 2px;
     -webkit-box-shadow: 3px 3px 6px #888;
     td {
