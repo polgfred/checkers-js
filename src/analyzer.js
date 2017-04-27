@@ -2,9 +2,10 @@
 
 import Rules from './rules';
 
-export default class Analyzer {
+export default class Analyzer extends Rules {
   constructor(board, side) {
-    this.rules = new Rules(board, side);
+    super(board, side);
+
     this.level = 6;
     this.value = 0;
   }
@@ -36,20 +37,18 @@ export default class Analyzer {
 
     for (let y = 0; y < 8; y++) {
       for (let x = 0; x < 8; x++) {
-        switch (this.rules.board[y][x]) {
-          case  1:
+        switch (this.board[y][x]) {
+          case +1:
             score += this.ptable[y][x];
             break;
           case -1:
             score -= this.ptable[7-y][7-x];
             break;
-          case  2:
+          case +2:
             score += this.ktable[y][x];
             break;
           case -2:
             score -= this.ktable[7-y][7-x];
-            break;
-          default:
             break;
         }
       }
@@ -59,35 +58,33 @@ export default class Analyzer {
   }
 
   run() {
-    let bestScore;
-    let bestPlay;
-    let score;
+    let bestScore, bestPlay, score;
 
-    this.rules.myPlays(play => {
-      this.rules.side = -this.rules.side;
+    this.myPlays(play => {
+      this.side = -this.side;
 
-      if (this.level < 1 && !this.rules.myJumps(() => {})) {
-        this.rules.side = -this.rules.side;
+      if (this.level < 1 && !this.myJumps(() => {})) {
+        this.side = -this.side;
         score = this.evaluate();
       } else {
         this.level--;
         score = this.run()[1];
         this.level++;
-        this.rules.side = -this.rules.side;
+        this.side = -this.side;
       }
 
       if (bestScore === undefined ||
-          (this.rules.side ==  1 && score > bestScore) ||
-          (this.rules.side == -1 && score < bestScore)) {
+          (this.side == +1 && score > bestScore) ||
+          (this.side == -1 && score < bestScore)) {
         bestScore = score;
         bestPlay  = play;
       }
     });
 
     if (bestScore === undefined) {
-      bestScore = this.rules.side == 1 ?
+      bestScore = this.side == 1 ?
         (this.dcount == 0 ? -Infinity : 0) :
-        (this.lcount == 0 ?  Infinity : 0);
+        (this.lcount == 0 ? +Infinity : 0);
     }
 
     return [bestPlay, bestScore];

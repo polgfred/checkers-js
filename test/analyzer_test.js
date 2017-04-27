@@ -1,10 +1,10 @@
 import expect from 'expect.js';
 
-import Player from '../src/player';
+import Analyzer from '../src/analyzer';
 
-describe('Player', function() {
+describe('Analyzer', function() {
   before(function() {
-    this.player = new Player([
+    this.analyzer = new Analyzer([
       new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
       new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
       new Int8Array([  0,  0,  0,  0,  0, -1,  0,  0 ]),
@@ -13,25 +13,24 @@ describe('Player', function() {
       new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
       new Int8Array([  0, -1,  0, -1,  0,  0,  0,  0 ]),
       new Int8Array([  0,  0,  1,  0,  0,  0,  0,  0 ])
-    ].reverse(), 1)
-
+    ].reverse(), 1);
   });
 
   it('should initialize the player', function() {
-    expect(this.player.rules.board[0][0]).to.be(0);
+    expect(this.analyzer.board[0][0]).to.be(0);
   });
 
   it('should initialize the side', function() {
-    expect(this.player.rules.side).to.be(1);
+    expect(this.analyzer.side).to.be(1);
   });
 
   it('should initialize the level', function() {
-    expect(this.player.level).to.be(6);
+    expect(this.analyzer.level).to.be(6);
   });
 
   describe('#run', function() {
     before(function() {
-      this.play = this.player.run();
+      this.play = this.analyzer.run();
     });
 
     it('should find the best play from this position', function() {
