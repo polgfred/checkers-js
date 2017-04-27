@@ -5,15 +5,16 @@ import Player from '../src/player';
 describe('Player', function() {
   before(function() {
     this.player = new Player([
-      [  0,  0,  1,  0,  0,  0,  0,  0 ],
-      [  0, -1,  0, -1,  0,  0,  0,  0 ],
-      [  0,  0,  0,  0,  0,  0,  0,  0 ],
-      [  0,  0,  0, -1,  0, -1,  0,  0 ],
-      [  0,  0,  0,  0,  0,  0,  0,  0 ],
-      [  0,  0,  0,  0,  0, -1,  0,  0 ],
-      [  0,  0,  0,  0,  0,  0,  0,  0 ],
-      [  0,  0,  0,  0,  0,  0,  0,  0 ]
-    ], 1)
+      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
+      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
+      new Int8Array([  0,  0,  0,  0,  0, -1,  0,  0 ]),
+      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
+      new Int8Array([  0,  0,  0, -1,  0, -1,  0,  0 ]),
+      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
+      new Int8Array([  0, -1,  0, -1,  0,  0,  0,  0 ]),
+      new Int8Array([  0,  0,  1,  0,  0,  0,  0,  0 ])
+    ].reverse(), 1)
+
   });
 
   it('should initialize the player', function() {

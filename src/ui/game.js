@@ -5,6 +5,7 @@ import autobind from 'autobind-decorator';
 
 import Rules from '../rules';
 import Player from '../player';
+import { newBoard, copyBoard } from '../utils';
 
 import Board from './board';
 
@@ -14,24 +15,11 @@ export default class Game extends Component {
 
     this.state = {
       side: 1,
-      board: this.initialBoard(),
+      board: newBoard(),
       player: 'human'
     };
 
     this.setupRules(this.state);
-  }
-
-  initialBoard() {
-    return [
-      [  0, -1,  0, -1,  0, -1,  0, -1 ],
-      [ -1,  0, -1,  0, -1,  0, -1,  0 ],
-      [  0, -1,  0, -1,  0, -1,  0, -1 ],
-      [  0,  0,  0,  0,  0,  0,  0,  0 ],
-      [  0,  0,  0,  0,  0,  0,  0,  0 ],
-      [  1,  0,  1,  0,  1,  0,  1,  0 ],
-      [  0,  1,  0,  1,  0,  1,  0,  1 ],
-      [  1,  0,  1,  0,  1,  0,  1,  0 ]
-    ].reverse();
   }
 
   render() {
@@ -44,10 +32,9 @@ export default class Game extends Component {
   }
 
   setupRules(state) {
-    let { board, side } = state;
+    let { board, side } = state, rules = new Rules(copyBoard(board), side);
 
-    state.rules = new Rules(board, side);
-    state.plays = state.rules.collectTree();
+    state.plays = rules.collectTree();
     state.current = [];
   }
 

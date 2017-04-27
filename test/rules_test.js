@@ -5,15 +5,15 @@ import Rules from '../src/rules';
 describe('Rules', function() {
   before(function() {
     this.rules = new Rules([
-      [  0,  0,  1,  0,  0,  0,  0,  0 ],
-      [  0, -1,  0, -1,  0,  0,  0,  0 ],
-      [  0,  0,  0,  0,  0,  0,  0,  0 ],
-      [  0,  0,  0, -1,  0, -1,  0,  0 ],
-      [  0,  0,  0,  0,  0,  0,  0,  0 ],
-      [  0,  0,  0,  0,  0, -1,  0,  0 ],
-      [  0,  0,  0,  0,  0,  0,  0,  0 ],
-      [  0,  0,  0,  0,  0,  0,  0,  0 ]
-    ], 1)
+      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
+      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
+      new Int8Array([  0,  0,  0,  0,  0, -1,  0,  0 ]),
+      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
+      new Int8Array([  0,  0,  0, -1,  0, -1,  0,  0 ]),
+      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
+      new Int8Array([  0, -1,  0, -1,  0,  0,  0,  0 ]),
+      new Int8Array([  0,  0,  1,  0,  0,  0,  0,  0 ])
+    ].reverse(), 1)
   });
 
   it('should initialize the board', function() {
