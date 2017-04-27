@@ -2,7 +2,7 @@
 
 import Rules from './rules';
 
-export default class Player {
+export default class Analyzer {
   constructor(board, side) {
     this.rules = new Rules(board, side);
     this.level = 6;
@@ -63,7 +63,7 @@ export default class Player {
     let bestPlay;
     let score;
 
-    this.rules.myPlays((play) => {
+    this.rules.myPlays(play => {
       this.rules.side = -this.rules.side;
 
       if (this.level < 1 && !this.rules.myJumps(() => {})) {

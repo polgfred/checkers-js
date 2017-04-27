@@ -87,8 +87,8 @@ class Square extends Component {
 }
 
 @DragSource('piece', {
-  canDrag: (props) => props.canDrag({ x: props.x, y: props.y }),
-  beginDrag: (props) => ({ x: props.x, y: props.y }),
+  canDrag: props => props.canDrag({ x: props.x, y: props.y }),
+  beginDrag: props => ({ x: props.x, y: props.y }),
   endDrag: (props, monitor) => props.endDrag(monitor.getItem(), monitor.getDropResult())
 }, (connect, monitor) => ({
   connectDragSource: connect.dragSource(),

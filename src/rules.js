@@ -112,7 +112,7 @@ export default class Rules {
     let found = false;
 
     this.doSquares((x, y, p) => {
-      this.doJumps(x, y, p, [x, y], (current) => {
+      this.doJumps(x, y, p, [x, y], current => {
         found = true;
         block(current);
       });
@@ -156,7 +156,7 @@ export default class Rules {
     let found = false;
 
     this.doSquares((x, y, p) => {
-      this.doMoves(x, y, p, (current) => {
+      this.doMoves(x, y, p, current => {
         found = true;
         block(current);
       });
@@ -172,7 +172,7 @@ export default class Rules {
   collectPlays() {
     let plays = [];
 
-    this.myPlays((play) => {
+    this.myPlays(play => {
       plays.push(play);
     });
 
@@ -182,7 +182,7 @@ export default class Rules {
   collectTree() {
     let plays = {};
 
-    this.myPlays((play) => {
+    this.myPlays(play => {
       let root = plays;
       for (let i = 0; i < play.length; i += 2) {
         let x = play[i], y = play[i+1], k = `${x},${y}`;

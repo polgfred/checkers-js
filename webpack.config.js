@@ -3,7 +3,7 @@ var path = require('path');
 module.exports = {
   entry: {
     main: './src/main.js',
-    worker: './src/aiWorker.js'
+    worker: './src/worker.js'
   },
   output: {
     path: path.join(__dirname, 'dist'),
