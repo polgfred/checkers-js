@@ -47,7 +47,7 @@ export default class Game extends Component {
     let { board, side } = state;
 
     state.rules = new Rules(board, side);
-    state.plays = state.rules.collectPlays();
+    state.plays = state.rules.collectTree();
     state.current = [];
   }
 
@@ -61,7 +61,10 @@ export default class Game extends Component {
       return false;
     }
 
-    return plays.some(([tx, ty]) => x == tx && y == ty);
+    // see if this position is in the tree
+    if (plays[`${x},${y}`]) {
+      return true;
+    }
   }
 
   @autobind
@@ -75,9 +78,11 @@ export default class Game extends Component {
       return false;
     }
 
-    return plays.some(
-              ([tx, ty, tnx, tny]) =>
-                x == tx && y == ty && nx == tnx && ny == tny);
+    // see if this move is in the tree
+    let next = plays[`${x},${y}`];
+    if (next && next[`${nx},${ny}`]) {
+      return true;
+    }
   }
 
   @autobind
@@ -86,73 +91,45 @@ export default class Game extends Component {
         { x: nx, y: ny } = props,
         { x, y } = item;
 
-    let next = this.checkPlay([x, y, nx, ny]);
+    // see if this move is in the tree
+    let next = plays[`${x},${y}`];
+    if (next) {
+      let next2 = next[`${nx},${ny}`];
+      if (next2) {
+        // build the next state
+        this.setState(state => {
+          let { board, side } = state,
+              p = board[y][x],
+              promoted = (p == 1 && ny == 7) || (p == -1 && ny == 0);
 
-    if (!next) {
-      return;
-    }
+          // make the move
+          board[y][x] = 0;
+          board[ny][nx] = promoted ? 2 * p : p;
 
-    this.setState(state => {
-      let { board, side } = state,
-          p = board[y][x],
-          promoted = (p == 1 && ny == 7) || (p == -1 && ny == 0);
-
-      // make the move
-      board[y][x] = 0;
-      board[ny][nx] = promoted ? 2 * p : p;
-
-      // it's a jump, so remove the jumped piece
-      if (Math.abs(nx - x) == 2) {
-        let mx = (x + nx) / 2, my = (y + ny) / 2;
-        board[my][mx] = 0;
-      }
-
-      // build the next state
-      let nstate = {
-        board: board,
-        player: 'human'
-      }
-
-      if (next === true) {
-        // move is done, switch sides
-        nstate.side = -side;
-        this.setupRules(nstate);
-      } else {
-        // get plays from this position
-        nstate.plays = next;
-      }
-
-      return nstate;
-    });
-  }
-
-  checkPlay(play) {
-    let { plays, current } = this.state, next = [];
-
-    if (current.length) {
-      play = current.concat(play.slice(2))
-    }
-
-    top:
-    for (let i = 0; i < plays.length; ++i) {
-      let p = plays[i];
-      if (play.length <= p.length) {
-        let j;
-        for (j = 0; j < play.length; ++j) {
-          if (play[j] != p[j]) {
-            continue top;
+          // it's a jump, so remove the jumped piece
+          if (Math.abs(nx - x) == 2) {
+            let mx = (x + nx) / 2, my = (y + ny) / 2;
+            board[my][mx] = 0;
           }
-        }
-        if (j == p.length) {
-          return true;
-        } else {
-          next.push(p.slice(j - 2));
-        }
-      }
-    }
 
-    if (next.length) {
-      return next;
+          // build the next state
+          let nstate = {
+            board,
+            player: 'human'
+          }
+
+          if (Object.keys(next2).length == 0) {
+            // move is done, switch sides
+            nstate.side = -side;
+            this.setupRules(nstate);
+          } else {
+            // get plays from this position
+            nstate.plays = next;
+          }
+
+          return nstate;
+        });
+      }
     }
   }
 }

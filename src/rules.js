@@ -178,4 +178,19 @@ export default class Rules {
 
     return plays;
   }
+
+  collectTree() {
+    let plays = {};
+
+    this.myPlays((play) => {
+      let root = plays;
+      for (let i = 0; i < play.length; i += 2) {
+        let x = play[i], y = play[i+1], k = `${x},${y}`;
+        root[k] = root[k] || {};
+        root = root[k];
+      }
+    });
+
+    return plays;
+  }
 }
