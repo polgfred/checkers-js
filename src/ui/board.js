@@ -65,7 +65,7 @@ class EmptySquare extends Component {
 }
 
 @DropTarget('piece', {
-  canDrop: (props, monitor) => props.canDrop(props, monitor.getItem()),
+  canDrop: (props, monitor) => props.canDrop({ x: props.x, y: props.y }, monitor.getItem()),
   drop: (props, monitor) => ({ x: props.x, y: props.y })
 }, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
@@ -87,7 +87,7 @@ class Square extends Component {
 }
 
 @DragSource('piece', {
-  canDrag: (props) => props.canDrag(props),
+  canDrag: (props) => props.canDrag({ x: props.x, y: props.y }),
   beginDrag: (props) => ({ x: props.x, y: props.y }),
   endDrag: (props, monitor) => props.endDrag(monitor.getItem(), monitor.getDropResult())
 }, (connect, monitor) => ({

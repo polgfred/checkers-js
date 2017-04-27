@@ -71,8 +71,8 @@ export class UIPlayer extends Player {
   }
 
   @autobind
-  canDrag(props) {
-    let { plays } = this.state, { x, y } = props;
+  canDrag(from) {
+    let { plays } = this.state, { x, y } = from;
 
     // see if this position is in the tree
     if (plays[`${x},${y}`]) {
@@ -81,10 +81,10 @@ export class UIPlayer extends Player {
   }
 
   @autobind
-  canDrop(props, item) {
+  canDrop(from, to) {
     let { plays } = this.state,
-        { x: nx, y: ny } = props,
-        { x, y } = item;
+        { x: nx, y: ny } = from,
+        { x, y } = to;
 
     // see if this move is in the tree
     let next = plays[`${x},${y}`];
@@ -94,15 +94,15 @@ export class UIPlayer extends Player {
   }
 
   @autobind
-  endDrag(item1, item2) {
-    if (!item2) {
+  endDrag(from, to) {
+    if (!to) {
       // dropped on an invalid square
       return;
     }
 
     let { board, side, plays } = this.state,
-        { x, y } = item1,
-        { x: nx, y: ny } = item2;
+        { x, y } = from,
+        { x: nx, y: ny } = to;
 
     // see if this move is in the tree
     let next = plays[`${x},${y}`];
