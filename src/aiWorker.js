@@ -1,6 +1,6 @@
-importScripts('rules.js');
+import Player from './player';
 
-addEventListener('message', function (event) {
-  var player = new Rules.Player(event.data.board, event.data.side);
+addEventListener('message', (ev) => {
+  let { board, side } = ev.data, player = new Player(board, side);
   postMessage({ move: player.run()[0] });
 }, false);

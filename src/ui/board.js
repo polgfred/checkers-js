@@ -36,17 +36,17 @@ export default class Board extends Component {
   }
 
   renderSquares(y) {
-    let { board, canDrag, canDrop, handleDrop } = this.props, elems = [];
+    let { board, canDrag, canDrop, endDrag } = this.props, elems = [];
 
     for (let x = 0; x <= 7; ++x) {
       let p = board[y][x], piece;
 
       if (p != 0) {
-        piece = <Piece x={x} y={y} p={p} canDrag={canDrag} />;
+        piece = <Piece x={x} y={y} p={p} canDrag={canDrag} endDrag={endDrag} />;
       }
 
       if ((x + y) % 2 == 0) {
-        elems.push(<Square key={x} x={x} y={y} p={p} canDrop={canDrop} handleDrop={handleDrop}>
+        elems.push(<Square key={x} x={x} y={y} p={p} canDrop={canDrop}>
           { piece }
         </Square>);
       } else {
@@ -66,7 +66,7 @@ class EmptySquare extends Component {
 
 @DropTarget('piece', {
   canDrop: (props, monitor) => props.canDrop(props, monitor.getItem()),
-  drop: (props, monitor) => props.handleDrop(props, monitor.getItem())
+  drop: (props, monitor) => ({ x: props.x, y: props.y })
 }, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
   canDrop: monitor.canDrop(),
@@ -88,7 +88,8 @@ class Square extends Component {
 
 @DragSource('piece', {
   canDrag: (props) => props.canDrag(props),
-  beginDrag: (props) => ({ x: props.x, y: props.y })
+  beginDrag: (props) => ({ x: props.x, y: props.y }),
+  endDrag: (props, monitor) => props.endDrag(monitor.getItem(), monitor.getDropResult())
 }, (connect, monitor) => ({
   connectDragSource: connect.dragSource(),
   connectDragPreview: connect.dragPreview(),
