@@ -54,6 +54,6 @@ export default class AIPlayer extends Player {
     }
 
     // commit this position
-    this.props.moveComplete(board);
+    this.props.moveComplete(board, move);
   }
 }

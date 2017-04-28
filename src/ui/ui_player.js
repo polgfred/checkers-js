@@ -67,7 +67,7 @@ export default class UIPlayer extends Player {
       return;
     }
 
-    let { board, side, plays } = this.state,
+    let { board, side, plays, current } = this.state,
         { x, y } = from,
         { x: nx, y: ny } = to;
 
@@ -89,12 +89,18 @@ export default class UIPlayer extends Player {
           board[my][mx] = 0;
         }
 
+        // record the current leg
+        if (current.length == 0) {
+          current.push(x, y);
+        }
+        current.push(nx, ny);
+
         if (Object.keys(next2).length == 0) {
           // move is done, switch sides
-          this.props.moveComplete(board);
+          this.props.moveComplete(board, current);
         } else {
           // commit this position
-          this.setState({ board, plays: next });
+          this.setState({ board, plays: next, current });
         }
       }
     }

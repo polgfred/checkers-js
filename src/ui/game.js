@@ -36,7 +36,7 @@ export default class Game extends Component {
   }
 
   @autobind
-  moveComplete(board) {
+  moveComplete(board, move) {
     let { side } = this.state;
 
     this.setState({ board, side: -side }, () => {
