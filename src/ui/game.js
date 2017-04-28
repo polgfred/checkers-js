@@ -6,7 +6,8 @@ import autobind from 'autobind-decorator';
 import { newBoard } from '../utils';
 
 import Board from './board';
-import { UIPlayer, AIPlayer } from './player';
+import UIPlayer from './ui_player';
+import AIPlayer from './ai_player';
 
 export default class Game extends Component {
   constructor() {
@@ -19,15 +20,12 @@ export default class Game extends Component {
   }
 
   render() {
-    let { board, side } = this.state;
+    let { board, side } = this.state,
+        Player = side == 1 ? UIPlayer : AIPlayer;
 
-    return side == 1 ?
-      <UIPlayer ref="player"
-                board={board} side={side}
-                moveComplete={this.moveComplete} /> :
-      <AIPlayer ref="player"
-                board={board} side={side}
-                moveComplete={this.moveComplete} />;
+    return <Player ref="player"
+                   board={board} side={side}
+                   moveComplete={this.moveComplete} />;
   }
 
   @autobind

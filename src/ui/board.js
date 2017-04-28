@@ -104,6 +104,7 @@ class Piece extends Component {
 
   render() {
     let { p, connectDragSource, isDragging } = this.props;
+
     return connectDragSource(
       <img src={pieceImages[p]} className={classNames({
                                   'is-dragging': isDragging
