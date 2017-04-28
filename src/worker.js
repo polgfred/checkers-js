@@ -1,4 +1,4 @@
-import Analyzer from './analyzer';
+import Analyzer from './core/analyzer';
 
 addEventListener('message', ev => {
   let { board, side } = ev.data, analyzer = new Analyzer(board, side);

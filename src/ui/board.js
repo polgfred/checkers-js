@@ -5,7 +5,7 @@ import { DragDropContext, DragSource, DropTarget } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import classNames from 'classnames';
 
-import { coordsToNumber } from '../utils';
+import { coordsToNumber } from '../core/utils';
 
 const pieceImages = new Map();
 pieceImages[+1] = 'src/images/red-piece.svg';

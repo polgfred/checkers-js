@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { moveToString } from '../utils';
+import { moveToString } from '../core/utils';
 
 export default class History extends Component {
   render() {

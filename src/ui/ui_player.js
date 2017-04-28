@@ -3,8 +3,8 @@
 import React, { Component } from 'react';
 import autobind from 'autobind-decorator';
 
-import Rules from '../rules';
-import { copyBoard } from '../utils';
+import Rules from '../core/rules';
+import { copyBoard } from '../core/utils';
 
 import Player from './player';
 

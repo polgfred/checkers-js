@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Row, Column } from 'react-foundation';
 import autobind from 'autobind-decorator';
 
-import { newBoard } from '../utils';
+import { newBoard } from '../core/utils';
 
 import Board from './board';
 import History from './history';
