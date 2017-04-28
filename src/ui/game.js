@@ -7,6 +7,7 @@ import autobind from 'autobind-decorator';
 import { newBoard } from '../utils';
 
 import Board from './board';
+import History from './history';
 import UIPlayer from './ui_player';
 import AIPlayer from './ai_player';
 
@@ -16,12 +17,13 @@ export default class Game extends Component {
 
     this.state = {
       board: newBoard(),
-      side: 1
+      side: 1,
+      hist: []
     };
   }
 
   render() {
-    let { board, side } = this.state,
+    let { board, side, hist } = this.state,
         Player = side == 1 ? UIPlayer : AIPlayer;
 
     return <Row>
@@ -31,15 +33,18 @@ export default class Game extends Component {
                 moveComplete={this.moveComplete} />
       </Column>
       <Column large={6}>
+        <History moves={hist} />
       </Column>
     </Row>;
   }
 
   @autobind
   moveComplete(board, move) {
-    let { side } = this.state;
+    let { side, hist } = this.state;
 
-    this.setState({ board, side: -side }, () => {
+    hist.push(move);
+
+    this.setState({ board, side: -side, hist }, () => {
       this.refs.player.play();
     });
   }

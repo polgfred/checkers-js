@@ -1,8 +1,11 @@
 @import '~foundation-sites/scss/foundation';
 @include foundation-everything(true);
 
-#board-container {
+#checkers-container {
   margin-top: 30px;
+}
+
+#board-container {
   float: left;
 
   #board {
