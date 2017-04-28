@@ -9,7 +9,7 @@ export default class History extends Component {
     let { moves } = this.props, elems = [];
 
     for (let i = 0; i < moves.length; i += 2) {
-      elems.push(<tr>
+      elems.push(<tr key={i}>
         <td>{ moveToString(moves[i]) }</td>
         <td>{ moveToString(moves[i+1]) }</td>
       </tr>);
