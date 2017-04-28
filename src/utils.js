@@ -32,3 +32,25 @@ export function as2DArray(buf) {
     new Int8Array(buf, 56, 8)
   ];
 }
+
+export function coordsToNumber(x, y) {
+  return 4 * (y + 1) - Math.floor(x / 2);
+}
+
+export function moveToString(move) {
+  if (move) {
+    let str = '';
+
+    for (let i = 0; i < move.length - 2; i += 2) {
+      let [x, y, nx, ny] = move.slice(i, i + 4);
+
+      if (i == 0) {
+        str += coordsToNumber(x, y);
+      }
+      str += Math.abs(nx - x) == 2 ? ' x ' : ' - ';
+      str += coordsToNumber(nx, ny);
+    }
+
+    return str;
+  }
+}

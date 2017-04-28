@@ -5,6 +5,8 @@ import { DragDropContext, DragSource, DropTarget } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import classNames from 'classnames';
 
+import { coordsToNumber } from '../utils';
+
 const pieceImages = new Map();
 pieceImages[+1] = 'src/images/red-piece.svg';
 pieceImages[+2] = 'src/images/red-king.svg';
@@ -47,6 +49,7 @@ export default class Board extends Component {
 
       if ((x + y) % 2 == 0) {
         elems.push(<Square key={x} x={x} y={y} p={p} canDrop={canDrop}>
+          <span>{ coordsToNumber(x, y) }</span>
           { piece }
         </Square>);
       } else {

@@ -21,6 +21,7 @@
       border-radius: 2px;
       height: 64px;
       padding: 0;
+      position: relative;
       transition: background 0.5s;
       width: 64px;
       &.playable {
@@ -31,9 +32,18 @@
         &.can-drop {
           background-color: #cb6;
           &.is-over {
-            background-color: #8fc;
+            background-color: #9cb;
           }
         }
+      }
+
+      span {
+        color: #fff;
+        font-size: 9px;
+        font-weight: bold;
+        left: 1px;
+        position: absolute;
+        top: 1px;
       }
 
       img {
