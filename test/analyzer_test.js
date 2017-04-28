@@ -1,19 +1,22 @@
 import expect from 'expect.js';
 
-import Analyzer from '../src/analyzer';
+import Analyzer from '../src/core/analyzer';
+import { newBoardFromData } from '../src/core/utils';
 
 describe('Analyzer', function() {
   before(function() {
-    this.analyzer = new Analyzer([
-      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
-      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
-      new Int8Array([  0,  0,  0,  0,  0, -1,  0,  0 ]),
-      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
-      new Int8Array([  0,  0,  0, -1,  0, -1,  0,  0 ]),
-      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
-      new Int8Array([  0, -1,  0, -1,  0,  0,  0,  0 ]),
-      new Int8Array([  0,  0,  1,  0,  0,  0,  0,  0 ])
-    ].reverse(), 1);
+    let board = newBoardFromData([
+      [  0,  0,  0,  0,  0,  0,  0,  0 ],
+      [  0,  0,  0,  0,  0,  0,  0,  0 ],
+      [  0,  0,  0,  0,  0, -1,  0,  0 ],
+      [  0,  0,  0,  0,  0,  0,  0,  0 ],
+      [  0,  0,  0, -1,  0, -1,  0,  0 ],
+      [  0,  0,  0,  0,  0,  0,  0,  0 ],
+      [  0, -1,  0, -1,  0,  0,  0,  0 ],
+      [  0,  0,  1,  0,  0,  0,  0,  0 ]
+    ].reverse());
+
+    this.analyzer = new Analyzer(board, 1);
   });
 
   it('should initialize the player', function() {

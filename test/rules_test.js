@@ -1,19 +1,22 @@
 import expect from 'expect.js';
 
-import Rules from '../src/rules';
+import Rules from '../src/core/rules';
+import { newBoardFromData } from '../src/core/utils';
 
 describe('Rules', function() {
   before(function() {
-    this.rules = new Rules([
-      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
-      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
-      new Int8Array([  0,  0,  0,  0,  0, -1,  0,  0 ]),
-      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
-      new Int8Array([  0,  0,  0, -1,  0, -1,  0,  0 ]),
-      new Int8Array([  0,  0,  0,  0,  0,  0,  0,  0 ]),
-      new Int8Array([  0, -1,  0, -1,  0,  0,  0,  0 ]),
-      new Int8Array([  0,  0,  1,  0,  0,  0,  0,  0 ])
-    ].reverse(), 1)
+    let board = newBoardFromData([
+      [  0,  0,  0,  0,  0,  0,  0,  0 ],
+      [  0,  0,  0,  0,  0,  0,  0,  0 ],
+      [  0,  0,  0,  0,  0, -1,  0,  0 ],
+      [  0,  0,  0,  0,  0,  0,  0,  0 ],
+      [  0,  0,  0, -1,  0, -1,  0,  0 ],
+      [  0,  0,  0,  0,  0,  0,  0,  0 ],
+      [  0, -1,  0, -1,  0,  0,  0,  0 ],
+      [  0,  0,  1,  0,  0,  0,  0,  0 ]
+    ].reverse());
+
+    this.rules = new Rules(board, 1);
   });
 
   it('should initialize the board', function() {

@@ -19,6 +19,15 @@ export function copyBoard(board) {
   return as2DArray(board[0].buffer.slice());
 }
 
+// make a new board from the passed in array data
+export function newBoardFromData(data) {
+  let board = as2DArray(new ArrayBuffer(64));
+  for (let i = 0; i < 8; ++i) {
+    board[i].set(data[i])
+  }
+  return board;
+}
+
 // make a 2d array wrapper around a 64-byte buffer
 export function as2DArray(buf) {
   return [
