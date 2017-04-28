@@ -5,6 +5,9 @@ import autobind from 'autobind-decorator';
 
 import Player from './player';
 
+// create a worker once that we'll attach to as needed
+const worker = new Worker('./dist/worker-bundle.js');
+
 export default class AIPlayer extends Player {
   constructor(props) {
     super();
@@ -18,16 +21,15 @@ export default class AIPlayer extends Player {
   }
 
   componentDidMount() {
-    this.worker = new Worker('./dist/worker-bundle.js');
-    this.worker.addEventListener('message', this.onComplete, false);
+    worker.addEventListener('message', this.onComplete, false);
   }
 
   componentWillUnmount() {
-    this.worker.removeEventListener('message', this.onComplete, false);
+    worker.removeEventListener('message', this.onComplete, false);
   }
 
   play() {
-    this.worker.postMessage(this.state);
+    worker.postMessage(this.state);
   }
 
   @autobind
