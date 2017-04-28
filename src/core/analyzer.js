@@ -2,7 +2,9 @@
 
 import Rules from './rules';
 
-// these arrays are flat
+// heuristic tables for board evaluation - FYI: these tables are flat!
+
+// default piece table
 const ptable = new Int8Array([
   55,  0, 58,  0, 58,  0, 55,  0,
    0, 55,  0, 56,  0, 56,  0, 55,
@@ -14,6 +16,7 @@ const ptable = new Int8Array([
    0,  0,  0,  0,  0,  0,  0,  0
 ]);
 
+// default king table
 const ktable = new Int8Array([
   85,  0, 85,  0, 85,  0, 92,  0,
    0, 92,  0, 92,  0, 92,  0, 92,
@@ -32,12 +35,25 @@ export default class Analyzer extends Rules {
     // a flat version of the board backed by the same data
     this.flat = new Int8Array(board[0].buffer, 0, 64);
 
+    // use default heuristic tables for both sides (but you can change them)
+    this.rptable = this.wptable = ptable;
+    this.rktable = this.wktable = ktable;
+
     // how many levels deep to search the tree
     this.level = 6;
   }
 
   evaluate() {
-    let score = 0;
+    let score = 0, ptable, ktable;
+
+    // heuristic tables are based on side, *not* piece
+    if (this.side == 1) {
+      ptable = this.rptable;
+      ktable = this.rktable;
+    } else {
+      ptable = this.wptable;
+      ktable = this.wktable;
+    }
 
     for (let i = 0; i < 64; ++i) {
       switch (this.flat[i]) {
