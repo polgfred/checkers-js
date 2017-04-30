@@ -5,6 +5,35 @@ import { inspect } from 'util';
 import Analyzer, { Evaluator } from '../src/core/analyzer';
 import { newBoardFromData } from '../src/core/utils';
 
+// use the original piece tables so the tests run
+const defaultEvaluator = new Evaluator();
+
+defaultEvaluator.addFormation([
+  [ 0, 0, 1 ]
+], [
+  [  0,  0,  0,  0,  0,  0,  0,  0 ],
+  [ 75,  0, 78,  0, 78,  0, 75,  0 ],
+  [  0, 67,  0, 72,  0, 72,  0, 67 ],
+  [ 61,  0, 67,  0, 67,  0, 61,  0 ],
+  [  0, 58,  0, 61,  0, 61,  0, 58 ],
+  [ 56,  0, 58,  0, 58,  0, 56,  0 ],
+  [  0, 55,  0, 56,  0, 56,  0, 55 ],
+  [ 55,  0, 58,  0, 58,  0, 55,  0 ]
+].reverse());
+
+defaultEvaluator.addFormation([
+  [ 0, 0, 2 ]
+], [
+  [  0, 92,  0, 85,  0, 85,  0, 85 ],
+  [ 92,  0, 92,  0, 92,  0, 92,  0 ],
+  [  0, 92,  0, 99,  0, 99,  0, 85 ],
+  [ 85,  0, 99,  0, 99,  0, 92,  0 ],
+  [  0, 92,  0, 99,  0, 99,  0, 85 ],
+  [ 85,  0, 99,  0, 99,  0, 92,  0 ],
+  [  0, 92,  0, 92,  0, 92,  0, 92 ],
+  [ 85,  0, 85,  0, 85,  0, 92,  0 ]
+].reverse());
+
 describe('Analyzer', function() {
   before(function() {
     let board = newBoardFromData([
@@ -19,6 +48,7 @@ describe('Analyzer', function() {
     ].reverse());
 
     this.analyzer = new Analyzer(board, 1);
+    this.analyzer.redEval = defaultEvaluator;
   });
 
   it('should initialize the player', function() {

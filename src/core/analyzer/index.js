@@ -3,37 +3,7 @@
 import Rules from '../rules';
 
 import Evaluator from './evaluator';
-
-// default evaluators
-const defaultEval = new Evaluator();
-
-// formation corresponding to the old piece table
-defaultEval.addFormation([
-  [ 0, 0, 1 ]
-], [
-  [  0,  0,  0,  0,  0,  0,  0,  0 ],
-  [ 75,  0, 78,  0, 78,  0, 75,  0 ],
-  [  0, 67,  0, 72,  0, 72,  0, 67 ],
-  [ 61,  0, 67,  0, 67,  0, 61,  0 ],
-  [  0, 58,  0, 61,  0, 61,  0, 58 ],
-  [ 56,  0, 58,  0, 58,  0, 56,  0 ],
-  [  0, 55,  0, 56,  0, 56,  0, 55 ],
-  [ 55,  0, 58,  0, 58,  0, 55,  0 ]
-].reverse());
-
-// formation corresponding to the old king table
-defaultEval.addFormation([
-  [ 0, 0, 2 ]
-], [
-  [  0, 92,  0, 85,  0, 85,  0, 85 ],
-  [ 92,  0, 92,  0, 92,  0, 92,  0 ],
-  [  0, 92,  0, 99,  0, 99,  0, 85 ],
-  [ 85,  0, 99,  0, 99,  0, 92,  0 ],
-  [  0, 92,  0, 99,  0, 99,  0, 85 ],
-  [ 85,  0, 99,  0, 99,  0, 92,  0 ],
-  [  0, 92,  0, 92,  0, 92,  0, 92 ],
-  [ 85,  0, 85,  0, 85,  0, 92,  0 ]
-].reverse());
+import defaultEvaluator from './default_evaluator';
 
 export default class Analyzer extends Rules {
   constructor(board, side) {
@@ -43,7 +13,7 @@ export default class Analyzer extends Rules {
     this.flat = new Int8Array(board[0].buffer, 0, 64);
 
     // use default evaluator for both sides (but feel free to change it)
-    this.redEval = this.whiteEval = defaultEval;
+    this.redEval = this.whiteEval = defaultEvaluator;
 
     // how many levels deep to search the tree
     this.level = 6;
