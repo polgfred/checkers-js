@@ -28,49 +28,51 @@ export default class Analyzer extends Rules {
 
   run() {
     // keep track of the current player's evaluator when switching sides
-    let playerEval = this.side == 1 ? this.redEval : this.whiteEval,
-        level = this.level;
+    let playerEval = this.side == 1 ? this.redEval : this.whiteEval;
 
     // loop entry point as we recurse into the void
-    let loop = () => {
+    let loop = (level) => {
       let bestScore, bestPlay, score;
 
-      // loop over plays from this position
-      this.myPlays(play => {
+      // handle tree descent for both jumps and moves
+      let descend = (play) => {
+        // switch sides and descend a level
         this.side = -this.side;
-
-        // see if we need to recurse further
-        if (level < 1 && !this.myJumps(() => {})) {
-          // we hit the search depth and there are no counter-jumps
-          this.side = -this.side;
-          score = playerEval.evaluate(this.flat);
-        } else {
-          // need to go further down the hole
-          level--;
-          score = loop()[1];
-          level++;
-          this.side = -this.side;
-        }
+        score = loop(level - 1)[1];
+        this.side = -this.side;
 
         // keep track of the best move from this position
         if (bestScore === undefined ||
             (this.side == +1 && score > bestScore) ||
             (this.side == -1 && score < bestScore)) {
+          bestPlay = play;
           bestScore = score;
-          bestPlay  = play;
         }
-      });
+      };
+
+      // always try to find counter-jumps from this position
+      if (!this.myJumps(descend)) {
+        // see if we've hit bottom
+        if (level < 0) {
+          // return score for this position
+          bestScore = playerEval.evaluate(this.flat);
+        } else {
+          // find counter-moves from this position
+          this.myMoves(descend);
+        }
+      }
 
       // if there are no moves from this position, the player loses
       if (bestScore === undefined) {
-        bestScore = this.side == 1 ? -Infinity : +Infinity;
+        bestScore = this.side * Infinity;
       }
 
       // a pair representing the winning play and score for this turn
       return [bestPlay, bestScore];
     }
 
-    return loop();
+    // start at the top level
+    return loop(this.level);
   }
 }
 
