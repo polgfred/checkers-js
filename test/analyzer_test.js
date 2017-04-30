@@ -1,6 +1,8 @@
 import expect from 'expect.js';
 
-import Analyzer from '../src/core/analyzer';
+import { inspect } from 'util';
+
+import Analyzer, { Evaluator } from '../src/core/analyzer';
 import { newBoardFromData } from '../src/core/utils';
 
 describe('Analyzer', function() {
@@ -44,16 +46,19 @@ describe('Analyzer', function() {
 
     describe('with different piece tables', function() {
       before(function() {
-        this.analyzer.rptable = new Int8Array([
-          60,  0, 58,  0, 58,  0, 60,  0,
-           0, 60,  0, 56,  0, 61,  0, 55,
-          56,  0, 63,  0, 63,  0, 56,  0,
-           0, 58,  0, 66,  0, 61,  0, 58,
-          61,  0, 72,  0, 82,  0, 61,  0,
-           0, 72,  0, 72,  0, 77,  0, 67,
-          80,  0, 78,  0, 78,  0, 80,  0,
-           0,  0,  0,  0,  0,  0,  0,  0
-        ]);
+        this.analyzer.redEval = new Evaluator();
+        this.analyzer.redEval.addFormation([
+          [ 0, 0, 1 ]
+        ], [
+          [  0,  0,  0,  0,  0,  0,  0, 0  ],
+          [ 80,  0, 78,  0, 78,  0, 80,  0 ],
+          [  0, 72,  0, 72,  0, 77,  0, 67 ],
+          [ 61,  0, 72,  0, 82,  0, 61,  0 ],
+          [  0, 58,  0, 66,  0, 61,  0, 58 ],
+          [ 56,  0, 63,  0, 63,  0, 56,  0 ],
+          [  0, 60,  0, 56,  0, 61,  0, 55 ],
+          [ 60,  0, 58,  0, 58,  0, 60,  0 ]
+        ].reverse());
       });
 
       it('should find the best score from this position', function() {
