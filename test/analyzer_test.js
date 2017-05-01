@@ -22,7 +22,7 @@ describe('Analyzer', function() {
     });
 
     it('should initialize the level', function() {
-      expect(this.analyzer.level).to.be(6);
+      expect(this.analyzer.level).to.be(8);
     });
 
     it('should score the initial position', function() {
@@ -56,7 +56,7 @@ describe('Analyzer', function() {
     });
 
     it('should initialize the level', function() {
-      expect(this.analyzer.level).to.be(6);
+      expect(this.analyzer.level).to.be(8);
     });
 
     describe('running the analyzer', function() {

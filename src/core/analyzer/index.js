@@ -2,7 +2,6 @@
 
 import Rules from '../rules';
 
-import Evaluator from './evaluator';
 import defaultEvaluator from './default_evaluator';
 
 export default class Analyzer extends Rules {
@@ -16,7 +15,7 @@ export default class Analyzer extends Rules {
     this.redEval = this.whiteEval = defaultEvaluator;
 
     // how many levels deep to search the tree
-    this.level = 6;
+    this.level = 8;
   }
 
   evaluate() {
@@ -28,41 +27,56 @@ export default class Analyzer extends Rules {
 
   run() {
     // keep track of the current player's evaluator when switching sides
-    let playerEval = this.side == 1 ? this.redEval : this.whiteEval;
+    let playerEval = this.side == 1 ? this.redEval : this.whiteEval,
+        initial = playerEval.evaluate(this.flat);
 
     // loop entry point as we recurse into the void
     let loop = (level) => {
-      let bestScore, bestPlay, score,
-          current = playerEval.evaluate(this.flat);
+      let bestScore, bestPlay, current;
 
-      // handle tree descent for both jumps and moves
-      let descend = (play) => {
-        let next = playerEval.evaluate(this.flat),
-            adjust = Math.min(Math.floor((current - next) / 50) - 1, 1);
-
+      // always try to find counter-jumps from this position
+      let canJump = this.myJumps(jump => {
         // switch sides and descend a level
         this.side = -this.side;
-        score = loop(level + adjust)[1];
+        current = loop(level - 1)[1];
         this.side = -this.side;
 
         // keep track of the best move from this position
         if (bestScore === undefined ||
-            (this.side == +1 && score > bestScore) ||
-            (this.side == -1 && score < bestScore)) {
-          bestPlay = play;
-          bestScore = score;
+            (this.side == +1 && current > bestScore) ||
+            (this.side == -1 && current < bestScore)) {
+          bestPlay = jump;
+          bestScore = current;
         }
-      };
+      });
 
-      // always try to find counter-jumps from this position
-      if (!this.myJumps(descend)) {
+      if (!canJump) {
+        current = playerEval.evaluate(this.flat);
+
+        let gain = current - initial;
+
         // see if we've hit bottom
-        if (level < 0) {
+        if (level <= 0 ||
+            (level <= 2 && (gain <= -25 || gain >= +25)) ||
+            (level <= 4 && (gain <= -75 || gain >= +75))) {
           // return score for this position
           bestScore = current;
         } else {
           // find counter-moves from this position
-          this.myMoves(descend);
+          this.myMoves(move => {
+            // switch sides and descend a level
+            this.side = -this.side;
+            current = loop(level - 1)[1];
+            this.side = -this.side;
+
+            // keep track of the best move from this position
+            if (bestScore === undefined ||
+                (this.side == +1 && current > bestScore) ||
+                (this.side == -1 && current < bestScore)) {
+              bestPlay = move;
+              bestScore = current;
+            }
+          });
         }
       }
 
@@ -81,4 +95,4 @@ export default class Analyzer extends Rules {
 }
 
 // export the evaluator submodule
-export { Evaluator };
+export { Evaluator } from './evaluator';
