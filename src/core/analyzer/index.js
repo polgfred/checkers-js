@@ -56,6 +56,12 @@ export default class Analyzer extends Rules {
         let gain = current - initial;
 
         // see if we've hit bottom
+
+        // TODO/FIXME:
+        // this pruning is far from ideal - we look to see if there are
+        // large gains or losses relative to the initial position, but it
+        // should really be done relative to the current plays, as a bell
+        // curve or something
         if (level <= 0 ||
             (level <= 2 && (gain <= -25 || gain >= +25)) ||
             (level <= 4 && (gain <= -75 || gain >= +75))) {
