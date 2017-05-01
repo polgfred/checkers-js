@@ -10,23 +10,6 @@ export default class Rules {
   constructor(board, side) {
     this.board = board;
     this.side = side;
-    this.setupCounts();
-  }
-
-  setupCounts() {
-    this.dcount = 0;
-    this.lcount = 0;
-
-    for (let y = 0; y < 8; y++) {
-      for (let x = 0; x < 8; x++) {
-        let p = this.board[y][x];
-        if (p > 0) {
-          ++this.dcount;
-        } else if (p < 0) {
-          ++this.lcount;
-        }
-      }
-    }
   }
 
   doDirs(p, block) {
@@ -67,7 +50,6 @@ export default class Rules {
 
   doJumps(x, y, p, current, block) {
     let found = false;
-    let oppCount = this.side == 1 ? 'lcount' : 'dcount';
 
     this.doDirs(p, (dx, dy) => {
       let mx =  x + dx;
@@ -91,7 +73,6 @@ export default class Rules {
           this.board[y][x] = 0;
           this.board[my][mx] = 0;
           this.board[ny][nx] = q;
-          this[oppCount]--;
 
           if (promoted || !this.doJumps(nx, ny, p, ncurrent, block)) {
             block(ncurrent);
@@ -100,7 +81,6 @@ export default class Rules {
           this.board[y][x] = p;
           this.board[my][mx] = m;
           this.board[ny][nx] = 0;
-          this[oppCount]++;
         }
       }
     });
