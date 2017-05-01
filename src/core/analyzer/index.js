@@ -32,13 +32,17 @@ export default class Analyzer extends Rules {
 
     // loop entry point as we recurse into the void
     let loop = (level) => {
-      let bestScore, bestPlay, score;
+      let bestScore, bestPlay, score,
+          current = playerEval.evaluate(this.flat);
 
       // handle tree descent for both jumps and moves
       let descend = (play) => {
+        let next = playerEval.evaluate(this.flat),
+            adjust = Math.min(Math.floor((current - next) / 50) - 1, 1);
+
         // switch sides and descend a level
         this.side = -this.side;
-        score = loop(level - 1)[1];
+        score = loop(level + adjust)[1];
         this.side = -this.side;
 
         // keep track of the best move from this position
@@ -55,7 +59,7 @@ export default class Analyzer extends Rules {
         // see if we've hit bottom
         if (level < 0) {
           // return score for this position
-          bestScore = playerEval.evaluate(this.flat);
+          bestScore = current;
         } else {
           // find counter-moves from this position
           this.myMoves(descend);
