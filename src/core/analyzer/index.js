@@ -68,7 +68,7 @@ export default class Analyzer extends Rules {
 
       // if there are no moves from this position, the player loses
       if (bestScore === undefined) {
-        bestScore = this.side * Infinity;
+        bestScore = -this.side * Infinity;
       }
 
       // a pair representing the winning play and score for this turn
