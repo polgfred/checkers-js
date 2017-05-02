@@ -1,155 +1,121 @@
 'use strict';
 
-const dirsMap = new Map();
-dirsMap.set(+1, [[+1, +1], [-1, +1]]);
-dirsMap.set(+2, [[+1, +1], [-1, +1], [+1, -1], [-1, -1]]);
-dirsMap.set(-1, [[-1, -1], [+1, -1]]);
-dirsMap.set(-2, [[-1, -1], [+1, -1], [-1, +1], [+1, +1]]);
-
 export default class Rules {
   constructor(board, side) {
     this.board = board;
     this.side = side;
   }
 
-  doDirs(p, block) {
-    let dirs = dirsMap.get(p);
+  jumps() {
+    let { board, side } = this,
+        bottom = side == 1 ? 0 : 7,
+        top = bottom ^ 7,
+        jumps = [];
 
-    for (let i = 0; i < dirs.length; i++) {
-      let [dx, dy] = dirs[i];
+    for (let y = bottom; y != top; y += side) {
+      for (let x = bottom; x != top; x += side) {
+        let p = board[y][x];
 
-      block(dx, dy);
+        if (side * p > 0) {
+          let cur = [x, y];
+
+          let loop = (x, y) => {
+            let found = false;
+
+            for (let dy = p == side * 2 ? -1 : 1; dy <= 1; dy += 2) {
+              for (let dx = -1; dx <= 1; dx += 2) {
+                let mx = x + side * dx,
+                    my = y + side * dy,
+                    nx = mx + side * dx,
+                    ny = my + side * dy;
+
+                if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+                  let m = board[my][mx],
+                      n = board[ny][nx];
+
+                  if (n == 0 && side * m < 0) {
+                    let king = ny == top;
+
+                    found = true;
+
+                    cur.push(nx, ny);
+
+                    board[y][x] = 0;
+                    board[my][mx] = 0;
+                    board[ny][nx] = king ? p * 2 : p;
+
+                    if (king || !loop(nx, ny)) {
+                      jumps.push(cur.slice());
+                    }
+
+                    cur.splice(-2, 2);
+
+                    board[y][x] = p;
+                    board[my][mx] = m;
+                    board[ny][nx] = 0;
+                  }
+                }
+              }
+            }
+
+            return found;
+          };
+
+          loop(x, y);
+        }
+      }
+    }
+
+    return jumps;
+  }
+
+  moves() {
+    let { board, side } = this,
+        bottom = side == 1 ? 0 : 7,
+        top = bottom ^ 7,
+        moves = [];
+
+    for (let y = bottom; y != top; y += side) {
+      for (let x = bottom; x != top; x += side) {
+        let p = board[y][x];
+
+        if (side * p > 0) {
+          for (let dy = p == side * 2 ? -1 : 1; dy <= 1; dy += 2) {
+            for (let dx = -1; dx <= 1; dx += 2) {
+              let nx = x + side * dx,
+                  ny = y + side * dy;
+
+              if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+                if (board[ny][nx] == 0) {
+                  board[y][x] = 0;
+                  board[ny][nx] = ny == top ? p * 2 : p;
+
+                  moves.push([x, y, nx, ny]);
+
+                  board[y][x] = p;
+                  board[ny][nx] = 0;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return moves;
+  }
+
+  plays(block) {
+    let jumps = this.jumps();
+
+    if (jumps.length) {
+      return jumps;
+    } else {
+      return this.moves();
     }
   }
 
-  doSquares(block) {
-    if (this.side == 1) {
-      for (let y = 0; y < 8; y++) {
-        for (let x = 0; x < 8; x++) {
-          let p = this.board[y][x];
-
-          if (p > 0) {
-            block(x, y, p);
-          }
-        }
-      }
-    } else if (this.side == -1) {
-      for (let y = 7; y >= 0; y--) {
-        for (let x = 7; x >= 0; x--) {
-          let p = this.board[y][x];
-
-          if (p < 0) {
-            block(x, y, p);
-          }
-        }
-      }
-    }
-  }
-
-  doJumps(x, y, p, current, block) {
-    let found = false;
-
-    this.doDirs(p, (dx, dy) => {
-      let mx =  x + dx,
-          nx = mx + dx,
-          my =  y + dy,
-          ny = my + dy;
-
-      if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
-        let p = this.board[y][x],
-            m = this.board[my][mx],
-            n = this.board[ny][nx];
-
-        if (n == 0 && ((this.side ==  1 && m < 0) ||
-                       (this.side == -1 && m > 0))) {
-          found = true;
-
-          let promoted = (p == 1 && ny == 7) || (p == -1 && ny == 0),
-              ncurrent = current.concat([nx, ny]),
-              q = (promoted ? p * 2: p);
-
-          this.board[y][x] = 0;
-          this.board[my][mx] = 0;
-          this.board[ny][nx] = q;
-
-          if (promoted || !this.doJumps(nx, ny, p, ncurrent, block)) {
-            block(ncurrent);
-          }
-
-          this.board[y][x] = p;
-          this.board[my][mx] = m;
-          this.board[ny][nx] = 0;
-        }
-      }
-    });
-
-    return found;
-  }
-
-  myJumps(block) {
-    let found = false;
-
-    this.doSquares((x, y, p) => {
-      this.doJumps(x, y, p, [x, y], current => {
-        found = true;
-
-        block(current);
-      });
-    });
-
-    return found;
-  }
-
-  doMoves(x, y, p, block) {
-    let found = false;
-
-    this.doDirs(p, (dx, dy) => {
-      let nx = x + dx,
-          ny = y + dy;
-
-      if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
-        let p = this.board[y][x],
-            n = this.board[ny][nx];
-
-        if (n == 0) {
-          found = true;
-
-          let promoted = (p == 1 && ny == 7) || (p == -1 && ny == 0),
-              q = (promoted ? p * 2: p);
-
-          this.board[y][x] = 0;
-          this.board[ny][nx] = q;
-
-          block([x, y, nx, ny]);
-
-          this.board[y][x] = p;
-          this.board[ny][nx] = 0;
-        }
-      }
-    });
-
-    return found;
-  }
-
-  myMoves(block) {
-    let found = false;
-
-    this.doSquares((x, y, p) => {
-      this.doMoves(x, y, p, current => {
-        found = true;
-
-        block(current);
-      });
-    });
-
-    return found;
-  }
-
-  myPlays(block) {
-    return this.myJumps(block) || this.myMoves(block);
-  }
-
-  collectPlays() {
+  xcollectPlays() {
     let plays = [];
 
     this.myPlays(play => {
@@ -159,7 +125,7 @@ export default class Rules {
     return plays;
   }
 
-  collectTree() {
+  xcollectTree() {
     let plays = {};
 
     this.myPlays(play => {
