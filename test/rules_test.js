@@ -37,6 +37,17 @@ describe('moves', function() {
       [ 6, 2, 7, 3 ]
     ]);
   });
+
+  it('should find the jumps from this position', function() {
+    let plays;
+    console.time('jumps');
+    for (let i = 1000; i; --i) {
+      plays = this.rules.jumps();
+    }
+    console.timeEnd('jumps');
+
+    expect(plays.length).to.be(0);
+  });
 });
 
 describe('jumps', function() {

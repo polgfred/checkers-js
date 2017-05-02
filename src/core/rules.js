@@ -14,7 +14,7 @@ export default class Rules {
 
     for (let y = bottom; y != top; y += side) {
       for (let x = bottom; x != top; x += side) {
-        let p = board[y][x];
+        let p = board[y][x], king = p == side * 2;
 
         if (side * p > 0) {
           let cur = [x, y];
@@ -22,8 +22,8 @@ export default class Rules {
           let loop = (x, y) => {
             let found = false;
 
-            for (let dy = p == side * 2 ? -1 : 1; dy <= 1; dy += 2) {
-              for (let dx = -1; dx <= 1; dx += 2) {
+            for (let dy = king ? -1 : 1; dy != 3; dy += 2) {
+              for (let dx = -1; dx != 3; dx += 2) {
                 let mx = x + side * dx,
                     my = y + side * dy,
                     nx = mx + side * dx,
@@ -34,22 +34,19 @@ export default class Rules {
                       n = board[ny][nx];
 
                   if (n == 0 && side * m < 0) {
-                    let king = ny == top;
-
+                    let crowned = !king && ny == top;
                     found = true;
 
                     cur.push(nx, ny);
-
                     board[y][x] = 0;
                     board[my][mx] = 0;
-                    board[ny][nx] = king ? p * 2 : p;
+                    board[ny][nx] = crowned ? p * 2 : p;
 
-                    if (king || !loop(nx, ny)) {
+                    if (crowned || !loop(nx, ny)) {
                       jumps.push(cur.slice());
                     }
 
                     cur.splice(-2, 2);
-
                     board[y][x] = p;
                     board[my][mx] = m;
                     board[ny][nx] = 0;
@@ -77,18 +74,20 @@ export default class Rules {
 
     for (let y = bottom; y != top; y += side) {
       for (let x = bottom; x != top; x += side) {
-        let p = board[y][x];
+        let p = board[y][x], king = p == side * 2;
 
         if (side * p > 0) {
-          for (let dy = p == side * 2 ? -1 : 1; dy <= 1; dy += 2) {
-            for (let dx = -1; dx <= 1; dx += 2) {
+          for (let dy = king ? -1 : 1; dy != 3; dy += 2) {
+            for (let dx = -1; dx != 3; dx += 2) {
               let nx = x + side * dx,
                   ny = y + side * dy;
 
               if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+                let crowned = !king && ny == top;
+
                 if (board[ny][nx] == 0) {
                   board[y][x] = 0;
-                  board[ny][nx] = ny == top ? p * 2 : p;
+                  board[ny][nx] = crowned ? p * 2 : p;
 
                   moves.push([x, y, nx, ny]);
 
