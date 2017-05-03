@@ -12,40 +12,61 @@ export default class Rules {
         top = bottom ^ 7,
         jumps = [];
 
+    // loop through playable squares
     for (let y = bottom; y != top; y += side) {
       for (let x = bottom; x != top; x += side) {
         let p = board[y][x], king = p == side * 2;
 
+        // see if it's our piece
         if (side * p > 0) {
           let cur = [x, y];
 
+          // checking for jumps is a recursive process - as long as you find jumps,
+          // you have to keep looking, and we only care about terminal positions
           let loop = (x, y) => {
             let found = false;
 
+            // loop over directions (dx, dy) from the current square
             for (let dy = king ? -1 : 1; dy != 3; dy += 2) {
               for (let dx = -1; dx != 3; dx += 2) {
-                let mx = x + side * dx,
-                    my = y + side * dy,
-                    nx = mx + side * dx,
-                    ny = my + side * dy;
+                let mx, my, nx, ny;
 
+                // calculate middle and landing coordinates
+                if (side == 1) {
+                  mx = x + dx;
+                  my = y + dy;
+                  nx = mx + dx;
+                  ny = my + dy;
+                } else {
+                  mx = x - dx;
+                  my = y - dy;
+                  nx = mx - dx;
+                  ny = my - dy;
+                }
+
+                // see if jump is on the board
                 if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
                   let m = board[my][mx],
                       n = board[ny][nx];
 
+                  // see if the middle piece is an opponent and the landing is open
                   if (n == 0 && side * m < 0) {
                     let crowned = !king && ny == top;
                     found = true;
 
+                    // keep track of the coordinates, and move the piece
                     cur.push(nx, ny);
                     board[y][x] = 0;
                     board[my][mx] = 0;
                     board[ny][nx] = crowned ? p * 2 : p;
 
+                    // if we're crowned, or there are no further jumps from here,
+                    // we've reached a terminal position
                     if (crowned || !loop(nx, ny)) {
                       jumps.push(cur.slice());
                     }
 
+                    // put things back where we found them
                     cur.splice(-2, 2);
                     board[y][x] = p;
                     board[my][mx] = m;
@@ -55,9 +76,11 @@ export default class Rules {
               }
             }
 
+            // return whether more jumps were found from this position
             return found;
           };
 
+          // start the search
           loop(x, y);
         }
       }
@@ -72,25 +95,40 @@ export default class Rules {
         top = bottom ^ 7,
         moves = [];
 
+    // loop through playable squares
     for (let y = bottom; y != top; y += side) {
       for (let x = bottom; x != top; x += side) {
         let p = board[y][x], king = p == side * 2;
 
+        // see if it's our piece
         if (side * p > 0) {
+          // loop over directions (dx, dy) from the current square
           for (let dy = king ? -1 : 1; dy != 3; dy += 2) {
             for (let dx = -1; dx != 3; dx += 2) {
-              let nx = x + side * dx,
-                  ny = y + side * dy;
+              let nx, ny;
 
+              // calculate landing coordinates
+              if (side == 1) {
+                nx = x + dx;
+                ny = y + dy;
+              } else {
+                nx = x - dx;
+                ny = y - dy;
+              }
+
+              // see if move is on the board
               if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
                 let crowned = !king && ny == top;
 
+                // see if the landing is open
                 if (board[ny][nx] == 0) {
+                  // keep track of the coordinates, and move the piece
                   board[y][x] = 0;
                   board[ny][nx] = crowned ? p * 2 : p;
 
                   moves.push([x, y, nx, ny]);
 
+                  // put things back where we found them
                   board[y][x] = p;
                   board[ny][nx] = 0;
                 }
@@ -107,6 +145,7 @@ export default class Rules {
   plays(block) {
     let jumps = this.jumps();
 
+    // you have to jump if you can
     if (jumps.length) {
       return jumps;
     } else {
