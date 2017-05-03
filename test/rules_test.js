@@ -22,7 +22,7 @@ describe('moves', function() {
     let plays;
     console.time('moves');
     for (let i = 1000; i; --i) {
-      plays = this.rules.moves();
+      plays = this.rules.findMoves();
     }
     console.timeEnd('moves');
 
@@ -39,7 +39,7 @@ describe('moves', function() {
   });
 
   it('should find the jumps from this position', function() {
-    let plays = this.rules.jumps();
+    let plays = this.rules.findJumps();
 
     expect(plays.length).to.be(0);
   });
@@ -70,7 +70,7 @@ describe('jumps', function() {
   });
 
   it('should find the jumps from this position', function() {
-    let plays = this.rules.jumps();
+    let plays = this.rules.findJumps();
 
     expect(plays.length).to.be(3);
     expect(plays).to.eql([

@@ -6,7 +6,7 @@ export default class Rules {
     this.side = side;
   }
 
-  jumpNext(x, y, cur, jumps) {
+  nextJump(x, y, cur, jumps) {
     let { board, side } = this,
         p = board[y][x],
         top = side == 1 ? 7 : 0,
@@ -50,7 +50,7 @@ export default class Rules {
 
             // if we're crowned, or there are no further jumps from here,
             // we've reached a terminal position
-            if (crowned || !this.jumpNext(nx, ny, ncur, jumps)) {
+            if (crowned || !this.nextJump(nx, ny, ncur, jumps)) {
               jumps.push(ncur);
             }
 
@@ -67,7 +67,7 @@ export default class Rules {
     return found;
   }
 
-  jumps() {
+  findJumps() {
     let { board, side } = this,
         top = side == 1 ? 7 : 0,
         bottom = top ^ 7,
@@ -80,7 +80,7 @@ export default class Rules {
         if (side * board[y][x] > 0) {
           // checking for jumps is inherently recursive - as long as you find them,
           // you have to keep looking, and only termimal positions are valid
-          this.jumpNext(x, y, [x, y], jumps);
+          this.nextJump(x, y, [x, y], jumps);
         }
       }
     }
@@ -88,7 +88,57 @@ export default class Rules {
     return jumps;
   }
 
-  moves() {
+  doJump(jumps) {
+    let { board, side } = this,
+        top = side == 1 ? 7 : 0,
+        undo = [],
+        p;
+
+    // loop over the passed in coords
+    for (let i = 0; i < jumps.length - 2; i += 2) {
+      let x = jumps[i], y = jumps[i + 1],
+          nx = jumps[i + 2], ny = jumps[i + 3],
+          mx = (x + nx) / 2, my = (y + ny) / 2;
+
+      // keep track of the piece making the jump
+      p = board[y][x];
+
+      let crowned = p == side && ny == top;
+
+      // keep track of the captured piece
+      undo.push(board[my][mx]);
+
+      // perform the jump
+      board[y][x] = 0;
+      board[my][mx] = 0;
+      board[ny][nx] = crowned ? p * 2 : p;
+    }
+
+    // push on the original piece
+    undo.push(p);
+
+    // return everything we need to undo the jump
+    return undo;
+  }
+
+  undoJump(jumps, undo) {
+    let { board } = this,
+        p = undo.pop();
+
+    // loop over the passed in coords in reverse
+    for (let i = jumps.length - 4; i >= 0; i -= 2) {
+      let x = jumps[i], y = jumps[i + 1],
+          nx = jumps[i + 2], ny = jumps[i + 3],
+          mx = (x + nx) / 2, my = (y + ny) / 2;
+
+      // put things back where we found them
+      board[y][x] = p;
+      board[my][mx] = undo.pop();
+      board[ny][nx] = 0;
+    }
+  }
+
+  findMoves() {
     let { board, side } = this,
         top = side == 1 ? 7 : 0,
         bottom = top ^ 7,
@@ -142,19 +192,43 @@ export default class Rules {
     return moves;
   }
 
-  plays(block) {
-    let jumps = this.jumps();
+  doMove(move) {
+    let { board, side } = this,
+        top = side == 1 ? 7 : 0,
+        [x, y, nx, ny] = move,
+        p = board[y][x],
+        crowned = p == side && ny == top;
+
+    // perform the jump
+    board[y][x] = 0;
+    board[ny][nx] = crowned ? p * 2 : p;
+
+    // return the original piece
+    return p;
+  }
+
+  undoMove(move, p) {
+    let { board } = this,
+        [x, y, nx, ny] = move;
+
+    // put things back where we found them
+    board[y][x] = p;
+    board[ny][nx] = 0;
+  }
+
+  findPlays(block) {
+    let jumps = this.findJumps();
 
     // you have to jump if you can
     if (jumps.length) {
       return jumps;
     } else {
-      return this.moves();
+      return this.findMoves();
     }
   }
 
   buildTree() {
-    let plays = this.plays(),
+    let plays = this.findPlays(),
         tree = {};
 
     for (let i = 0; i < plays.length; ++i) {

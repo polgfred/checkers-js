@@ -24,31 +24,39 @@ export default class Analyzer extends Rules {
 
   run() {
     // keep track of the current player's evaluator when switching sides
-    let playerEval = this.side == 1 ? this.redEval : this.whiteEval,
-        initial = playerEval.evaluate(this.board);
+    let { board } = this,
+        playerEval = this.side == 1 ? this.redEval : this.whiteEval,
+        initial = playerEval.evaluate(board);
 
     // loop entry point as we recurse into the void
     let loop = (level) => {
-      let bestScore, bestPlay, current;
+      let { side } = this,
+          bestScore, bestPlay, current;
 
       // always try to find counter-jumps from this position
-      let canJump = this.myJumps(jump => {
-        // switch sides and descend a level
-        this.side = -this.side;
-        current = loop(level - 1)[1];
-        this.side = -this.side;
+      let jumps = this.findJumps();
 
-        // keep track of the best move from this position
-        if (bestScore === undefined ||
-            (this.side == +1 && current > bestScore) ||
-            (this.side == -1 && current < bestScore)) {
-          bestPlay = jump;
-          bestScore = current;
+      if (jumps.length) {
+        for (let i = 0; i < jumps.length; ++i) {
+          let jump = jumps[i],
+              undo = this.doJump(jump);
+
+          // switch sides and descend a level
+          this.side = -side;
+          current = loop(level - 1)[1];
+          this.side = side;
+          this.undoJump(jump, undo);
+
+          // keep track of the best move from this position
+          if (bestScore === undefined ||
+              (side == +1 && current > bestScore) ||
+              (side == -1 && current < bestScore)) {
+            bestPlay = jump;
+            bestScore = current;
+          }
         }
-      });
-
-      if (!canJump) {
-        current = playerEval.evaluate(this.board);
+      } else {
+        current = playerEval.evaluate(board);
 
         let gain = current - initial;
 
@@ -66,26 +74,32 @@ export default class Analyzer extends Rules {
           bestScore = current;
         } else {
           // find counter-moves from this position
-          this.myMoves(move => {
+          let moves = this.findMoves();
+
+          for (let i = 0; i < moves.length; ++i) {
+            let move = moves[i],
+                undo = this.doMove(move);
+
             // switch sides and descend a level
-            this.side = -this.side;
+            this.side = -side;
             current = loop(level - 1)[1];
-            this.side = -this.side;
+            this.side = side;
+            this.undoMove(move, undo);
 
             // keep track of the best move from this position
             if (bestScore === undefined ||
-                (this.side == +1 && current > bestScore) ||
-                (this.side == -1 && current < bestScore)) {
+                (side == +1 && current > bestScore) ||
+                (side == -1 && current < bestScore)) {
               bestPlay = move;
               bestScore = current;
             }
-          });
+          }
         }
       }
 
       // if there are no moves from this position, the player loses
       if (bestScore === undefined) {
-        bestScore = -this.side * Infinity;
+        bestScore = -side * Infinity;
       }
 
       // a pair representing the winning play and score for this turn
