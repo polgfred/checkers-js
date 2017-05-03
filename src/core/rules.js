@@ -6,82 +6,81 @@ export default class Rules {
     this.side = side;
   }
 
+  jumpNext(x, y, cur, jumps) {
+    let { board, side } = this,
+        p = board[y][x],
+        top = side == 1 ? 7 : 0,
+        king = p == side * 2,
+        found = false;
+
+    // loop over directions (dx, dy) from the current square
+    for (let dy = king ? -1 : 1; dy != 3; dy += 2) {
+      for (let dx = -1; dx != 3; dx += 2) {
+        let mx, my, nx, ny;
+
+        // calculate middle and landing coordinates
+        if (side == 1) {
+          mx = x + dx;
+          my = y + dy;
+          nx = mx + dx;
+          ny = my + dy;
+        } else {
+          mx = x - dx;
+          my = y - dy;
+          nx = mx - dx;
+          ny = my - dy;
+        }
+
+        // see if jump is on the board
+        if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+          let m = board[my][mx],
+              n = board[ny][nx];
+
+          // see if the middle piece is an opponent and the landing is open
+          if (n == 0 && side * m < 0) {
+            let crowned = !king && ny == top;
+            found = true;
+
+            // keep track of the coordinates, and move the piece
+            board[y][x] = 0;
+            board[my][mx] = 0;
+            board[ny][nx] = crowned ? p * 2 : p;
+
+            let ncur = cur.concat([nx, ny]);
+
+            // if we're crowned, or there are no further jumps from here,
+            // we've reached a terminal position
+            if (crowned || !this.jumpNext(nx, ny, ncur, jumps)) {
+              jumps.push(ncur);
+            }
+
+            // put things back where we found them
+            board[y][x] = p;
+            board[my][mx] = m;
+            board[ny][nx] = 0;
+          }
+        }
+      }
+    }
+
+    // return whether more jumps were found from this position
+    return found;
+  }
+
   jumps() {
     let { board, side } = this,
-        bottom = side == 1 ? 0 : 7,
-        top = bottom ^ 7,
+        top = side == 1 ? 7 : 0,
+        bottom = top ^ 7,
         jumps = [];
 
     // loop through playable squares
     for (let y = bottom; y != top; y += side) {
       for (let x = bottom; x != top; x += side) {
-        let p = board[y][x], king = p == side * 2;
-
         // see if it's our piece
-        if (side * p > 0) {
-          let cur = [x, y];
-
-          // checking for jumps is a recursive process - as long as you find jumps,
-          // you have to keep looking, and we only care about terminal positions
-          let loop = (x, y) => {
-            let found = false;
-
-            // loop over directions (dx, dy) from the current square
-            for (let dy = king ? -1 : 1; dy != 3; dy += 2) {
-              for (let dx = -1; dx != 3; dx += 2) {
-                let mx, my, nx, ny;
-
-                // calculate middle and landing coordinates
-                if (side == 1) {
-                  mx = x + dx;
-                  my = y + dy;
-                  nx = mx + dx;
-                  ny = my + dy;
-                } else {
-                  mx = x - dx;
-                  my = y - dy;
-                  nx = mx - dx;
-                  ny = my - dy;
-                }
-
-                // see if jump is on the board
-                if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
-                  let m = board[my][mx],
-                      n = board[ny][nx];
-
-                  // see if the middle piece is an opponent and the landing is open
-                  if (n == 0 && side * m < 0) {
-                    let crowned = !king && ny == top;
-                    found = true;
-
-                    // keep track of the coordinates, and move the piece
-                    cur.push(nx, ny);
-                    board[y][x] = 0;
-                    board[my][mx] = 0;
-                    board[ny][nx] = crowned ? p * 2 : p;
-
-                    // if we're crowned, or there are no further jumps from here,
-                    // we've reached a terminal position
-                    if (crowned || !loop(nx, ny)) {
-                      jumps.push(cur.slice());
-                    }
-
-                    // put things back where we found them
-                    cur.splice(-2, 2);
-                    board[y][x] = p;
-                    board[my][mx] = m;
-                    board[ny][nx] = 0;
-                  }
-                }
-              }
-            }
-
-            // return whether more jumps were found from this position
-            return found;
-          };
-
-          // start the search
-          loop(x, y);
+        if (side * board[y][x] > 0) {
+          // checking for jumps is inherently recursive - as long as you find them,
+          // you have to keep looking, and only termimal positions are valid
+          this.jumpNext(x, y, [x, y], jumps);
         }
       }
     }
@@ -91,14 +90,15 @@ export default class Rules {
 
   moves() {
     let { board, side } = this,
-        bottom = side == 1 ? 0 : 7,
-        top = bottom ^ 7,
+        top = side == 1 ? 7 : 0,
+        bottom = top ^ 7,
         moves = [];
 
     // loop through playable squares
     for (let y = bottom; y != top; y += side) {
       for (let x = bottom; x != top; x += side) {
-        let p = board[y][x], king = p == side * 2;
+        let p = board[y][x],
+            king = p == side * 2;
 
         // see if it's our piece
         if (side * p > 0) {
