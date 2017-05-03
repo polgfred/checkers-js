@@ -153,30 +153,24 @@ export default class Rules {
     }
   }
 
-  xcollectPlays() {
-    let plays = [];
+  buildTree() {
+    let plays = this.plays(),
+        tree = {};
 
-    this.myPlays(play => {
-      plays.push(play);
-    });
+    for (let i = 0; i < plays.length; ++i) {
+      let play = plays[i],
+          root = tree;
 
-    return plays;
-  }
-
-  xcollectTree() {
-    let plays = {};
-
-    this.myPlays(play => {
-      let root = plays;
-
-      for (let i = 0; i < play.length; i += 2) {
-        let x = play[i], y = play[i+1], k = `${x},${y}`;
+      for (let j = 0; j < play.length; j += 2) {
+        let x = play[j],
+            y = play[j + 1],
+            k = `${x},${y}`;
 
         root[k] = root[k] || {};
         root = root[k];
       }
-    });
+    }
 
-    return plays;
+    return tree;
   }
 }
