@@ -8,9 +8,6 @@ export default class Analyzer extends Rules {
   constructor(board, side) {
     super(board, side);
 
-    // a flat version of the board backed by the same data
-    this.flat = new Int8Array(board[0].buffer, 0, 64);
-
     // use default evaluator for both sides (but feel free to change it)
     this.redEval = this.whiteEval = defaultEvaluator;
 
@@ -22,13 +19,13 @@ export default class Analyzer extends Rules {
     // delegate to the current player's evaluator
     let playerEval = this.side == 1 ? this.redEval : this.whiteEval;
 
-    return playerEval.evaluate(this.flat);
+    return playerEval.evaluate(this.board);
   }
 
   run() {
     // keep track of the current player's evaluator when switching sides
     let playerEval = this.side == 1 ? this.redEval : this.whiteEval,
-        initial = playerEval.evaluate(this.flat);
+        initial = playerEval.evaluate(this.board);
 
     // loop entry point as we recurse into the void
     let loop = (level) => {
@@ -51,7 +48,7 @@ export default class Analyzer extends Rules {
       });
 
       if (!canJump) {
-        current = playerEval.evaluate(this.flat);
+        current = playerEval.evaluate(this.board);
 
         let gain = current - initial;
 

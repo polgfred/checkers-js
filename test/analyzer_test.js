@@ -59,6 +59,10 @@ describe('Analyzer', function() {
       expect(this.analyzer.level).to.be(8);
     });
 
+    it('should score the position', function() {
+      expect(this.analyzer.evaluate()).to.be.below(0);
+    });
+
     describe('running the analyzer', function() {
       before(function() {
         this.play = this.analyzer.run();
