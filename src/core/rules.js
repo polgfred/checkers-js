@@ -6,6 +6,29 @@ export default class Rules {
     this.side = side;
   }
 
+  findJumps() {
+    let { board, side } = this,
+        top = side == 1 ? 7 : 0,
+        bottom = top ^ 7,
+        jumps = [];
+
+    // loop through playable squares
+    for (let y = bottom; y != top; y += side) {
+      for (let x = bottom; x != top; x += side) {
+        // see if it's our piece
+        let p = board[y][x];
+
+        if (side * p > 0) {
+          // checking for jumps is inherently recursive - as long as you find them,
+          // you have to keep looking, and only termimal positions are valid
+          this.nextJump(x, y, [x, y], jumps);
+        }
+      }
+    }
+
+    return jumps;
+  }
+
   nextJump(x, y, cur, jumps) {
     let { board, side } = this,
         p = board[y][x],
@@ -65,27 +88,6 @@ export default class Rules {
 
     // return whether more jumps were found from this position
     return found;
-  }
-
-  findJumps() {
-    let { board, side } = this,
-        top = side == 1 ? 7 : 0,
-        bottom = top ^ 7,
-        jumps = [];
-
-    // loop through playable squares
-    for (let y = bottom; y != top; y += side) {
-      for (let x = bottom; x != top; x += side) {
-        // see if it's our piece
-        if (side * board[y][x] > 0) {
-          // checking for jumps is inherently recursive - as long as you find them,
-          // you have to keep looking, and only termimal positions are valid
-          this.nextJump(x, y, [x, y], jumps);
-        }
-      }
-    }
-
-    return jumps;
   }
 
   doJump(jumps) {
