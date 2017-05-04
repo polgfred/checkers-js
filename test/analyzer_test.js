@@ -70,10 +70,10 @@ describe('Analyzer', function() {
 
       it('should find the best play from this position', function() {
         expect(this.play[0]).to.eql([
-          [2, 0, 1],
-          [4, 2, 3, 1, -1],
-          [6, 4, 5, 3, -1],
-          [4, 6, 5, 5, -1]
+          [2, 0],
+          [4, 2, 3, 1],
+          [6, 4, 5, 3],
+          [4, 6, 5, 5]
         ]);
       });
 

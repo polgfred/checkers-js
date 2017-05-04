@@ -21,7 +21,7 @@ export default class Rules {
         if (side * p > 0) {
           // checking for jumps is inherently recursive - as long as you find them,
           // you have to keep looking, and only termimal positions are valid
-          this.nextJump([[x, y, p]], jumps);
+          this.nextJump([[x, y]], jumps);
         }
       }
     }
@@ -72,7 +72,7 @@ export default class Rules {
 
             // if we're crowned, or there are no further jumps from here,
             // we've reached a terminal position
-            cur.push([nx, ny, mx, my, m]);
+            cur.push([nx, ny, mx, my]);
             if (crowned || !this.nextJump(cur, jumps)) {
               jumps.push(cur.slice());
             }
@@ -93,19 +93,24 @@ export default class Rules {
 
   withJump(jump, action) {
     let { board, side } = this,
+        len = jump.length,
+        [x, y] = jump[0],
+        [fx, fy] = jump[len - 1],
+        p = board[y][x],
         top = side == 1 ? 7 : 0,
-        [x, y, p] = jump[0],
-        [fx, fy] = jump[jump.length - 1],
-        crowned = p == side && fy == top;
+        crowned = p == side && fy == top,
+        cap = new Array(len);
 
     // remove the initial piece
+    cap[0] = p;
     board[y][x] = 0;
 
     // loop over the passed in coords
-    for (let i = 1; i < jump.length; ++i) {
+    for (let i = 1; i < len; ++i) {
       let [,, mx, my] = jump[i];
 
       // perform the jump
+      cap[i] = board[my][mx];
       board[my][mx] = 0;
     }
 
@@ -119,11 +124,11 @@ export default class Rules {
     board[fy][fx] = 0;
 
     // loop over the passed in coords in reverse
-    for (let i = jump.length - 1; i > 0; --i) {
-      let [,, mx, my, m] = jump[i];
+    for (let i = len - 1; i > 0; --i) {
+      let [,, mx, my] = jump[i];
 
       // put back the captured piece
-      board[my][mx] = m;
+      board[my][mx] = cap[i];
     }
 
     // put back initial piece
@@ -168,7 +173,7 @@ export default class Rules {
                   board[y][x] = 0;
                   board[ny][nx] = crowned ? p * 2 : p;
 
-                  moves.push([[x, y, p], [nx, ny]]);
+                  moves.push([[x, y], [nx, ny]]);
 
                   // put things back where we found them
                   board[y][x] = p;
@@ -186,8 +191,9 @@ export default class Rules {
 
   withMove(move, action) {
     let { board, side } = this,
+        [[x, y], [nx, ny]] = move,
+        p = board[y][x],
         top = side == 1 ? 7 : 0,
-        [[x, y, p], [nx, ny]] = move,
         crowned = p == side && ny == top;
 
     // perform the jump
