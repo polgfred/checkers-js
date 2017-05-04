@@ -221,9 +221,8 @@ export default class Rules {
       let play = plays[i],
           root = tree;
 
-      for (let j = 0; j < play.length; j += 2) {
-        let x = play[j],
-            y = play[j + 1],
+      for (let j = 0; j < play.length; ++j) {
+        let [x, y] = play[j],
             k = `${x},${y}`;
 
         root[k] = root[k] || {};
