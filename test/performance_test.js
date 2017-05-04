@@ -1,6 +1,9 @@
 import expect from 'expect.js';
 
+import { inspect } from 'util';
+
 import Rules from '../src/core/rules';
+import Analyzer, { Evaluator } from '../src/core/analyzer';
 import { newBoard, newBoardFromData } from '../src/core/utils';
 
 describe('moves', function() {
@@ -8,14 +11,6 @@ describe('moves', function() {
     let board = newBoard();
 
     this.rules = new Rules(board, +1);
-  });
-
-  it('should initialize the board', function() {
-    expect(this.rules.board[0][0]).to.be(+1);
-  });
-
-  it('should initialize the side', function() {
-    expect(this.rules.side).to.be(+1);
   });
 
   it('should find the moves from this position', function() {
@@ -39,7 +34,12 @@ describe('moves', function() {
   });
 
   it('should find the jumps from this position', function() {
-    let plays = this.rules.findJumps();
+    let plays;
+    console.time('jumps');
+    for (let i = 1000; i; --i) {
+      plays = this.rules.findJumps();
+    }
+    console.timeEnd('jumps');
 
     expect(plays.length).to.be(0);
   });
@@ -61,16 +61,13 @@ describe('jumps', function() {
     this.rules = new Rules(board, +1);
   });
 
-  it('should initialize the board', function() {
-    expect(this.rules.board[0][0]).to.be(0);
-  });
-
-  it('should initialize the side', function() {
-    expect(this.rules.side).to.be(+1);
-  });
-
   it('should find the jumps from this position', function() {
-    let plays = this.rules.findJumps();
+    let plays;
+    console.time('jumps');
+    for (let i = 1000; i; --i) {
+      plays = this.rules.findJumps();
+    }
+    console.timeEnd('jumps');
 
     expect(plays.length).to.be(3);
     expect(plays).to.eql([
@@ -78,13 +75,5 @@ describe('jumps', function() {
       [ [2, 0, 1], [4, 2, 3, 1, -1], [2, 4, 3, 3, -1] ],
       [ [2, 0, 1], [4, 2, 3, 1, -1], [6, 4, 5, 3, -1], [4, 6, 5, 5, -1] ]
     ]);
-  });
-
-  xit('should build a jump tree from this position', function() {
-    let plays = this.rules.buildTree();
-
-    expect(plays['2,0']['4,2']['6,4']['4,6']).to.eql({});
-    expect(plays['2,0']['4,2']['2,4']).to.eql({});
-    expect(plays['2,0']['0,2']).to.eql({});
   });
 });

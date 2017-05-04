@@ -38,14 +38,14 @@ export default class Analyzer extends Rules {
 
       if (jumps.length) {
         for (let i = 0; i < jumps.length; ++i) {
-          let jump = jumps[i],
-              undo = this.doJump(jump);
+          let jump = jumps[i];
 
-          // switch sides and descend a level
-          this.side = -side;
-          current = loop(level - 1)[1];
-          this.side = side;
-          this.undoJump(jump, undo);
+          this.withJump(jump, () => {
+            // switch sides and descend a level
+            this.side = -side;
+            current = loop(level - 1)[1];
+            this.side = side;
+          });
 
           // keep track of the best move from this position
           if (bestScore === undefined ||
@@ -77,14 +77,14 @@ export default class Analyzer extends Rules {
           let moves = this.findMoves();
 
           for (let i = 0; i < moves.length; ++i) {
-            let move = moves[i],
-                undo = this.doMove(move);
+            let move = moves[i];
 
-            // switch sides and descend a level
-            this.side = -side;
-            current = loop(level - 1)[1];
-            this.side = side;
-            this.undoMove(move, undo);
+            this.withMove(move, () => {
+              // switch sides and descend a level
+              this.side = -side;
+              current = loop(level - 1)[1];
+              this.side = side;
+            });
 
             // keep track of the best move from this position
             if (bestScore === undefined ||

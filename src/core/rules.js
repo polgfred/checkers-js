@@ -21,7 +21,7 @@ export default class Rules {
         if (side * p > 0) {
           // checking for jumps is inherently recursive - as long as you find them,
           // you have to keep looking, and only termimal positions are valid
-          this.nextJump(x, y, [x, y], jumps);
+          this.nextJump([[x, y, p]], jumps);
         }
       }
     }
@@ -29,8 +29,9 @@ export default class Rules {
     return jumps;
   }
 
-  nextJump(x, y, cur, jumps) {
+  nextJump(cur, jumps) {
     let { board, side } = this,
+        [x, y] = cur[cur.length - 1],
         p = board[y][x],
         top = side == 1 ? 7 : 0,
         king = p == side * 2,
@@ -69,15 +70,15 @@ export default class Rules {
             board[my][mx] = 0;
             board[ny][nx] = crowned ? p * 2 : p;
 
-            let ncur = cur.concat([nx, ny]);
-
             // if we're crowned, or there are no further jumps from here,
             // we've reached a terminal position
-            if (crowned || !this.nextJump(nx, ny, ncur, jumps)) {
-              jumps.push(ncur);
+            cur.push([nx, ny, mx, my, m]);
+            if (crowned || !this.nextJump(cur, jumps)) {
+              jumps.push(cur.slice());
             }
 
             // put things back where we found them
+            cur.pop();
             board[y][x] = p;
             board[my][mx] = m;
             board[ny][nx] = 0;
@@ -90,54 +91,43 @@ export default class Rules {
     return found;
   }
 
-  doJump(jumps) {
+  withJump(jump, action) {
     let { board, side } = this,
         top = side == 1 ? 7 : 0,
-        undo = [],
-        p;
+        [x, y, p] = jump[0],
+        [fx, fy] = jump[jump.length - 1],
+        crowned = p == side && fy == top;
+
+    // remove the initial piece
+    board[y][x] = 0;
 
     // loop over the passed in coords
-    for (let i = 0; i < jumps.length - 2; i += 2) {
-      let x = jumps[i], y = jumps[i + 1],
-          nx = jumps[i + 2], ny = jumps[i + 3],
-          mx = (x + nx) / 2, my = (y + ny) / 2;
-
-      // keep track of the piece making the jump
-      p = board[y][x];
-
-      let crowned = p == side && ny == top;
-
-      // keep track of the captured piece
-      undo.push(board[my][mx]);
+    for (let i = 1; i < jump.length; ++i) {
+      let [,, mx, my] = jump[i];
 
       // perform the jump
-      board[y][x] = 0;
       board[my][mx] = 0;
-      board[ny][nx] = crowned ? p * 2 : p;
     }
 
-    // push on the original piece
-    undo.push(p);
+    // final piece
+    board[fy][fx] = crowned ? p * 2 : p;
 
-    // return everything we need to undo the jump
-    return undo;
-  }
+    // do the action
+    action();
 
-  undoJump(jumps, undo) {
-    let { board } = this,
-        p = undo.pop();
+    // remove the final piece
+    board[fy][fx] = 0;
 
     // loop over the passed in coords in reverse
-    for (let i = jumps.length - 4; i >= 0; i -= 2) {
-      let x = jumps[i], y = jumps[i + 1],
-          nx = jumps[i + 2], ny = jumps[i + 3],
-          mx = (x + nx) / 2, my = (y + ny) / 2;
+    for (let i = jump.length - 1; i > 0; --i) {
+      let [,, mx, my, m] = jump[i];
 
-      // put things back where we found them
-      board[y][x] = p;
-      board[my][mx] = undo.pop();
-      board[ny][nx] = 0;
+      // put back the captured piece
+      board[my][mx] = m;
     }
+
+    // put back initial piece
+    board[y][x] = p;
   }
 
   findMoves() {
@@ -178,7 +168,7 @@ export default class Rules {
                   board[y][x] = 0;
                   board[ny][nx] = crowned ? p * 2 : p;
 
-                  moves.push([x, y, nx, ny]);
+                  moves.push([[x, y, p], [nx, ny]]);
 
                   // put things back where we found them
                   board[y][x] = p;
@@ -194,28 +184,22 @@ export default class Rules {
     return moves;
   }
 
-  doMove(move) {
+  withMove(move, action) {
     let { board, side } = this,
         top = side == 1 ? 7 : 0,
-        [x, y, nx, ny] = move,
-        p = board[y][x],
+        [[x, y, p], [nx, ny]] = move,
         crowned = p == side && ny == top;
 
     // perform the jump
     board[y][x] = 0;
     board[ny][nx] = crowned ? p * 2 : p;
 
-    // return the original piece
-    return p;
-  }
-
-  undoMove(move, p) {
-    let { board } = this,
-        [x, y, nx, ny] = move;
+    // do the action
+    action();
 
     // put things back where we found them
-    board[y][x] = p;
     board[ny][nx] = 0;
+    board[y][x] = p;
   }
 
   findPlays(block) {
