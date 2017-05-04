@@ -19,7 +19,7 @@ export default class UIPlayer extends Player {
     this.state = {
       board,
       side,
-      plays: new Rules(board, side).collectTree(),
+      plays: new Rules(board, side).buildTree(),
       current: []
     };
   }
@@ -32,7 +32,7 @@ export default class UIPlayer extends Player {
     this.setState({
       board,
       side,
-      plays: new Rules(board, side).collectTree(),
+      plays: new Rules(board, side).buildTree(),
       current: []
     });
   }
@@ -73,27 +73,34 @@ export default class UIPlayer extends Player {
 
     // see if this move is in the tree
     let next = plays[`${x},${y}`];
+
     if (next) {
       let next2 = next[`${nx},${ny}`];
+
       if (next2) {
         let p = board[y][x],
-            promoted = (p == 1 && ny == 7) || (p == -1 && ny == 0);
+            top = side == 1 ? 7 : 0,
+            crowned = p == side && ny == top;
 
         // move the piece
         board[y][x] = 0;
-        board[ny][nx] = promoted ? 2 * p : p;
-
-        // it's a jump, so remove the jumped piece too
-        if (Math.abs(nx - x) == 2) {
-          let mx = (x + nx) / 2, my = (y + ny) / 2;
-          board[my][mx] = 0;
-        }
+        board[ny][nx] = crowned ? p * 2 : p;
 
         // record the current leg
         if (current.length == 0) {
-          current.push(x, y);
+          current.push([x, y]);
         }
-        current.push(nx, ny);
+
+        // it's a jump, so remove the jumped piece too
+        if (Math.abs(nx - x) == 2) {
+          let mx = (x + nx) >> 1,
+              my = (y + ny) >> 1;
+
+          board[my][mx] = 0;
+          current.push([nx, ny, mx, my]);
+        } else {
+          current.push([nx, ny]);
+        }
 
         if (Object.keys(next2).length == 0) {
           // move is done, switch sides

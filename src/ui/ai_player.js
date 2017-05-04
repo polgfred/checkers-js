@@ -34,26 +34,29 @@ export default class AIPlayer extends Player {
 
   @autobind
   onComplete(ev) {
-    let { board } = this.state, move = ev.data.move;
+    let { board, side } = this.state,
+        { move } = ev.data,
+        len = move.length,
+        [x, y] = move[0],
+        [fx, fy] = move[len - 1],
+        p = board[y][x],
+        top = side == 1 ? 7 : 0,
+        crowned = p == side && fy == top;
 
-    for (let i = 0; i < move.length - 2; i += 2) {
-      let x = move[i],
-          y = move[i+1],
-          nx = move[i+2],
-          ny = move[i+3],
-          p = board[y][x],
-          promoted = (p == 1 && ny == 7) || (p == -1 && ny == 0);
+    // remove the initial piece
+    board[y][x] = 0;
 
-      // move the piece
-      board[y][x] = 0;
-      board[ny][nx] = promoted ? 2 * p : p;
+    for (let i = 1; i < len; ++i) {
+      if (move[i].length > 2) {
+        let [,, mx, my] = move[i];
 
-      // it's a jump, so remove the jumped piece too
-      if (Math.abs(nx - x) == 2) {
-        let mx = (x + nx) / 2, my = (y + ny) / 2;
+        // perform the jump
         board[my][mx] = 0;
       }
     }
+
+    // final piece
+    board[fy][fx] = crowned ? p * 2 : p;
 
     // commit this position
     this.props.moveComplete(board, move);
