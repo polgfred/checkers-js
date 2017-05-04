@@ -9,12 +9,13 @@ export default class Rules {
   findJumps() {
     let { board, side } = this,
         top = side == 1 ? 7 : 0,
+        out = top + side,
         bottom = top ^ 7,
         jumps = [];
 
     // loop through playable squares
-    for (let y = bottom; y != top; y += side) {
-      for (let x = bottom; x != top; x += side) {
+    for (let y = bottom; y != out; y += side) {
+      for (let x = bottom; x != out; x += side) {
         // see if it's our piece
         let p = board[y][x];
 
@@ -138,12 +139,13 @@ export default class Rules {
   findMoves() {
     let { board, side } = this,
         top = side == 1 ? 7 : 0,
+        out = top + side,
         bottom = top ^ 7,
         moves = [];
 
     // loop through playable squares
-    for (let y = bottom; y != top; y += side) {
-      for (let x = bottom; x != top; x += side) {
+    for (let y = bottom; y != out; y += side) {
+      for (let x = bottom; x != out; x += side) {
         let p = board[y][x],
             king = p == side * 2;
 
