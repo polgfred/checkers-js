@@ -2,7 +2,7 @@ import expect from 'expect.js';
 
 import { inspect } from 'util';
 
-import Analyzer, { Evaluator } from '../src/core/analyzer';
+import Analyzer from '../src/core/analyzer';
 import { newBoard, newBoardFromData } from '../src/core/utils';
 
 describe('Analyzer', function() {

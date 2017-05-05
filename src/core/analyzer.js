@@ -1,7 +1,6 @@
 'use strict';
 
-import Rules from '../rules';
-
+import Rules from './rules';
 import defaultEvaluator from './default_evaluator';
 
 export default class Analyzer extends Rules {
@@ -92,6 +91,3 @@ export default class Analyzer extends Rules {
     return [bestPlay, bestScore];
   }
 }
-
-// export the evaluator submodule
-export { Evaluator } from './evaluator';
