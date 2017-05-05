@@ -24,26 +24,56 @@ export default class Analyzer extends Rules {
 
   run() {
     // keep track of the current player's evaluator when switching sides
-    let { board } = this,
-        playerEval = this.side == 1 ? this.redEval : this.whiteEval,
-        initial = playerEval.evaluate(board);
+    let player = this.side == 1 ? this.redEval : this.whiteEval;
 
-    // loop entry point as we recurse into the void
-    let loop = (level) => {
-      let { side } = this,
-          bestScore, bestPlay, current;
+    // start at the top level
+    return this.loop(this.level, player);
+  }
 
-      // always try to find counter-jumps from this position
-      let jumps = this.findJumps();
+  loop(level, player) {
+    let { board, side } = this,
+        bestScore, bestPlay, current;
 
-      if (jumps.length) {
-        for (let i = 0; i < jumps.length; ++i) {
-          let jump = jumps[i];
+    // always try to find counter-jumps from this position
+    let jumps = this.findJumps();
 
-          this.withJump(jump, () => {
+    if (jumps.length) {
+      for (let i = 0; i < jumps.length; ++i) {
+        let jump = jumps[i];
+
+        this.withJump(jump, () => {
+          // switch sides and descend a level
+          this.side = -side;
+          current = this.loop(level - 1, player)[1];
+          this.side = side;
+        });
+
+        // keep track of the best move from this position
+        if (bestScore === undefined ||
+            (side == +1 && current > bestScore) ||
+            (side == -1 && current < bestScore)) {
+          bestPlay = jump;
+          bestScore = current;
+        }
+      }
+    } else {
+      current = player.evaluate(board);
+
+      // see if we've hit bottom
+      if (level <= 0) {
+        // return score for this position
+        bestScore = current;
+      } else {
+        // find counter-moves from this position
+        let moves = this.findMoves();
+
+        for (let i = 0; i < moves.length; ++i) {
+          let move = moves[i];
+
+          this.withMove(move, () => {
             // switch sides and descend a level
             this.side = -side;
-            current = loop(level - 1)[1];
+            current = this.loop(level - 1, player)[1];
             this.side = side;
           });
 
@@ -51,63 +81,20 @@ export default class Analyzer extends Rules {
           if (bestScore === undefined ||
               (side == +1 && current > bestScore) ||
               (side == -1 && current < bestScore)) {
-            bestPlay = jump;
+            bestPlay = move;
             bestScore = current;
           }
         }
-      } else {
-        current = playerEval.evaluate(board);
-
-        let gain = current - initial;
-
-        // see if we've hit bottom
-
-        // TODO/FIXME:
-        // this pruning is far from ideal - we look to see if there are
-        // large gains or losses relative to the initial position, but it
-        // should really be done relative to the current plays, as a bell
-        // curve or something
-        if (level <= 0 ||
-            (level <= 2 && (gain <= -25 || gain >= +25)) ||
-            (level <= 4 && (gain <= -75 || gain >= +75))) {
-          // return score for this position
-          bestScore = current;
-        } else {
-          // find counter-moves from this position
-          let moves = this.findMoves();
-
-          for (let i = 0; i < moves.length; ++i) {
-            let move = moves[i];
-
-            this.withMove(move, () => {
-              // switch sides and descend a level
-              this.side = -side;
-              current = loop(level - 1)[1];
-              this.side = side;
-            });
-
-            // keep track of the best move from this position
-            if (bestScore === undefined ||
-                (side == +1 && current > bestScore) ||
-                (side == -1 && current < bestScore)) {
-              bestPlay = move;
-              bestScore = current;
-            }
-          }
-        }
       }
-
-      // if there are no moves from this position, the player loses
-      if (bestScore === undefined) {
-        bestScore = -side * Infinity;
-      }
-
-      // a pair representing the winning play and score for this turn
-      return [bestPlay, bestScore];
     }
 
-    // start at the top level
-    return loop(this.level);
+    // if there are no moves from this position, the player loses
+    if (bestScore === undefined) {
+      bestScore = -side * Infinity;
+    }
+
+    // a pair representing the winning play and score for this turn
+    return [bestPlay, bestScore];
   }
 }
 
