@@ -82,11 +82,11 @@
     }
 
     thead {
-      position: sticky;
-
       th {
         background-color: #486;
         color: #fff;
+        position: sticky;
+        top: 0;
       }
     }
 
