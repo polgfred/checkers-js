@@ -1,6 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 
 import { moveToString } from '../core/utils';
 
@@ -15,10 +16,24 @@ export default class History extends Component {
       </tr>);
     }
 
-    return <table>
-      <tbody>
-        { elems }
-      </tbody>
-    </table>;
+    return <div className="history-container">
+      <table className="history">
+        <thead>
+          <tr>
+            <th>Red</th>
+            <th>White</th>
+          </tr>
+        </thead>
+        <tbody>
+          { elems }
+        </tbody>
+      </table>
+    </div>;
+  }
+
+  componentDidUpdate() {
+    // scroll to the bottom anytime we're updated
+    let node = ReactDOM.findDOMNode(this);
+    node.scrollTop = node.scrollHeight;
   }
 }

@@ -1,7 +1,6 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { Row, Column } from 'react-foundation';
 import autobind from 'autobind-decorator';
 
 import { newBoard } from '../core/utils';
@@ -26,16 +25,12 @@ export default class Game extends Component {
     let { board, side, hist } = this.state,
         Player = side == 1 ? UIPlayer : AIPlayer;
 
-    return <Row>
-      <Column large={6}>
+    return <div className="checkers-game">
         <Player ref="player"
                 board={board} side={side}
                 moveComplete={this.moveComplete} />
-      </Column>
-      <Column large={6}>
         <History moves={hist} />
-      </Column>
-    </Row>;
+    </div>;
   }
 
   @autobind

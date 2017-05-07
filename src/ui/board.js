@@ -16,8 +16,8 @@ pieceImages[-2] = 'src/images/white-king.svg';
 @DragDropContext(HTML5Backend)
 export default class Board extends Component {
   render() {
-    return <div id="board-container">
-      <table id="board">
+    return <div className="board-container">
+      <table className="board">
         <tbody>
           { this.renderRows() }
         </tbody>

@@ -1,19 +1,16 @@
-@import '~foundation-sites/scss/foundation';
-@include foundation-everything(true);
-
 #checkers-container {
-  margin-top: 30px;
 }
 
-#board-container {
+.board-container {
+  border: 4px solid #444;
+  border-radius: 3px;
+  box-shadow: 3px 3px 6px #888;
   float: left;
+  margin: 20px;
 
-  #board {
+  .board {
     border-collapse: separate;
     border-spacing: 1px;
-    border: 4px solid #444;
-    border-radius: 3px;
-    box-shadow: 3px 3px 6px #888;
 
     td {
       background-color: #ffb;
@@ -67,6 +64,55 @@
 
     #board {
       transform: rotateX(35deg);
+    }
+  }
+}
+
+.history-container {
+  border: 4px solid #444;
+  border-radius: 3px;
+  box-shadow: 3px 3px 6px #888;
+  float: left;
+  max-height: 537px;
+  margin: 20px;
+  overflow: scroll;
+  width: 400px;
+
+  .history {
+    border-collapse: separate;
+    border-spacing: 1px;
+    width: 100%;
+
+    th, td {
+      border: 1px solid #444;
+      border-radius: 2px;
+      padding: 10px;
+      text-align: center;
+      width: 50%;
+    }
+
+    thead {
+      position: sticky;
+
+      th {
+        background-color: #486;
+        color: #fff;
+      }
+    }
+
+    tbody {
+      td {
+        font-family: monospace;
+        font-size: 14px;
+      }
+
+      tr:nth-child(odd) td {
+        background-color: #ffb;
+      }
+
+      tr:nth-child(even) td {
+        background-color: #ddb;
+      }
     }
   }
 }
