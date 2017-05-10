@@ -17,8 +17,8 @@ module.exports = {
         use: [ 'babel-loader' ],
         exclude: [ path.resolve(__dirname, 'node_modules') ]
       }, {
-        test: /\.scss$/,
-        use: [ 'style-loader', 'css-loader', 'postcss-loader', 'sass-loader' ]
+        test: /\.css$/,
+        use: [ 'style-loader', 'css-loader?importLoaders=1', 'postcss-loader' ]
       }
     ]
   }

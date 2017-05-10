@@ -1,4 +1,5 @@
-.board-container, .history-container {
+.board-container,
+.history-container {
   border: 6px solid #444;
   border-radius: 2px;
   box-shadow: 3px 3px 6px #888;
@@ -7,31 +8,32 @@
 }
 
 .board-container {
-  .board {
+  & .board {
     border-collapse: separate;
     border-spacing: 0;
 
-    td {
+    & td {
       background-color: #ffb;
       height: 64px;
       padding: 0;
       position: relative;
       transition: background 0.5s;
       width: 64px;
+
       &.playable {
         background-color: #486;
         &.is-over {
           background-color: #933;
         }
-        &.can-drop {
-          background-color: #cb6;
-          &.is-over {
-            background-color: #9cb;
-          }
+      }
+      &.playable.can-drop {
+        background-color: #cb6;
+        &.is-over {
+          background-color: #9cb;
         }
       }
 
-      span {
+      & span {
         color: #fff;
         font-size: 9px;
         font-weight: bold;
@@ -40,12 +42,13 @@
         top: 2px;
       }
 
-      img {
+      & img {
         height: 60px;
         left: 2px;
         position: absolute;
         top: 4px;
         width: 60px;
+
         &.is-dragging {
           visibility: hidden;
         }
@@ -53,13 +56,13 @@
     }
   }
 
-  // perspective support
   &.three-d {
+    /* perspective support */
     margin-left: 20vh;
     margin-top: 0;
     perspective: 800px;
 
-    #board {
+    & .board {
       transform: rotateX(35deg);
     }
   }
@@ -70,37 +73,37 @@
   overflow: scroll;
   width: 400px;
 
-  .history {
+  & .history {
     border-collapse: separate;
     border-spacing: 0;
     width: 100%;
 
-    th, td {
+    & th, & td {
       padding: 10px;
       text-align: center;
       width: 50%;
     }
 
-    thead {
-      th {
+    & thead {
+      & th {
         background-color: #486;
         color: #fff;
         position: sticky;
-        top: 0;
+        top: 0px;
       }
     }
 
-    tbody {
-      td {
+    & tbody {
+      & td {
         font-family: monospace;
         font-size: 14px;
       }
 
-      tr:nth-child(odd) td {
+      & tr:nth-child(odd) td {
         background-color: #ffb;
       }
 
-      tr:nth-child(even) td {
+      & tr:nth-child(even) td {
         background-color: #ddb;
       }
     }

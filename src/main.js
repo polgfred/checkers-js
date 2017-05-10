@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 
 import Game from './ui/game';
 
-import './main.scss';
+import './main.css';
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(<Game />, document.getElementById('checkers-container'));
