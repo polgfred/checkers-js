@@ -1,8 +1,15 @@
+:root {
+  --primary: #486;
+  --secondary: #ffb;
+  --droppable: #cb6;
+  --undroppable: #933;
+}
+
 .board-container,
 .history-container {
-  border: 6px solid #444;
+  border: 6px solid gray(25%);
   border-radius: 2px;
-  box-shadow: 3px 3px 6px #888;
+  box-shadow: 3px 3px 6px gray(50%);
   float: left;
   margin: 20px;
 }
@@ -13,7 +20,7 @@
     border-spacing: 0;
 
     & td {
-      background-color: #ffb;
+      background-color: var(--secondary);
       height: 64px;
       padding: 0;
       position: relative;
@@ -21,20 +28,20 @@
       width: 64px;
 
       &.playable {
-        background-color: #486;
+        background-color: var(--primary);
         &.is-over {
-          background-color: #933;
+          background-color: var(--undroppable);
         }
-      }
-      &.playable.can-drop {
-        background-color: #cb6;
-        &.is-over {
-          background-color: #9cb;
+        &.can-drop {
+          background-color: var(--droppable);
+          &.is-over {
+            background-color: color(var(--primary) tint(40%));
+          }
         }
       }
 
       & span {
-        color: #fff;
+        color: white;
         font-size: 9px;
         font-weight: bold;
         left: 2px;
@@ -78,7 +85,8 @@
     border-spacing: 0;
     width: 100%;
 
-    & th, & td {
+    & th,
+    & td {
       padding: 10px;
       text-align: center;
       width: 50%;
@@ -86,8 +94,8 @@
 
     & thead {
       & th {
-        background-color: #486;
-        color: #fff;
+        background-color: var(--primary);
+        color: white;
         position: sticky;
         top: 0px;
       }
@@ -100,11 +108,11 @@
       }
 
       & tr:nth-child(odd) td {
-        background-color: #ffb;
+        background-color: var(--secondary);
       }
 
       & tr:nth-child(even) td {
-        background-color: #ddb;
+        background-color: color(var(--secondary) shade(20%));
       }
     }
   }
