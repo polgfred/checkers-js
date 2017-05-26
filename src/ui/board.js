@@ -8,10 +8,10 @@ import classNames from 'classnames';
 import { coordsToNumber } from '../core/utils';
 
 const pieceImages = new Map();
-pieceImages[+1] = 'src/images/red-piece.svg';
-pieceImages[+2] = 'src/images/red-king.svg';
-pieceImages[-1] = 'src/images/white-piece.svg';
-pieceImages[-2] = 'src/images/white-king.svg';
+pieceImages.set(+1, 'src/images/red-piece.svg');
+pieceImages.set(+2, 'src/images/red-king.svg');
+pieceImages.set(-1, 'src/images/white-piece.svg');
+pieceImages.set(-2, 'src/images/white-king.svg');
 
 @DragDropContext(HTML5Backend)
 export default class Board extends Component {
@@ -101,7 +101,7 @@ class Square extends Component {
 class Piece extends Component {
   componentDidMount() {
     let { p, connectDragPreview } = this.props, img = new Image();
-    img.src = pieceImages[p];
+    img.src = pieceImages.get(p);
     connectDragPreview(img);
   }
 
@@ -109,8 +109,8 @@ class Piece extends Component {
     let { p, connectDragSource, isDragging } = this.props;
 
     return connectDragSource(
-      <img src={pieceImages[p]} className={classNames({
-                                  'is-dragging': isDragging
-                                  })} />);
+      <img src={pieceImages.get(p)} className={classNames({
+                                      'is-dragging': isDragging
+                                    })} />);
   }
 }
