@@ -33,16 +33,18 @@ describe('Analyzer', function() {
 
   describe('with a contrived multi-jump position', function() {
     before(function() {
-      let board = newBoardFromData([
-        [  0,  0,  0,  0,  0,  0,  0,  0 ],
-        [  0,  0,  0,  0,  0,  0,  0,  0 ],
-        [  0,  0,  0,  0,  0, -1,  0,  0 ],
-        [  0,  0,  0,  0,  0,  0,  0,  0 ],
-        [  0,  0,  0, -1,  0, -1,  0,  0 ],
-        [  0,  0,  0,  0,  0,  0,  0,  0 ],
-        [  0, -1,  0, -1,  0,  0,  0,  0 ],
-        [  0,  0,  1,  0,  0,  0,  0,  0 ]
-      ].reverse());
+      let board = newBoardFromData(
+        [
+          [0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, -1, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, -1, 0, -1, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0],
+          [0, -1, 0, -1, 0, 0, 0, 0],
+          [0, 0, 1, 0, 0, 0, 0, 0],
+        ].reverse()
+      );
 
       this.analyzer = new Analyzer(board, +1);
     });
@@ -73,7 +75,7 @@ describe('Analyzer', function() {
           [2, 0],
           [4, 2, 3, 1],
           [6, 4, 5, 3],
-          [4, 6, 5, 5]
+          [4, 6, 5, 5],
         ]);
       });
 

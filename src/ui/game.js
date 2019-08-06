@@ -1,5 +1,3 @@
-'use strict';
-
 import React, { Component } from 'react';
 import autobind from 'autobind-decorator';
 
@@ -17,20 +15,25 @@ export default class Game extends Component {
     this.state = {
       board: newBoard(),
       side: 1,
-      hist: []
+      hist: [],
     };
   }
 
   render() {
     let { board, side, hist } = this.state,
-        Player = side == 1 ? UIPlayer : AIPlayer;
+      Player = side == 1 ? UIPlayer : AIPlayer;
 
-    return <div className="checkers-game">
-        <Player ref="player"
-                board={board} side={side}
-                moveComplete={this.moveComplete} />
+    return (
+      <div className="checkers-game">
+        <Player
+          ref="player"
+          board={board}
+          side={side}
+          moveComplete={this.moveComplete}
+        />
         <History moves={hist} />
-    </div>;
+      </div>
+    );
   }
 
   @autobind

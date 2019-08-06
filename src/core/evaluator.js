@@ -1,11 +1,9 @@
-'use strict';
-
 export default class Evaluator {
   constructor() {
     // rules are represented as a 2D array of [pattern, score] pairs, where:
     //  - `pattern` is an array of [dx, dy, value] pairs, and
     //  - `score` is what will be awarded if the pattern matches
-    this.rules = [ [], [], [], [], [], [], [], [] ];
+    this.rules = [[], [], [], [], [], [], [], []];
   }
 
   addFormation(formation, scores) {
@@ -29,7 +27,7 @@ export default class Evaluator {
         let score = scores[y][x];
 
         if (score != 0) {
-          rules[y][x] = (rules[y][x] || []);
+          rules[y][x] = rules[y][x] || [];
           rules[y][x].push([formation, score]);
         }
       }
@@ -43,7 +41,7 @@ export default class Evaluator {
     //      the board, or white (-) from the bottom, and adjust the total
     //      score accordingly
     let { rules } = this,
-        total = 0;
+      total = 0;
 
     for (let y = 0; y < 8; ++y) {
       for (let x = 0; x < 8; ++x) {
@@ -51,20 +49,25 @@ export default class Evaluator {
 
         if (r) {
           for (let j = 0; j < r.length; ++j) {
-            let [formation, score] = r[j], match;
+            let [formation, score] = r[j],
+              match;
 
             // try the pattern as red
             match = true;
             for (let k = 0; k < formation.length; ++k) {
               let [dx, dy, v] = formation[k],
-                  p = board[y + dy][x + dx];
+                p = board[y + dy][x + dx];
 
               // see if the formation matches for this square
-              if (!((v == 0 && p == 0) ||
-                    ((v == +1 || v == +3) && p == +1) ||
-                    ((v == +2 || v == +3) && p == +2) ||
-                    ((v == -1 || v == -3) && p == -1) ||
-                    ((v == -2 || v == -3) && p == -2))) {
+              if (
+                !(
+                  (v == 0 && p == 0) ||
+                  ((v == +1 || v == +3) && p == +1) ||
+                  ((v == +2 || v == +3) && p == +2) ||
+                  ((v == -1 || v == -3) && p == -1) ||
+                  ((v == -2 || v == -3) && p == -2)
+                )
+              ) {
                 // bail out and flag as failed
                 match = false;
                 break;
@@ -78,14 +81,18 @@ export default class Evaluator {
             match = true;
             for (let k = 0; k < formation.length; ++k) {
               let [dx, dy, v] = formation[k],
-                  p = board[(y ^ 7) - dy][(x ^ 7) - dx];
+                p = board[(y ^ 7) - dy][(x ^ 7) - dx];
 
               // see if the pattern matches for this square
-              if (!((v == 0 && p == 0) ||
-                    ((v == +1 || v == +3) && p == -1) ||
-                    ((v == +2 || v == +3) && p == -2) ||
-                    ((v == -1 || v == -3) && p == +1) ||
-                    ((v == -2 || v == -3) && p == +2))) {
+              if (
+                !(
+                  (v == 0 && p == 0) ||
+                  ((v == +1 || v == +3) && p == -1) ||
+                  ((v == +2 || v == +3) && p == -2) ||
+                  ((v == -1 || v == -3) && p == +1) ||
+                  ((v == -2 || v == -3) && p == +2)
+                )
+              ) {
                 // bail out and flag as failed
                 match = false;
                 break;

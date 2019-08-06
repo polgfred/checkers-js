@@ -1,5 +1,3 @@
-'use strict';
-
 import React, { Component } from 'react';
 import autobind from 'autobind-decorator';
 
@@ -9,16 +7,20 @@ export default class Player extends Component {
   render() {
     let { board, side } = this.state;
 
-    return <Board board={board} side={side}
-                  canDrag={this.canDrag}
-                  canDrop={this.canDrop}
-                  endDrag={this.endDrag} />;
+    return (
+      <Board
+        board={board}
+        side={side}
+        canDrag={this.canDrag}
+        canDrop={this.canDrop}
+        endDrag={this.endDrag}
+      />
+    );
   }
 
   // hook to start play
 
-  play() {
-  }
+  play() {}
 
   // default drag/drop handlers
 

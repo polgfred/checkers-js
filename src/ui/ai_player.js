@@ -1,5 +1,3 @@
-'use strict';
-
 import React, { Component } from 'react';
 import autobind from 'autobind-decorator';
 
@@ -16,7 +14,7 @@ export default class AIPlayer extends Player {
 
     this.state = {
       board,
-      side
+      side,
     };
   }
 
@@ -35,20 +33,20 @@ export default class AIPlayer extends Player {
   @autobind
   onComplete(ev) {
     let { board, side } = this.state,
-        { move } = ev.data,
-        len = move.length,
-        [x, y] = move[0],
-        [fx, fy] = move[len - 1],
-        p = board[y][x],
-        top = side == 1 ? 7 : 0,
-        crowned = p == side && fy == top;
+      { move } = ev.data,
+      len = move.length,
+      [x, y] = move[0],
+      [fx, fy] = move[len - 1],
+      p = board[y][x],
+      top = side == 1 ? 7 : 0,
+      crowned = p == side && fy == top;
 
     // remove the initial piece
     board[y][x] = 0;
 
     for (let i = 1; i < len; ++i) {
       if (move[i].length > 2) {
-        let [,, mx, my] = move[i];
+        let [, , mx, my] = move[i];
 
         // perform the jump
         board[my][mx] = 0;

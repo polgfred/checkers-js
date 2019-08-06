@@ -1,5 +1,3 @@
-'use strict';
-
 import React, { Component } from 'react';
 import autobind from 'autobind-decorator';
 
@@ -20,7 +18,7 @@ export default class UIPlayer extends Player {
       board,
       side,
       plays: new Rules(board, side).buildTree(),
-      current: []
+      current: [],
     };
   }
 
@@ -33,13 +31,14 @@ export default class UIPlayer extends Player {
       board,
       side,
       plays: new Rules(board, side).buildTree(),
-      current: []
+      current: [],
     });
   }
 
   @autobind
   canDrag(from) {
-    let { plays } = this.state, { x, y } = from;
+    let { plays } = this.state,
+      { x, y } = from;
 
     // see if this position is in the tree
     if (plays[`${x},${y}`]) {
@@ -50,8 +49,8 @@ export default class UIPlayer extends Player {
   @autobind
   canDrop(from, to) {
     let { plays } = this.state,
-        { x: nx, y: ny } = from,
-        { x, y } = to;
+      { x: nx, y: ny } = from,
+      { x, y } = to;
 
     // see if this move is in the tree
     let next = plays[`${x},${y}`];
@@ -68,8 +67,8 @@ export default class UIPlayer extends Player {
     }
 
     let { board, side, plays, current } = this.state,
-        { x, y } = from,
-        { x: nx, y: ny } = to;
+      { x, y } = from,
+      { x: nx, y: ny } = to;
 
     // see if this move is in the tree
     let next = plays[`${x},${y}`];
@@ -79,8 +78,8 @@ export default class UIPlayer extends Player {
 
       if (next2) {
         let p = board[y][x],
-            top = side == 1 ? 7 : 0,
-            crowned = p == side && ny == top;
+          top = side == 1 ? 7 : 0,
+          crowned = p == side && ny == top;
 
         // move the piece
         board[y][x] = 0;
@@ -94,7 +93,7 @@ export default class UIPlayer extends Player {
         // it's a jump, so remove the jumped piece too
         if (Math.abs(nx - x) == 2) {
           let mx = (x + nx) >> 1,
-              my = (y + ny) >> 1;
+            my = (y + ny) >> 1;
 
           board[my][mx] = 0;
           current.push([nx, ny, mx, my]);

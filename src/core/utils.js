@@ -1,5 +1,3 @@
-'use strict';
-
 // set up the initial board position
 const initial = as2DArray(new ArrayBuffer(64));
 initial[0][0] = initial[0][2] = initial[0][4] = initial[0][6] = +1;
@@ -23,7 +21,7 @@ export function copyBoard(board) {
 export function newBoardFromData(data) {
   let board = as2DArray(new ArrayBuffer(64));
   for (let i = 0; i < 8; ++i) {
-    board[i].set(data[i])
+    board[i].set(data[i]);
   }
   return board;
 }
@@ -31,14 +29,14 @@ export function newBoardFromData(data) {
 // make a 2d array wrapper around a 64-byte buffer
 export function as2DArray(buf) {
   return [
-    new Int8Array(buf,  0, 8),
-    new Int8Array(buf,  8, 8),
+    new Int8Array(buf, 0, 8),
+    new Int8Array(buf, 8, 8),
     new Int8Array(buf, 16, 8),
     new Int8Array(buf, 24, 8),
     new Int8Array(buf, 32, 8),
     new Int8Array(buf, 40, 8),
     new Int8Array(buf, 48, 8),
-    new Int8Array(buf, 56, 8)
+    new Int8Array(buf, 56, 8),
   ];
 }
 
@@ -49,7 +47,7 @@ export function coordsToNumber(x, y) {
 export function moveToString(move) {
   if (move) {
     let [x, y] = move[0],
-        str = coordsToNumber(x, y);
+      str = coordsToNumber(x, y);
 
     for (let i = 1; i < move.length; ++i) {
       let [nx, ny] = move[i];

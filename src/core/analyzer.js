@@ -1,5 +1,3 @@
-'use strict';
-
 import Rules from './rules';
 import defaultEvaluator from './default_evaluator';
 
@@ -31,9 +29,9 @@ export default class Analyzer extends Rules {
 
   loop(level, player) {
     let { board, side } = this,
-        bestScore = -side * Infinity,
-        bestPlay,
-        current;
+      bestScore = -side * Infinity,
+      bestPlay,
+      current;
 
     // always try to find counter-jumps from this position
     let jumps = this.findJumps();
@@ -50,8 +48,10 @@ export default class Analyzer extends Rules {
         });
 
         // keep track of the best move from this position
-        if ((side == +1 && current > bestScore) ||
-            (side == -1 && current < bestScore)) {
+        if (
+          (side == +1 && current > bestScore) ||
+          (side == -1 && current < bestScore)
+        ) {
           bestPlay = jump;
           bestScore = current;
         }
@@ -78,8 +78,10 @@ export default class Analyzer extends Rules {
           });
 
           // keep track of the best move from this position
-          if ((side == +1 && current > bestScore) ||
-              (side == -1 && current < bestScore)) {
+          if (
+            (side == +1 && current > bestScore) ||
+            (side == -1 && current < bestScore)
+          ) {
             bestPlay = move;
             bestScore = current;
           }
