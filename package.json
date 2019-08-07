@@ -4,11 +4,11 @@
   "description": "",
   "main": "build.js",
   "scripts": {
-    "lint": "eslint --config .eslintrc.js ./{src,test}",
-    "test": "mocha --require @babel/register",
     "build": "webpack",
     "start": "node --require @babel/register ./src/server",
-    "format": "prettier --write ./{src,test}/**/*.js"
+    "test": "mocha --require @babel/register",
+    "format": "prettier --write ./{src,test}/**/*.js",
+    "lint": "eslint --config .eslintrc.js ./{src,test}"
   },
   "repository": {
     "type": "git",
