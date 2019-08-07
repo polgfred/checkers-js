@@ -1,52 +1,30 @@
-import React, { Component } from 'react';
-import autobind from 'autobind-decorator';
+import React, { useCallback, useEffect } from 'react';
 
-import Player from './player';
+import { copyBoard } from '../core/utils';
+
+import Board from './board';
 
 // create a worker once that we'll attach to as needed
-const worker = new Worker('./dist/worker-bundle.js');
+const worker = new Worker('./worker-bundle.js');
 
-export default class AIPlayer extends Player {
-  constructor(props) {
-    super();
+const isFalse = () => false;
 
-    let { board, side } = props;
-
-    this.state = {
-      board,
-      side,
-    };
-  }
-
-  componentDidMount() {
-    worker.addEventListener('message', this.onComplete, false);
-  }
-
-  componentWillUnmount() {
-    worker.removeEventListener('message', this.onComplete, false);
-  }
-
-  play() {
-    worker.postMessage(this.state);
-  }
-
-  @autobind
-  onComplete(ev) {
-    let { board, side } = this.state,
-      { move } = ev.data,
-      len = move.length,
-      [x, y] = move[0],
-      [fx, fy] = move[len - 1],
-      p = board[y][x],
-      top = side == 1 ? 7 : 0,
-      crowned = p == side && fy == top;
+export default function AIPlayer({ board, side, moveComplete }) {
+  const onComplete = useCallback(ev => {
+    const { move } = ev.data;
+    const len = move.length;
+    const [x, y] = move[0];
+    const [fx, fy] = move[len - 1];
+    const p = board[y][x];
+    const top = side == 1 ? 7 : 0;
+    const crowned = p == side && fy == top;
 
     // remove the initial piece
     board[y][x] = 0;
 
     for (let i = 1; i < len; ++i) {
       if (move[i].length > 2) {
-        let [, , mx, my] = move[i];
+        const [, , mx, my] = move[i];
 
         // perform the jump
         board[my][mx] = 0;
@@ -57,6 +35,25 @@ export default class AIPlayer extends Player {
     board[fy][fx] = crowned ? p * 2 : p;
 
     // commit this position
-    this.props.moveComplete(board, move);
-  }
+    moveComplete(board, move).then(() => {
+      worker.postMessage({ board, side });
+    });
+  });
+
+  useEffect(() => {
+    worker.addEventListener('message', onComplete, false);
+    return () => {
+      worker.removeEventListener('message', onComplete, false);
+    };
+  }, [onComplete]);
+
+  return (
+    <Board
+      board={board}
+      side={side}
+      canDrag={isFalse}
+      canDrop={isFalse}
+      endDrag={isFalse}
+    />
+  );
 }

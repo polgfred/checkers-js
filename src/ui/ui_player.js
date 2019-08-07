@@ -1,114 +1,92 @@
-import React, { Component } from 'react';
-import autobind from 'autobind-decorator';
+import React, { useCallback, useState } from 'react';
 
 import Rules from '../core/rules';
 import { copyBoard } from '../core/utils';
 
-import Player from './player';
+import Board from './board';
 
-export default class UIPlayer extends Player {
-  constructor(props) {
-    super();
+export default function UIPlayer({ board: _board, side: _side, moveComplete }) {
+  const [{ board, side, plays, current }, setState] = useState({
+    board: _board,
+    side: _side,
+    plays: new Rules(_board, _side).buildTree(),
+    current: [],
+  });
 
-    let { board, side } = props;
+  const canDrag = useCallback(
+    ({ x, y }) => {
+      // see if this position is in the tree
+      if (plays[`${x},${y}`]) {
+        return true;
+      }
+    },
+    [plays]
+  );
 
-    board = copyBoard(board);
+  const canDrop = useCallback(
+    ({ x, y }, { x: nx, y: ny }) => {
+      // see if this move is in the tree
+      let next = plays[`${x},${y}`];
+      if (next && next[`${nx},${ny}`]) {
+        return true;
+      }
+    },
+    [plays]
+  );
 
-    this.state = {
-      board,
-      side,
-      plays: new Rules(board, side).buildTree(),
-      current: [],
-    };
-  }
+  const endDrag = useCallback(
+    ({ x, y }, { x: nx, y: ny }) => {
+      // see if this move is in the tree
+      const next = plays[`${x},${y}`];
 
-  componentWillReceiveProps(nextProps) {
-    let { board, side } = nextProps;
+      if (next) {
+        const next2 = next[`${nx},${ny}`];
 
-    board = copyBoard(board);
+        if (next2) {
+          const p = board[y][x];
+          const top = side == 1 ? 7 : 0;
+          const crowned = p == side && ny == top;
 
-    this.setState({
-      board,
-      side,
-      plays: new Rules(board, side).buildTree(),
-      current: [],
-    });
-  }
+          // move the piece
+          board[y][x] = 0;
+          board[ny][nx] = crowned ? p * 2 : p;
 
-  @autobind
-  canDrag(from) {
-    let { plays } = this.state,
-      { x, y } = from;
+          // record the current leg
+          if (current.length == 0) {
+            current.push([x, y]);
+          }
 
-    // see if this position is in the tree
-    if (plays[`${x},${y}`]) {
-      return true;
-    }
-  }
+          // it's a jump, so remove the jumped piece too
+          if (Math.abs(nx - x) == 2) {
+            const mx = (x + nx) >> 1;
+            const my = (y + ny) >> 1;
 
-  @autobind
-  canDrop(from, to) {
-    let { plays } = this.state,
-      { x: nx, y: ny } = from,
-      { x, y } = to;
+            board[my][mx] = 0;
+            current.push([nx, ny, mx, my]);
+          } else {
+            current.push([nx, ny]);
+          }
 
-    // see if this move is in the tree
-    let next = plays[`${x},${y}`];
-    if (next && next[`${nx},${ny}`]) {
-      return true;
-    }
-  }
-
-  @autobind
-  endDrag(from, to) {
-    if (!to) {
-      // dropped on an invalid square
-      return;
-    }
-
-    let { board, side, plays, current } = this.state,
-      { x, y } = from,
-      { x: nx, y: ny } = to;
-
-    // see if this move is in the tree
-    let next = plays[`${x},${y}`];
-
-    if (next) {
-      let next2 = next[`${nx},${ny}`];
-
-      if (next2) {
-        let p = board[y][x],
-          top = side == 1 ? 7 : 0,
-          crowned = p == side && ny == top;
-
-        // move the piece
-        board[y][x] = 0;
-        board[ny][nx] = crowned ? p * 2 : p;
-
-        // record the current leg
-        if (current.length == 0) {
-          current.push([x, y]);
-        }
-
-        // it's a jump, so remove the jumped piece too
-        if (Math.abs(nx - x) == 2) {
-          let mx = (x + nx) >> 1,
-            my = (y + ny) >> 1;
-
-          board[my][mx] = 0;
-          current.push([nx, ny, mx, my]);
-        } else {
-          current.push([nx, ny]);
-        }
-
-        if (Object.keys(next2).length == 0) {
-          // move is done, switch sides
-          this.props.moveComplete(board, current);
-        } else {
-          // commit this position
-          this.setState({ board, plays: next, current });
+          if (Object.keys(next2).length == 0) {
+            // move is done, switch sides
+            moveComplete(board, current);
+          } else {
+            // commit this position
+            setState({ board, side, plays: next, current });
+          }
         }
       }
-    }
-  }
+    },
+    [plays, current]
+  );
+
+  return (
+    <Board
+      board={board}
+      side={side}
+      canDrag={canDrag}
+      canDrop={canDrop}
+      endDrag={endDrag}
+    />
+  );
 }
