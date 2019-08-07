@@ -1,8 +1,6 @@
 import React, { useCallback, useState } from 'react';
 
 import Rules from '../core/rules';
-import { copyBoard } from '../core/utils';
-
 import Board from './board';
 
 export default function UIPlayer({ board: _board, side: _side, moveComplete }) {

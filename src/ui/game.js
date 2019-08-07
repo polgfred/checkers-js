@@ -2,7 +2,6 @@ import React, { useCallback, useState } from 'react';
 
 import { newBoard } from '../core/utils';
 
-import Board from './board';
 import History from './history';
 import UIPlayer from './ui_player';
 import AIPlayer from './ai_player';
@@ -14,10 +13,13 @@ export default function Game() {
     hist: [],
   });
 
-  const moveComplete = useCallback((board, move) => {
-    hist.push(move);
-    setState({ board, side: -side, hist });
-  });
+  const moveComplete = useCallback(
+    (board, move) => {
+      hist.push(move);
+      setState({ board, side: -side, hist });
+    },
+    [side, hist]
+  );
 
   return (
     <div className="checkers-game">

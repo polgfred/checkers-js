@@ -208,7 +208,7 @@ export default class Rules {
     board[y][x] = p;
   }
 
-  findPlays(block) {
+  findPlays() {
     const jumps = this.findJumps();
 
     // you have to jump if you can

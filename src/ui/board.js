@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import classNames from 'classnames';
@@ -15,7 +15,7 @@ function EmptySquare() {
   return <td />;
 }
 
-function Square({ x, y, p, canDrop, children }) {
+function Square({ x, y, canDrop, children }) {
   const [{ _canDrop, _isOver }, connectDropTarget] = useDrop({
     accept: 'piece',
     canDrop: (_, monitor) => canDrop(monitor.getItem(), { x, y }),
