@@ -15,10 +15,8 @@ export default function Game() {
   });
 
   const moveComplete = useCallback((board, move) => {
-    return new Promise(resolve => {
-      hist.push(move);
-      setState({ board, side: -side, hist }, resolve);
-    });
+    hist.push(move);
+    setState({ board, side: -side, hist });
   });
 
   return (

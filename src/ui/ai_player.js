@@ -10,8 +10,7 @@ const worker = new Worker('./worker-bundle.js');
 const isFalse = () => false;
 
 export default function AIPlayer({ board, side, moveComplete }) {
-  const onComplete = useCallback(ev => {
-    const { move } = ev.data;
+  const onComplete = useCallback(({ data: { move } }) => {
     const len = move.length;
     const [x, y] = move[0];
     const [fx, fy] = move[len - 1];
@@ -35,13 +34,12 @@ export default function AIPlayer({ board, side, moveComplete }) {
     board[fy][fx] = crowned ? p * 2 : p;
 
     // commit this position
-    moveComplete(board, move).then(() => {
-      worker.postMessage({ board, side });
-    });
+    moveComplete(board, move);
   });
 
   useEffect(() => {
     worker.addEventListener('message', onComplete, false);
+    worker.postMessage({ board, side });
     return () => {
       worker.removeEventListener('message', onComplete, false);
     };
