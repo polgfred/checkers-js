@@ -70,45 +70,39 @@ function Piece({ x, y, p, canDrag, endDrag }) {
   );
 }
 
+const COORDS = [0, 1, 2, 3, 4, 5, 6, 7];
+const REV_COORDS = COORDS.slice().reverse();
+
 export default function Board({ board, canDrag, canDrop, endDrag }) {
-  function renderRows() {
-    const elems = [];
-
-    for (let y = 7; y >= 0; --y) {
-      elems.push(<tr key={y}>{renderSquares(y)}</tr>);
-    }
-
-    return elems;
-  }
-
-  function renderSquares(y) {
-    const elems = [];
-
-    for (let x = 0; x <= 7; ++x) {
-      if ((x + y) % 2 == 0) {
-        const p = board[y][x];
-
-        elems.push(
-          <Square key={x} x={x} y={y} p={p} canDrop={canDrop}>
-            <span>{coordsToNumber(x, y)}</span>
-            {p != 0 && (
-              <Piece x={x} y={y} p={p} canDrag={canDrag} endDrag={endDrag} />
-            )}
-          </Square>
-        );
-      } else {
-        elems.push(<EmptySquare key={x} />);
-      }
-    }
-
-    return elems;
-  }
-
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="board-container">
         <table className="board">
-          <tbody>{renderRows()}</tbody>
+          <tbody>
+            {REV_COORDS.map(y => (
+              <tr key={y}>
+                {COORDS.map(x => {
+                  const p = board[y][x];
+                  return (x + y) % 2 == 0 ? (
+                    <Square key={x} x={x} y={y} p={p} canDrop={canDrop}>
+                      <span>{coordsToNumber(x, y)}</span>
+                      {p != 0 && (
+                        <Piece
+                          x={x}
+                          y={y}
+                          p={p}
+                          canDrag={canDrag}
+                          endDrag={endDrag}
+                        />
+                      )}
+                    </Square>
+                  ) : (
+                    <EmptySquare key={x} />
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     </DndProvider>
