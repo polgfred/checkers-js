@@ -7,7 +7,6 @@
     "lint": "eslint --config .eslintrc.js ./{src,test}",
     "test": "mocha --require @babel/register",
     "build": "webpack",
-    "watch": "webpack --watch",
     "start": "node --require @babel/register ./src/server",
     "format": "prettier --write ./{src,test}/**/*.js"
   },
