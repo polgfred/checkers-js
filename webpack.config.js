@@ -1,7 +1,5 @@
 var path = require('path');
 
-var postcssPresetEnv = require('postcss-preset-env');
-
 module.exports = {
   mode: 'development',
   devtool: 'source-map',
@@ -10,7 +8,7 @@ module.exports = {
     worker: './src/worker.js',
   },
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: __dirname,
     filename: '[name]-bundle.js',
   },
   devtool: 'cheap-module-source-map',

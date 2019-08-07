@@ -7,9 +7,9 @@
 
 .board-container,
 .history-container {
-  border: 6px solid gray(25%);
+  border: 6px solid #444;
   border-radius: 2px;
-  box-shadow: 3px 3px 6px gray(50%);
+  box-shadow: 3px 3px 6px #888;
   float: left;
   margin: 20px;
 }
@@ -24,7 +24,7 @@
       height: 64px;
       padding: 0;
       position: relative;
-      transition: background 0.5s;
+      transition: background-color 0.5s;
       width: 64px;
 
       &.playable {
@@ -35,7 +35,7 @@
         &.can-drop {
           background-color: var(--droppable);
           &.is-over {
-            background-color: color(var(--primary) tint(40%));
+            background-color: color-mod(var(--primary) tint(40%));
           }
         }
       }

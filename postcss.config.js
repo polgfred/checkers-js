@@ -1,14 +1,13 @@
 module.exports = {
   plugins: {
-    'postcss-custom-properties': {
-      preserve: false,
-    },
     'postcss-preset-env': {
-      stage: 3,
+      stage: 4,
+      autoprefixer: true,
+      preserve: false,
       features: {
         'nesting-rules': true,
+        'color-mod-function': true,
       },
     },
-    'postcss-calc': {},
   },
 };
