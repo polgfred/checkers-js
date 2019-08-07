@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import classNames from 'classnames';
@@ -16,7 +16,7 @@ function EmptySquare() {
 }
 
 function Square({ x, y, p, canDrop, children }) {
-  const [{ _canDrop, _isOver }, drop] = useDrop({
+  const [{ _canDrop, _isOver }, connectDropTarget] = useDrop({
     accept: 'piece',
     canDrop: (_, monitor) => canDrop(monitor.getItem(), { x, y }),
     drop: () => ({ x, y }),
@@ -26,9 +26,8 @@ function Square({ x, y, p, canDrop, children }) {
     }),
   });
 
-  return (
+  return connectDropTarget(
     <td
-      ref={drop}
       className={classNames({
         playable: true,
         'can-drop': _canDrop,
@@ -41,7 +40,7 @@ function Square({ x, y, p, canDrop, children }) {
 }
 
 function Piece({ x, y, p, canDrag, endDrag }) {
-  const [{ _isDragging }, drag] = useDrag({
+  const [{ _isDragging }, connectDragSource, connectDragPreview] = useDrag({
     item: { type: 'piece', x, y },
     canDrag: () => canDrag({ x, y }),
     end: (_, monitor) => {
@@ -55,14 +54,14 @@ function Piece({ x, y, p, canDrag, endDrag }) {
     }),
   });
 
-  // let { p, connectDragPreview } = this.props,
-  // 	img = new Image();
-  // img.src = pieceImages.get(p);
-  // connectDragPreview(img);
+  const imgRef = useRef(new Image());
+  useEffect(() => {
+    imgRef.current.src = pieceImages.get(p);
+    connectDragPreview(imgRef.current);
+  }, []);
 
-  return (
+  return connectDragSource(
     <img
-      ref={drag}
       src={pieceImages.get(p)}
       className={classNames({
         'is-dragging': _isDragging,
