@@ -6,14 +6,14 @@ export default class Rules {
 
   findJumps() {
     let { board, side } = this,
-      top = side == 1 ? 7 : 0,
+      top = side === 1 ? 7 : 0,
       out = top + side,
       bottom = top ^ 7,
       jumps = [];
 
     // loop through playable squares
-    for (let y = bottom; y != out; y += side) {
-      for (let x = bottom; x != out; x += side) {
+    for (let y = bottom; y !== out; y += side) {
+      for (let x = bottom; x !== out; x += side) {
         // see if it's our piece
         let p = board[y][x];
 
@@ -32,17 +32,17 @@ export default class Rules {
     let { board, side } = this,
       [x, y] = cur[cur.length - 1],
       p = board[y][x],
-      top = side == 1 ? 7 : 0,
-      king = p == side * 2,
+      top = side === 1 ? 7 : 0,
+      king = p === side * 2,
       found = false;
 
     // loop over directions (dx, dy) from the current square
-    for (let dy = king ? -1 : 1; dy != 3; dy += 2) {
-      for (let dx = -1; dx != 3; dx += 2) {
+    for (let dy = king ? -1 : 1; dy !== 3; dy += 2) {
+      for (let dx = -1; dx !== 3; dx += 2) {
         let mx, my, nx, ny;
 
         // calculate middle and landing coordinates
-        if (side == 1) {
+        if (side === 1) {
           mx = x + dx;
           my = y + dy;
           nx = mx + dx;
@@ -60,8 +60,8 @@ export default class Rules {
             n = board[ny][nx];
 
           // see if the middle piece is an opponent and the landing is open
-          if (n == 0 && side * m < 0) {
-            let crowned = !king && ny == top;
+          if (n === 0 && side * m < 0) {
+            let crowned = !king && ny === top;
             found = true;
 
             // keep track of the coordinates, and move the piece
@@ -96,8 +96,8 @@ export default class Rules {
       [x, y] = jump[0],
       [fx, fy] = jump[len - 1],
       p = board[y][x],
-      top = side == 1 ? 7 : 0,
-      crowned = p == side && fy == top,
+      top = side === 1 ? 7 : 0,
+      crowned = p === side && fy === top,
       cap = new Array(len);
 
     // remove the initial piece
@@ -136,26 +136,26 @@ export default class Rules {
 
   findMoves() {
     let { board, side } = this,
-      top = side == 1 ? 7 : 0,
+      top = side === 1 ? 7 : 0,
       out = top + side,
       bottom = top ^ 7,
       moves = [];
 
     // loop through playable squares
-    for (let y = bottom; y != out; y += side) {
-      for (let x = bottom; x != out; x += side) {
+    for (let y = bottom; y !== out; y += side) {
+      for (let x = bottom; x !== out; x += side) {
         let p = board[y][x],
-          king = p == side * 2;
+          king = p === side * 2;
 
         // see if it's our piece
         if (side * p > 0) {
           // loop over directions (dx, dy) from the current square
-          for (let dy = king ? -1 : 1; dy != 3; dy += 2) {
-            for (let dx = -1; dx != 3; dx += 2) {
+          for (let dy = king ? -1 : 1; dy !== 3; dy += 2) {
+            for (let dx = -1; dx !== 3; dx += 2) {
               let nx, ny;
 
               // calculate landing coordinates
-              if (side == 1) {
+              if (side === 1) {
                 nx = x + dx;
                 ny = y + dy;
               } else {
@@ -165,10 +165,10 @@ export default class Rules {
 
               // see if move is on the board
               if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
-                let crowned = !king && ny == top;
+                let crowned = !king && ny === top;
 
                 // see if the landing is open
-                if (board[ny][nx] == 0) {
+                if (board[ny][nx] === 0) {
                   // keep track of the coordinates, and move the piece
                   board[y][x] = 0;
                   board[ny][nx] = crowned ? p * 2 : p;
@@ -193,8 +193,8 @@ export default class Rules {
     let { board, side } = this,
       [[x, y], [nx, ny]] = move,
       p = board[y][x],
-      top = side == 1 ? 7 : 0,
-      crowned = p == side && ny == top;
+      top = side === 1 ? 7 : 0,
+      crowned = p === side && ny === top;
 
     // perform the jump
     board[y][x] = 0;

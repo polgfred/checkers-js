@@ -15,8 +15,8 @@ export default function AIPlayer({ board, side, moveComplete }) {
     const [x, y] = move[0];
     const [fx, fy] = move[len - 1];
     const p = board[y][x];
-    const top = side == 1 ? 7 : 0;
-    const crowned = p == side && fy == top;
+    const top = side === 1 ? 7 : 0;
+    const crowned = p === side && fy === top;
 
     // remove the initial piece
     board[y][x] = 0;

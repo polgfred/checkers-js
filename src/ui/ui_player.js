@@ -44,20 +44,20 @@ export default function UIPlayer({ board: _board, side: _side, moveComplete }) {
 
         if (next2) {
           const p = board[y][x];
-          const top = side == 1 ? 7 : 0;
-          const crowned = p == side && ny == top;
+          const top = side === 1 ? 7 : 0;
+          const crowned = p === side && ny === top;
 
           // move the piece
           board[y][x] = 0;
           board[ny][nx] = crowned ? p * 2 : p;
 
           // record the current leg
-          if (current.length == 0) {
+          if (current.length === 0) {
             current.push([x, y]);
           }
 
           // it's a jump, so remove the jumped piece too
-          if (Math.abs(nx - x) == 2) {
+          if (Math.abs(nx - x) === 2) {
             const mx = (x + nx) >> 1;
             const my = (y + ny) >> 1;
 
@@ -67,7 +67,7 @@ export default function UIPlayer({ board: _board, side: _side, moveComplete }) {
             current.push([nx, ny]);
           }
 
-          if (Object.keys(next2).length == 0) {
+          if (Object.keys(next2).length === 0) {
             // move is done, switch sides
             moveComplete(board, current);
           } else {

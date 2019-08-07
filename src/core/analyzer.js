@@ -14,14 +14,14 @@ export default class Analyzer extends Rules {
 
   evaluate() {
     // delegate to the current player's evaluator
-    let playerEval = this.side == 1 ? this.redEval : this.whiteEval;
+    let playerEval = this.side === 1 ? this.redEval : this.whiteEval;
 
     return playerEval.evaluate(this.board);
   }
 
   run() {
     // keep track of the current player's evaluator when switching sides
-    let player = this.side == 1 ? this.redEval : this.whiteEval;
+    let player = this.side === 1 ? this.redEval : this.whiteEval;
 
     // start at the top level
     return this.loop(this.level, player);
@@ -49,8 +49,8 @@ export default class Analyzer extends Rules {
 
         // keep track of the best move from this position
         if (
-          (side == +1 && current > bestScore) ||
-          (side == -1 && current < bestScore)
+          (side === +1 && current > bestScore) ||
+          (side === -1 && current < bestScore)
         ) {
           bestPlay = jump;
           bestScore = current;
@@ -79,8 +79,8 @@ export default class Analyzer extends Rules {
 
           // keep track of the best move from this position
           if (
-            (side == +1 && current > bestScore) ||
-            (side == -1 && current < bestScore)
+            (side === +1 && current > bestScore) ||
+            (side === -1 && current < bestScore)
           ) {
             bestPlay = move;
             bestScore = current;

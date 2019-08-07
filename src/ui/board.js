@@ -83,10 +83,10 @@ export default function Board({ board, canDrag, canDrop, endDrag }) {
               <tr key={y}>
                 {COORDS.map(x => {
                   const p = board[y][x];
-                  return (x + y) % 2 == 0 ? (
+                  return (x + y) % 2 === 0 ? (
                     <Square key={x} x={x} y={y} p={p} canDrop={canDrop}>
                       <span>{coordsToNumber(x, y)}</span>
-                      {p != 0 && (
+                      {p !== 0 && (
                         <Piece
                           x={x}
                           y={y}

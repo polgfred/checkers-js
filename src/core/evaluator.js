@@ -26,7 +26,7 @@ export default class Evaluator {
       for (let x = 0; x < 8; ++x) {
         let score = scores[y][x];
 
-        if (score != 0) {
+        if (score !== 0) {
           rules[y][x] = rules[y][x] || [];
           rules[y][x].push([formation, score]);
         }
@@ -61,11 +61,11 @@ export default class Evaluator {
               // see if the formation matches for this square
               if (
                 !(
-                  (v == 0 && p == 0) ||
-                  ((v == +1 || v == +3) && p == +1) ||
-                  ((v == +2 || v == +3) && p == +2) ||
-                  ((v == -1 || v == -3) && p == -1) ||
-                  ((v == -2 || v == -3) && p == -2)
+                  (v === 0 && p === 0) ||
+                  ((v === +1 || v === +3) && p === +1) ||
+                  ((v === +2 || v === +3) && p === +2) ||
+                  ((v === -1 || v === -3) && p === -1) ||
+                  ((v === -2 || v === -3) && p === -2)
                 )
               ) {
                 // bail out and flag as failed
@@ -86,11 +86,11 @@ export default class Evaluator {
               // see if the pattern matches for this square
               if (
                 !(
-                  (v == 0 && p == 0) ||
-                  ((v == +1 || v == +3) && p == -1) ||
-                  ((v == +2 || v == +3) && p == -2) ||
-                  ((v == -1 || v == -3) && p == +1) ||
-                  ((v == -2 || v == -3) && p == +2)
+                  (v === 0 && p === 0) ||
+                  ((v === +1 || v === +3) && p === -1) ||
+                  ((v === +2 || v === +3) && p === -2) ||
+                  ((v === -1 || v === -3) && p === +1) ||
+                  ((v === -2 || v === -3) && p === +2)
                 )
               ) {
                 // bail out and flag as failed
