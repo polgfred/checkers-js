@@ -19,7 +19,7 @@ export function copyBoard(board) {
 
 // make a new board from the passed in array data
 export function newBoardFromData(data) {
-  let board = as2DArray(new ArrayBuffer(64));
+  const board = as2DArray(new ArrayBuffer(64));
   for (let i = 0; i < 8; ++i) {
     board[i].set(data[i]);
   }
@@ -46,11 +46,11 @@ export function coordsToNumber(x, y) {
 
 export function moveToString(move) {
   if (move) {
-    let [x, y] = move[0],
-      str = coordsToNumber(x, y);
+    const [x, y] = move[0];
+    let str = coordsToNumber(x, y);
 
     for (let i = 1; i < move.length; ++i) {
-      let [nx, ny] = move[i];
+      const [nx, ny] = move[i];
 
       str += move[i].length > 2 ? ' x ' : ' - ';
       str += coordsToNumber(nx, ny);

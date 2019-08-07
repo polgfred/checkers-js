@@ -19,12 +19,12 @@ export default class Evaluator {
     //    - -3: any piece on my opponent's side
     // `scores` is an 8x8 array of values representing the bonus (or penalty)
     //    awarded when the formation's origin matches the given position
-    let rules = this.rules;
+    const rules = this.rules;
 
     // push on the pattern and score for each non-zero slot
     for (let y = 0; y < 8; ++y) {
       for (let x = 0; x < 8; ++x) {
-        let score = scores[y][x];
+        const score = scores[y][x];
 
         if (score !== 0) {
           rules[y][x] = rules[y][x] || [];
@@ -40,23 +40,23 @@ export default class Evaluator {
     //  - for each formation, see if it applies to red (+) from the top of
     //      the board, or white (-) from the bottom, and adjust the total
     //      score accordingly
-    let { rules } = this,
-      total = 0;
+    const { rules } = this;
+    let total = 0;
 
     for (let y = 0; y < 8; ++y) {
       for (let x = 0; x < 8; ++x) {
-        let r = rules[y][x];
+        const r = rules[y][x];
 
         if (r) {
           for (let j = 0; j < r.length; ++j) {
-            let [formation, score] = r[j],
-              match;
+            const [formation, score] = r[j];
+            let match;
 
             // try the pattern as red
             match = true;
             for (let k = 0; k < formation.length; ++k) {
-              let [dx, dy, v] = formation[k],
-                p = board[y + dy][x + dx];
+              const [dx, dy, v] = formation[k];
+              const p = board[y + dy][x + dx];
 
               // see if the formation matches for this square
               if (
@@ -80,8 +80,8 @@ export default class Evaluator {
             // try the pattern as white
             match = true;
             for (let k = 0; k < formation.length; ++k) {
-              let [dx, dy, v] = formation[k],
-                p = board[(y ^ 7) - dy][(x ^ 7) - dx];
+              const [dx, dy, v] = formation[k];
+              const p = board[(y ^ 7) - dy][(x ^ 7) - dx];
 
               // see if the pattern matches for this square
               if (

@@ -14,31 +14,31 @@ export default class Analyzer extends Rules {
 
   evaluate() {
     // delegate to the current player's evaluator
-    let playerEval = this.side === 1 ? this.redEval : this.whiteEval;
+    const playerEval = this.side === 1 ? this.redEval : this.whiteEval;
 
     return playerEval.evaluate(this.board);
   }
 
   run() {
     // keep track of the current player's evaluator when switching sides
-    let player = this.side === 1 ? this.redEval : this.whiteEval;
+    const player = this.side === 1 ? this.redEval : this.whiteEval;
 
     // start at the top level
     return this.loop(this.level, player);
   }
 
   loop(level, player) {
-    let { board, side } = this,
-      bestScore = -side * Infinity,
-      bestPlay,
-      current;
+    const { board, side } = this;
+    let bestScore = -side * Infinity;
+    let bestPlay;
+    let current;
 
     // always try to find counter-jumps from this position
-    let jumps = this.findJumps();
+    const jumps = this.findJumps();
 
     if (jumps.length) {
       for (let i = 0; i < jumps.length; ++i) {
-        let jump = jumps[i];
+        const jump = jumps[i];
 
         this.withJump(jump, () => {
           // switch sides and descend a level
@@ -65,10 +65,10 @@ export default class Analyzer extends Rules {
         bestScore = current;
       } else {
         // find counter-moves from this position
-        let moves = this.findMoves();
+        const moves = this.findMoves();
 
         for (let i = 0; i < moves.length; ++i) {
-          let move = moves[i];
+          const move = moves[i];
 
           this.withMove(move, () => {
             // switch sides and descend a level
