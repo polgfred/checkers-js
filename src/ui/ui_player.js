@@ -77,7 +77,7 @@ export default function UIPlayer({ board: _board, side: _side, moveComplete }) {
         }
       }
     },
-    [plays, current]
+    [board, side, plays, current, moveComplete]
   );
 
   return (

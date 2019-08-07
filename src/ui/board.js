@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import classNames from 'classnames';
@@ -54,11 +54,11 @@ function Piece({ x, y, p, canDrag, endDrag }) {
     }),
   });
 
-  const imgRef = useRef(new Image());
   useEffect(() => {
-    imgRef.current.src = pieceImages.get(p);
-    connectDragPreview(imgRef.current);
-  }, []);
+    const img = new Image();
+    img.src = pieceImages.get(p);
+    connectDragPreview(img);
+  }, [p, connectDragPreview]);
 
   return connectDragSource(
     <img

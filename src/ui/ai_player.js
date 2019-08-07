@@ -43,7 +43,7 @@ export default function AIPlayer({ board, side, moveComplete }) {
     return () => {
       worker.removeEventListener('message', onComplete, false);
     };
-  }, [onComplete]);
+  }, [board, side, onComplete]);
 
   return (
     <Board
