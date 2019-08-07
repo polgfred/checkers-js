@@ -1,9 +1,8 @@
+/* eslint-disable no-console */
+
 import expect from 'expect.js';
 
-import { inspect } from 'util';
-
 import Rules from '../src/core/rules';
-import Analyzer from '../src/core/analyzer';
 import { newBoard, newBoardFromData } from '../src/core/utils';
 
 describe('Performance', () => {
