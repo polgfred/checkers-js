@@ -6,19 +6,19 @@ import Rules from '../src/core/rules';
 import Analyzer from '../src/core/analyzer';
 import { newBoard, newBoardFromData } from '../src/core/utils';
 
-describe('Performance', function() {
-  describe('moves', function() {
-    before(function() {
-      let board = newBoard();
+describe('Performance', () => {
+  describe('moves', () => {
+    let rules;
 
-      this.rules = new Rules(board, +1);
+    before(() => {
+      rules = new Rules(newBoard(), +1);
     });
 
-    it('should find the moves from this position', function() {
+    it('should find the moves from this position', () => {
       let plays;
       console.time('moves');
       for (let i = 1000; i; --i) {
-        plays = this.rules.findMoves();
+        plays = rules.findMoves();
       }
       console.timeEnd('moves');
 
@@ -34,11 +34,11 @@ describe('Performance', function() {
       ]);
     });
 
-    it('should find the jumps from this position', function() {
+    it('should find the jumps from this position', () => {
       let plays;
       console.time('jumps');
       for (let i = 1000; i; --i) {
-        plays = this.rules.findJumps();
+        plays = rules.findJumps();
       }
       console.timeEnd('jumps');
 
@@ -46,29 +46,32 @@ describe('Performance', function() {
     });
   });
 
-  describe('jumps', function() {
-    before(function() {
-      let board = newBoardFromData(
-        [
-          [0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, -1, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, -1, 0, -1, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0],
-          [0, -1, 0, -1, 0, 0, 0, 0],
-          [0, 0, 1, 0, 0, 0, 0, 0],
-        ].reverse()
-      );
+  describe('jumps', () => {
+    let rules;
 
-      this.rules = new Rules(board, +1);
+    before(() => {
+      rules = new Rules(
+        newBoardFromData(
+          [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, -1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, -1, 0, -1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, -1, 0, -1, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0],
+          ].reverse()
+        ),
+        +1
+      );
     });
 
-    it('should find the jumps from this position', function() {
+    it('should find the jumps from this position', () => {
       let plays;
       console.time('jumps');
       for (let i = 1000; i; --i) {
-        plays = this.rules.findJumps();
+        plays = rules.findJumps();
       }
       console.timeEnd('jumps');
 

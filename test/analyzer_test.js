@@ -1,77 +1,80 @@
 import expect from 'expect.js';
 
-import { inspect } from 'util';
-
 import Analyzer from '../src/core/analyzer';
 import { newBoard, newBoardFromData } from '../src/core/utils';
 
-describe('Analyzer', function() {
-  describe('with the default position', function() {
-    before(function() {
-      let board = newBoard();
+describe('Analyzer', () => {
+  describe('with the default position', () => {
+    let analyzer;
 
-      this.analyzer = new Analyzer(board, +1);
+    before(() => {
+      analyzer = new Analyzer(newBoard(), +1);
     });
 
-    it('should initialize the player', function() {
-      expect(this.analyzer.board[0][0]).to.be(+1);
+    it('should initialize the player', () => {
+      expect(analyzer.board[0][0]).to.be(+1);
     });
 
-    it('should initialize the side', function() {
-      expect(this.analyzer.side).to.be(+1);
+    it('should initialize the side', () => {
+      expect(analyzer.side).to.be(+1);
     });
 
-    it('should initialize the level', function() {
-      expect(this.analyzer.level).to.be(8);
+    it('should initialize the level', () => {
+      expect(analyzer.level).to.be(8);
     });
 
-    it('should score the initial position', function() {
+    it('should score the initial position', () => {
       // both sides have the same score
-      expect(this.analyzer.evaluate()).to.be(0);
+      expect(analyzer.evaluate()).to.be(0);
     });
   });
 
-  describe('with a contrived multi-jump position', function() {
-    before(function() {
-      let board = newBoardFromData(
-        [
-          [0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, -1, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, -1, 0, -1, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0],
-          [0, -1, 0, -1, 0, 0, 0, 0],
-          [0, 0, 1, 0, 0, 0, 0, 0],
-        ].reverse()
+  describe('with a contrived multi-jump position', () => {
+    let analyzer;
+
+    before(() => {
+      analyzer = new Analyzer(
+        newBoardFromData(
+          [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, -1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, -1, 0, -1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, -1, 0, -1, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0],
+          ].reverse()
+        ),
+        +1
       );
-
-      this.analyzer = new Analyzer(board, +1);
     });
 
-    it('should initialize the player', function() {
-      expect(this.analyzer.board[0][0]).to.be(0);
+    it('should initialize the player', () => {
+      expect(analyzer.board[0][0]).to.be(0);
     });
 
-    it('should initialize the side', function() {
-      expect(this.analyzer.side).to.be(+1);
+    it('should initialize the side', () => {
+      expect(analyzer.side).to.be(+1);
     });
 
-    it('should initialize the level', function() {
-      expect(this.analyzer.level).to.be(8);
+    it('should initialize the level', () => {
+      expect(analyzer.level).to.be(8);
     });
 
-    it('should score the position', function() {
-      expect(this.analyzer.evaluate()).to.be.below(0);
+    it('should score the position', () => {
+      expect(analyzer.evaluate()).to.be.below(0);
     });
 
-    describe('running the analyzer', function() {
-      before(function() {
-        this.play = this.analyzer.run();
+    describe('running the analyzer', () => {
+      let play;
+
+      before(() => {
+        play = analyzer.run();
       });
 
-      it('should find the best play from this position', function() {
-        expect(this.play[0]).to.eql([
+      it('should find the best play from this position', () => {
+        expect(play[0]).to.eql([
           [2, 0],
           [4, 2, 3, 1],
           [6, 4, 5, 3],
@@ -79,8 +82,8 @@ describe('Analyzer', function() {
         ]);
       });
 
-      it('should find the best score from this position', function() {
-        expect(this.play[1]).to.be.below(0);
+      it('should find the best score from this position', () => {
+        expect(play[1]).to.be.below(0);
       });
     });
   });

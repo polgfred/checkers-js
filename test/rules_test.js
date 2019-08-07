@@ -3,24 +3,24 @@ import expect from 'expect.js';
 import Rules from '../src/core/rules';
 import { newBoard, newBoardFromData } from '../src/core/utils';
 
-describe('Rules', function() {
-  describe('moves', function() {
-    before(function() {
-      let board = newBoard();
+describe('Rules', () => {
+  describe('moves', () => {
+    let rules;
 
-      this.rules = new Rules(board, +1);
+    before(() => {
+      rules = new Rules(newBoard(), +1);
     });
 
-    it('should initialize the board', function() {
-      expect(this.rules.board[0][0]).to.be(+1);
+    it('should initialize the board', () => {
+      expect(rules.board[0][0]).to.be(+1);
     });
 
-    it('should initialize the side', function() {
-      expect(this.rules.side).to.be(+1);
+    it('should initialize the side', () => {
+      expect(rules.side).to.be(+1);
     });
 
-    it('should find the moves from this position', function() {
-      let plays = this.rules.findMoves();
+    it('should find the moves from this position', () => {
+      const plays = rules.findMoves();
 
       expect(plays.length).to.be(7);
       expect(plays).to.eql([
@@ -34,41 +34,44 @@ describe('Rules', function() {
       ]);
     });
 
-    it('should find the jumps from this position', function() {
-      let plays = this.rules.findJumps();
+    it('should find the jumps from this position', () => {
+      const plays = rules.findJumps();
 
       expect(plays.length).to.be(0);
     });
   });
 
-  describe('jumps', function() {
-    before(function() {
-      let board = newBoardFromData(
-        [
-          [0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, -1, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, -1, 0, -1, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0],
-          [0, -1, 0, -1, 0, 0, 0, 0],
-          [0, 0, 1, 0, 0, 0, 0, 0],
-        ].reverse()
+  describe('jumps', () => {
+    let rules;
+
+    before(() => {
+      rules = new Rules(
+        newBoardFromData(
+          [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, -1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, -1, 0, -1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, -1, 0, -1, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0],
+          ].reverse()
+        ),
+        +1
       );
-
-      this.rules = new Rules(board, +1);
     });
 
-    it('should initialize the board', function() {
-      expect(this.rules.board[0][0]).to.be(0);
+    it('should initialize the board', () => {
+      expect(rules.board[0][0]).to.be(0);
     });
 
-    it('should initialize the side', function() {
-      expect(this.rules.side).to.be(+1);
+    it('should initialize the side', () => {
+      expect(rules.side).to.be(+1);
     });
 
-    it('should find the jumps from this position', function() {
-      let plays = this.rules.findJumps();
+    it('should find the jumps from this position', () => {
+      const plays = rules.findJumps();
 
       expect(plays.length).to.be(3);
       expect(plays).to.eql([
@@ -78,8 +81,8 @@ describe('Rules', function() {
       ]);
     });
 
-    it('should build a jump tree from this position', function() {
-      let plays = this.rules.buildTree();
+    it('should build a jump tree from this position', () => {
+      const plays = rules.buildTree();
 
       expect(plays['2,0']['4,2']['6,4']['4,6']).to.eql({});
       expect(plays['2,0']['4,2']['2,4']).to.eql({});
