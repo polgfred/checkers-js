@@ -9,17 +9,6 @@ export default function History({ moves }) {
     ref.current.scrollTop = ref.current.scrollHeight;
   }, [ref]);
 
-  const elems = [];
-
-  for (let i = 0; i < moves.length; i += 2) {
-    elems.push(
-      <tr key={i}>
-        <td>{moveToString(moves[i])}</td>
-        <td>{moveToString(moves[i + 1])}</td>
-      </tr>
-    );
-  }
-
   return (
     <div ref={ref} className="history-container">
       <table className="history">
@@ -29,7 +18,17 @@ export default function History({ moves }) {
             <th>White</th>
           </tr>
         </thead>
-        <tbody>{elems}</tbody>
+        <tbody>
+          {Array(Math.ceil(moves.length / 2))
+            .fill()
+            .map((_, i) => (
+              <tr key={i}>
+                {moves.slice(i * 2, i * 2 + 2).map((move, j) => (
+                  <td key={j}>{moveToString(move)}</td>
+                ))}
+              </tr>
+            ))}
+        </tbody>
       </table>
     </div>
   );
