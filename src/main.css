@@ -92,6 +92,16 @@
       padding: 10px;
       text-align: center;
       width: 50%;
+
+      &.thinking {
+        padding: 0;
+
+        & img {
+          vertical-align: middle;
+          width: 20px;
+          height: 20px;
+        }
+      }
     }
 
     & thead {

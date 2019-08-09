@@ -1,4 +1,4 @@
-import React, { createRef, useLayoutEffect } from 'react';
+import React, { createRef, useCallback, useLayoutEffect } from 'react';
 
 import { moveToString } from '../core/utils';
 
@@ -8,6 +8,15 @@ export default function History({ moves }) {
   useLayoutEffect(() => {
     ref.current.scrollTop = ref.current.scrollHeight;
   }, [ref]);
+
+  // pad the row if there's only one move
+  const getRow = useCallback(i => {
+    const row = moves.slice(i * 2, i * 2 + 2);
+    if (row.length == 1) {
+      row.push(null);
+    }
+    return row;
+  }, []);
 
   return (
     <div ref={ref} className="history-container">
@@ -23,9 +32,15 @@ export default function History({ moves }) {
             .fill()
             .map((_, i) => (
               <tr key={i}>
-                {moves.slice(i * 2, i * 2 + 2).map((move, j) => (
-                  <td key={j}>{moveToString(move)}</td>
-                ))}
+                {getRow(i).map((move, j) =>
+                  move ? (
+                    <td key={j}>{moveToString(move)}</td>
+                  ) : (
+                    <td className="thinking" key={j}>
+                      <img src="src/images/thinking.svg" />
+                    </td>
+                  )
+                )}
               </tr>
             ))}
         </tbody>
