@@ -11,6 +11,8 @@
   border-radius: 2px;
   box-shadow: 3px 3px 6px #888;
   float: left;
+  font-family: sans-serif;
+  font-size: 14px;
   margin: 20px;
 }
 
@@ -102,11 +104,6 @@
     }
 
     & tbody {
-      & td {
-        font-family: monospace;
-        font-size: 14px;
-      }
-
       & tr:nth-child(odd) td {
         background-color: var(--secondary);
       }
