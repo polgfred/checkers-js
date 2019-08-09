@@ -1,8 +1,7 @@
 {
   "name": "checkers",
   "version": "1.0.0",
-  "description": "",
-  "main": "build.js",
+  "description": "Checkers in JavaScript",
   "scripts": {
     "build": "webpack",
     "start": "node --require @babel/register ./src/server",

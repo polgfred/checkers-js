@@ -1,3 +1,0 @@
-- `yarn install`
-- `yarn run build` or `yarn run watch`
-- open index.html from a local web server (web workers don't work with file:// URLs)
