@@ -27,6 +27,13 @@ module.exports = {
           'postcss-loader',
         ],
       },
+      {
+        test: /\.svg$/,
+        use: [
+          'babel-loader',
+          { loader: 'react-svg-loader', options: { jsx: true } },
+        ],
+      },
     ],
   },
 };

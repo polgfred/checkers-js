@@ -1,15 +1,20 @@
 import React, { useEffect } from 'react';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
+import { DndProvider, useDrag, useDragLayer, useDrop } from 'react-dnd';
+import HTML5Backend, { getEmptyImage } from 'react-dnd-html5-backend';
 import classNames from 'classnames';
 
 import { coordsToNumber } from '../core/utils';
 
-const pieceImages = new Map();
-pieceImages.set(+1, 'src/images/red-piece.svg');
-pieceImages.set(+2, 'src/images/red-king.svg');
-pieceImages.set(-1, 'src/images/white-piece.svg');
-pieceImages.set(-2, 'src/images/white-king.svg');
+import redPiece from '../images/red-piece.svg';
+import redKing from '../images/red-king.svg';
+import whitePiece from '../images/white-piece.svg';
+import whiteKing from '../images/white-king.svg';
+
+const pieceComponents = new Map();
+pieceComponents.set(+1, redPiece);
+pieceComponents.set(+2, redKing);
+pieceComponents.set(-1, whitePiece);
+pieceComponents.set(-2, whiteKing);
 
 function EmptySquare() {
   return <td />;
@@ -54,19 +59,59 @@ function Piece({ x, y, p, canDrag, endDrag }) {
     }),
   });
 
+  // since we're using a custom drag layer
   useEffect(() => {
-    const img = new Image();
-    img.src = pieceImages.get(p);
-    connectDragPreview(img);
-  }, [p, connectDragPreview]);
+    connectDragPreview(getEmptyImage());
+  }, [connectDragPreview]);
+
+  const PieceSvg = pieceComponents.get(p);
 
   return connectDragSource(
-    <img
-      src={pieceImages.get(p)}
+    <div
       className={classNames({
+        'piece-container': true,
         'is-dragging': _isDragging,
       })}
-    />
+    >
+      <PieceSvg />
+    </div>
+  );
+}
+
+function DragLayer({ board }) {
+  const { item, isDragging, sourceClientOffset } = useDragLayer(monitor => ({
+    item: monitor.getItem(),
+    isDragging: monitor.isDragging(),
+    sourceClientOffset: monitor.getSourceClientOffset(),
+  }));
+
+  if (!item || !isDragging || !sourceClientOffset) {
+    return null;
+  }
+
+  const { x, y } = item;
+  const PieceSvg = pieceComponents.get(board[y][x]);
+
+  return (
+    <div
+      style={{
+        pointerEvents: 'none',
+        position: 'fixed',
+        left: 0,
+        top: 0,
+        width: '100%',
+        height: '100%',
+      }}
+    >
+      <div
+        style={{
+          transform: `translate(${sourceClientOffset.x}px,${sourceClientOffset.y}px)`,
+          opacity: 0.8,
+        }}
+      >
+        <PieceSvg />
+      </div>
+    </div>
   );
 }
 
@@ -105,6 +150,7 @@ export default function Board({ board, canDrag, canDrop, endDrag }) {
           </tbody>
         </table>
       </div>
+      <DragLayer board={board} />
     </DndProvider>
   );
 }

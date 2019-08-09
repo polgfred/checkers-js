@@ -51,7 +51,7 @@
         top: 2px;
       }
 
-      & img {
+      & .piece-container {
         height: 60px;
         left: 2px;
         position: absolute;
