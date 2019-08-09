@@ -46,7 +46,7 @@ function Square({ x, y, canDrop, children }) {
 
 function Piece({ x, y, p, canDrag, endDrag }) {
   const [{ _isDragging }, connectDragSource, connectDragPreview] = useDrag({
-    item: { type: 'piece', x, y },
+    item: { type: 'piece', x, y, p },
     canDrag: () => canDrag({ x, y }),
     end: (_, monitor) => {
       const dropResult = monitor.getDropResult();
@@ -78,7 +78,7 @@ function Piece({ x, y, p, canDrag, endDrag }) {
   );
 }
 
-function DragLayer({ board }) {
+function DragLayer() {
   const { item, isDragging, sourceClientOffset } = useDragLayer(monitor => ({
     item: monitor.getItem(),
     isDragging: monitor.isDragging(),
@@ -89,8 +89,7 @@ function DragLayer({ board }) {
     return null;
   }
 
-  const { x, y } = item;
-  const PieceSvg = pieceComponents.get(board[y][x]);
+  const PieceSvg = pieceComponents.get(item.p);
 
   return (
     <div
@@ -150,7 +149,7 @@ export default function Board({ board, canDrag, canDrop, endDrag }) {
           </tbody>
         </table>
       </div>
-      <DragLayer board={board} />
+      <DragLayer />
     </DndProvider>
   );
 }
