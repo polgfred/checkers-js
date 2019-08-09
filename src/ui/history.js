@@ -12,13 +12,16 @@ export default function History({ moves }) {
   }, [ref]);
 
   // pad the row if there's only one move
-  const getRow = useCallback(i => {
-    const row = moves.slice(i * 2, i * 2 + 2);
-    if (row.length == 1) {
-      row.push(null);
-    }
-    return row;
-  }, []);
+  const getRow = useCallback(
+    i => {
+      const row = moves.slice(i * 2, i * 2 + 2);
+      if (row.length == 1) {
+        row.push(null);
+      }
+      return row;
+    },
+    [moves]
+  );
 
   return (
     <div ref={ref} className="history-container">
