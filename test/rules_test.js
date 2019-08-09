@@ -8,15 +8,15 @@ describe('Rules', () => {
     let rules;
 
     before(() => {
-      rules = new Rules(newBoard(), +1);
+      rules = new Rules(newBoard(), 1);
     });
 
     it('should initialize the board', () => {
-      expect(rules.board[0][0]).to.be(+1);
+      expect(rules.board[0][0]).to.be(1);
     });
 
     it('should initialize the side', () => {
-      expect(rules.side).to.be(+1);
+      expect(rules.side).to.be(1);
     });
 
     it('should find the moves from this position', () => {
@@ -58,7 +58,7 @@ describe('Rules', () => {
             [0, 0, 1, 0, 0, 0, 0, 0],
           ].reverse()
         ),
-        +1
+        1
       );
     });
 
@@ -67,7 +67,7 @@ describe('Rules', () => {
     });
 
     it('should initialize the side', () => {
-      expect(rules.side).to.be(+1);
+      expect(rules.side).to.be(1);
     });
 
     it('should find the jumps from this position', () => {

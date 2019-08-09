@@ -17,7 +17,7 @@ export default class Rules {
         // see if it's our piece
         const p = board[y][x];
 
-        if (side * p > 0) {
+        if (side === 1 ? p > 0 : p < 0) {
           // checking for jumps is inherently recursive - as long as you find them,
           // you have to keep looking, and only termimal positions are valid
           this.nextJump([[x, y]], jumps);
@@ -33,7 +33,7 @@ export default class Rules {
     const [x, y] = cur[cur.length - 1];
     const p = board[y][x];
     const top = side === 1 ? 7 : 0;
-    const king = p === side * 2;
+    const king = p === side << 1;
     let found = false;
 
     // loop over directions (dx, dy) from the current square
@@ -60,14 +60,14 @@ export default class Rules {
           const n = board[ny][nx];
 
           // see if the middle piece is an opponent and the landing is open
-          if (n === 0 && side * m < 0) {
+          if (n === 0 && (side === 1 ? m < 0 : m > 0)) {
             const crowned = !king && ny === top;
             found = true;
 
             // keep track of the coordinates, and move the piece
             board[y][x] = 0;
             board[my][mx] = 0;
-            board[ny][nx] = crowned ? p * 2 : p;
+            board[ny][nx] = crowned ? p << 1 : p;
 
             // if we're crowned, or there are no further jumps from here,
             // we've reached a terminal position
@@ -114,7 +114,7 @@ export default class Rules {
     }
 
     // final piece
-    board[fy][fx] = crowned ? p * 2 : p;
+    board[fy][fx] = crowned ? p << 1 : p;
 
     // do the action
     action();
@@ -145,10 +145,10 @@ export default class Rules {
     for (let y = bottom; y !== out; y += side) {
       for (let x = bottom; x !== out; x += side) {
         const p = board[y][x];
-        const king = p === side * 2;
+        const king = p === side << 1;
 
         // see if it's our piece
-        if (side * p > 0) {
+        if (side === 1 ? p > 0 : p < 0) {
           // loop over directions (dx, dy) from the current square
           for (let dy = king ? -1 : 1; dy !== 3; dy += 2) {
             for (let dx = -1; dx !== 3; dx += 2) {
@@ -171,7 +171,7 @@ export default class Rules {
                 if (board[ny][nx] === 0) {
                   // keep track of the coordinates, and move the piece
                   board[y][x] = 0;
-                  board[ny][nx] = crowned ? p * 2 : p;
+                  board[ny][nx] = crowned ? p << 1 : p;
 
                   moves.push([[x, y], [nx, ny]]);
 
@@ -198,7 +198,7 @@ export default class Rules {
 
     // perform the jump
     board[y][x] = 0;
-    board[ny][nx] = crowned ? p * 2 : p;
+    board[ny][nx] = crowned ? p << 1 : p;
 
     // do the action
     action();

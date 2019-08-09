@@ -29,7 +29,7 @@ export default class Analyzer extends Rules {
 
   loop(level, player) {
     const { board, side } = this;
-    let bestScore = -side * Infinity;
+    let bestScore = side / -0;
     let bestPlay;
     let current;
 
@@ -49,7 +49,7 @@ export default class Analyzer extends Rules {
 
         // keep track of the best move from this position
         if (
-          (side === +1 && current > bestScore) ||
+          (side === 1 && current > bestScore) ||
           (side === -1 && current < bestScore)
         ) {
           bestPlay = jump;
@@ -79,7 +79,7 @@ export default class Analyzer extends Rules {
 
           // keep track of the best move from this position
           if (
-            (side === +1 && current > bestScore) ||
+            (side === 1 && current > bestScore) ||
             (side === -1 && current < bestScore)
           ) {
             bestPlay = move;

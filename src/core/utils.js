@@ -1,8 +1,8 @@
 // set up the initial board position
 const initial = as2DArray(new ArrayBuffer(64));
-initial[0][0] = initial[0][2] = initial[0][4] = initial[0][6] = +1;
-initial[1][1] = initial[1][3] = initial[1][5] = initial[1][7] = +1;
-initial[2][0] = initial[2][2] = initial[2][4] = initial[2][6] = +1;
+initial[0][0] = initial[0][2] = initial[0][4] = initial[0][6] = 1;
+initial[1][1] = initial[1][3] = initial[1][5] = initial[1][7] = 1;
+initial[2][0] = initial[2][2] = initial[2][4] = initial[2][6] = 1;
 initial[5][1] = initial[5][3] = initial[5][5] = initial[5][7] = -1;
 initial[6][0] = initial[6][2] = initial[6][4] = initial[6][6] = -1;
 initial[7][1] = initial[7][3] = initial[7][5] = initial[7][7] = -1;
@@ -41,7 +41,7 @@ export function as2DArray(buf) {
 }
 
 export function coordsToNumber(x, y) {
-  return 4 * (y + 1) - (x >> 1);
+  return ((y + 1) << 2) - (x >> 1);
 }
 
 export function moveToString(move) {

@@ -8,15 +8,15 @@ describe('Analyzer', () => {
     let analyzer;
 
     before(() => {
-      analyzer = new Analyzer(newBoard(), +1);
+      analyzer = new Analyzer(newBoard(), 1);
     });
 
     it('should initialize the player', () => {
-      expect(analyzer.board[0][0]).to.be(+1);
+      expect(analyzer.board[0][0]).to.be(1);
     });
 
     it('should initialize the side', () => {
-      expect(analyzer.side).to.be(+1);
+      expect(analyzer.side).to.be(1);
     });
 
     it('should initialize the level', () => {
@@ -46,7 +46,7 @@ describe('Analyzer', () => {
             [0, 0, 1, 0, 0, 0, 0, 0],
           ].reverse()
         ),
-        +1
+        1
       );
     });
 
@@ -55,7 +55,7 @@ describe('Analyzer', () => {
     });
 
     it('should initialize the side', () => {
-      expect(analyzer.side).to.be(+1);
+      expect(analyzer.side).to.be(1);
     });
 
     it('should initialize the level', () => {

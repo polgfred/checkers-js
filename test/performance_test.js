@@ -10,7 +10,7 @@ describe('Performance', () => {
     let rules;
 
     before(() => {
-      rules = new Rules(newBoard(), +1);
+      rules = new Rules(newBoard(), 1);
     });
 
     it('should find the moves from this position', () => {
@@ -62,7 +62,7 @@ describe('Performance', () => {
             [0, 0, 1, 0, 0, 0, 0, 0],
           ].reverse()
         ),
-        +1
+        1
       );
     });
 

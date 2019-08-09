@@ -4,7 +4,7 @@ const defaultEvaluator = new Evaluator();
 
 // basic piece values
 defaultEvaluator.addFormation(
-  [[0, 0, +1]],
+  [[0, 0, 1]],
   [
     [0, 0, 0, 0, 0, 0, 0, 0],
     [50, 0, 50, 0, 50, 0, 50, 0],
@@ -19,7 +19,7 @@ defaultEvaluator.addFormation(
 
 // basic king values
 defaultEvaluator.addFormation(
-  [[0, 0, +2]],
+  [[0, 0, 2]],
   [
     [0, 60, 0, 60, 0, 60, 0, 60],
     [60, 0, 60, 0, 60, 0, 60, 0],
@@ -34,7 +34,7 @@ defaultEvaluator.addFormation(
 
 // offensive lines
 defaultEvaluator.addFormation(
-  [[0, 0, +3], [+1, -1, +3]],
+  [[0, 0, 3], [1, -1, 3]],
   [
     [0, 12, 0, 8, 0, 0, 0, 0],
     [12, 0, 10, 0, 6, 0, 0, 0],
@@ -49,7 +49,7 @@ defaultEvaluator.addFormation(
 
 // offensive 3-lines
 defaultEvaluator.addFormation(
-  [[0, 0, +3], [+1, -1, +3], [+2, -2, +3]],
+  [[0, 0, 3], [1, -1, 3], [2, -2, 3]],
   [
     [0, 12, 0, 8, 0, 0, 0, 0],
     [12, 0, 10, 0, 6, 0, 0, 0],
@@ -64,7 +64,7 @@ defaultEvaluator.addFormation(
 
 // triangle bases
 defaultEvaluator.addFormation(
-  [[0, 0, +3], [+1, -1, +3], [-1, -1, +3]],
+  [[0, 0, 3], [1, -1, 3], [-1, -1, 3]],
   [
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -79,7 +79,7 @@ defaultEvaluator.addFormation(
 
 // defensive lines
 defaultEvaluator.addFormation(
-  [[0, 0, +3], [-1, -1, +3]],
+  [[0, 0, 3], [-1, -1, 3]],
   [
     [0, 0, 0, 0, 0, 10, 0, 16],
     [0, 0, 0, 0, 8, 0, 12, 0],
@@ -94,7 +94,7 @@ defaultEvaluator.addFormation(
 
 // defensive 3-lines
 defaultEvaluator.addFormation(
-  [[0, 0, +3], [-1, -1, +3], [-2, -2, +3]],
+  [[0, 0, 3], [-1, -1, 3], [-2, -2, 3]],
   [
     [0, 0, 0, 0, 0, 10, 0, 16],
     [0, 0, 0, 0, 8, 0, 12, 0],
