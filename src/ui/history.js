@@ -2,6 +2,8 @@ import React, { createRef, useCallback, useLayoutEffect } from 'react';
 
 import { moveToString } from '../core/utils';
 
+import ThinkingSpinner from '../images/thinking.svg';
+
 export default function History({ moves }) {
   const ref = createRef();
 
@@ -37,7 +39,9 @@ export default function History({ moves }) {
                     <td key={j}>{moveToString(move)}</td>
                   ) : (
                     <td className="thinking" key={j}>
-                      <img src="src/images/thinking.svg" />
+                      <span>
+                        <ThinkingSpinner />
+                      </span>
                     </td>
                   )
                 )}

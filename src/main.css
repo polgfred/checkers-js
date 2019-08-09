@@ -96,7 +96,7 @@
       &.thinking {
         padding: 0;
 
-        & img {
+        & span {
           vertical-align: middle;
           width: 20px;
           height: 20px;
