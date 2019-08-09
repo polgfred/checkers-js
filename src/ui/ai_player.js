@@ -1,13 +1,22 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import Board from './board';
+
+import { copyBoard } from '../core/utils';
 
 // create a worker once that we'll attach to as needed
 const worker = new Worker('./worker-bundle.js');
 
 const isFalse = () => false;
 
-export default function AIPlayer({ board, side, moveComplete }) {
+export default function AIPlayer({ board: _board, side, moveComplete }) {
+  const [{ board }] = useState(() => {
+    // copy the game board to use locally
+    return {
+      board: copyBoard(_board),
+    };
+  });
+
   const onComplete = useCallback(
     ({ data: { move } }) => {
       const len = move.length;

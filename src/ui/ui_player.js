@@ -1,14 +1,18 @@
 import React, { useCallback, useState } from 'react';
 
 import Rules from '../core/rules';
+import { copyBoard } from '../core/utils';
 import Board from './board';
 
-export default function UIPlayer({ board: _board, side: _side, moveComplete }) {
-  const [{ board, side, plays, current }, setState] = useState({
-    board: _board,
-    side: _side,
-    plays: new Rules(_board, _side).buildTree(),
-    current: [],
+export default function UIPlayer({ board: _board, side, moveComplete }) {
+  const [{ board, plays, current }, setState] = useState(() => {
+    // copy the game board to use locally
+    const board = copyBoard(_board);
+    return {
+      board,
+      plays: new Rules(board, side).buildTree(),
+      current: [],
+    };
   });
 
   const canDrag = useCallback(
