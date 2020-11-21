@@ -15,7 +15,6 @@ app.use(express.static('.'));
 const compiler = webpack(webpack_config);
 app.use(
   WebpackDevMiddleware(compiler, {
-    noInfo: true,
     publicPath: webpack_config.output.publicPath,
   })
 );
