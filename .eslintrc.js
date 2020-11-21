@@ -13,12 +13,11 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    'plugin:flowtype/recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
     'prettier',
   ],
-  plugins: ['import', 'react', 'react-hooks', 'flowtype'],
+  plugins: ['import', 'react', 'react-hooks'],
   settings: {
     'import/resolver': {
       node: {

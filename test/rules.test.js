@@ -1,28 +1,27 @@
-/* eslint-disable no-console */
-
-import expect from 'expect.js';
-
 import Rules from '../src/core/rules';
 import { newBoard, newBoardFromData } from '../src/core/utils';
 
-describe('Performance', () => {
+describe('Rules', () => {
   describe('moves', () => {
     let rules;
 
-    before(() => {
+    beforeEach(() => {
       rules = new Rules(newBoard(), 1);
     });
 
-    it('should find the moves from this position', () => {
-      let plays;
-      console.time('moves');
-      for (let i = 1000; i; --i) {
-        plays = rules.findMoves();
-      }
-      console.timeEnd('moves');
+    it('should initialize the board', () => {
+      expect(rules.board[0][0]).toBe(1);
+    });
 
-      expect(plays.length).to.be(7);
-      expect(plays).to.eql([
+    it('should initialize the side', () => {
+      expect(rules.side).toBe(1);
+    });
+
+    it('should find the moves from this position', () => {
+      const plays = rules.findMoves();
+
+      expect(plays.length).toBe(7);
+      expect(plays).toEqual([
         [[0, 2], [1, 3]],
         [[2, 2], [1, 3]],
         [[2, 2], [3, 3]],
@@ -34,21 +33,16 @@ describe('Performance', () => {
     });
 
     it('should find the jumps from this position', () => {
-      let plays;
-      console.time('jumps');
-      for (let i = 1000; i; --i) {
-        plays = rules.findJumps();
-      }
-      console.timeEnd('jumps');
+      const plays = rules.findJumps();
 
-      expect(plays.length).to.be(0);
+      expect(plays.length).toBe(0);
     });
   });
 
   describe('jumps', () => {
     let rules;
 
-    before(() => {
+    beforeEach(() => {
       rules = new Rules(
         newBoardFromData(
           [
@@ -66,20 +60,31 @@ describe('Performance', () => {
       );
     });
 
-    it('should find the jumps from this position', () => {
-      let plays;
-      console.time('jumps');
-      for (let i = 1000; i; --i) {
-        plays = rules.findJumps();
-      }
-      console.timeEnd('jumps');
+    it('should initialize the board', () => {
+      expect(rules.board[0][0]).toBe(0);
+    });
 
-      expect(plays.length).to.be(3);
-      expect(plays).to.eql([
+    it('should initialize the side', () => {
+      expect(rules.side).toBe(1);
+    });
+
+    it('should find the jumps from this position', () => {
+      const plays = rules.findJumps();
+
+      expect(plays.length).toBe(3);
+      expect(plays).toEqual([
         [[2, 0], [0, 2, 1, 1]],
         [[2, 0], [4, 2, 3, 1], [2, 4, 3, 3]],
         [[2, 0], [4, 2, 3, 1], [6, 4, 5, 3], [4, 6, 5, 5]],
       ]);
+    });
+
+    it('should build a jump tree from this position', () => {
+      const plays = rules.buildTree();
+
+      expect(plays['2,0']['4,2']['6,4']['4,6']).toEqual({});
+      expect(plays['2,0']['4,2']['2,4']).toEqual({});
+      expect(plays['2,0']['0,2']).toEqual({});
     });
   });
 });
