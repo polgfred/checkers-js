@@ -2,7 +2,6 @@ var path = require('path');
 
 module.exports = {
   mode: 'development',
-  devtool: 'source-map',
   entry: {
     main: './src/main.js',
     worker: './src/worker.js',

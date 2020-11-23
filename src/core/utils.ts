@@ -1,5 +1,7 @@
+import { Board } from './rules';
+
 // set up the initial board position
-const initial = as2DArray(new ArrayBuffer(64));
+const initial: Board = as2DArray(new ArrayBuffer(64));
 initial[0][0] = initial[0][2] = initial[0][4] = initial[0][6] = 1;
 initial[1][1] = initial[1][3] = initial[1][5] = initial[1][7] = 1;
 initial[2][0] = initial[2][2] = initial[2][4] = initial[2][6] = 1;
@@ -8,17 +10,17 @@ initial[6][0] = initial[6][2] = initial[6][4] = initial[6][6] = -1;
 initial[7][1] = initial[7][3] = initial[7][5] = initial[7][7] = -1;
 
 // make a copy of the initial board position
-export function newBoard() {
+export function newBoard(): Board {
   return copyBoard(initial);
 }
 
 // only use this on boards that are backed by a shared buffer!
-export function copyBoard(board) {
-  return as2DArray(board[0].buffer.slice());
+export function copyBoard(board: Board): Board {
+  return as2DArray(board[0].buffer.slice(0));
 }
 
 // make a new board from the passed in array data
-export function newBoardFromData(data) {
+export function newBoardFromData(data: number[][]): Board {
   const board = as2DArray(new ArrayBuffer(64));
   for (let i = 0; i < 8; ++i) {
     board[i].set(data[i]);
@@ -27,7 +29,7 @@ export function newBoardFromData(data) {
 }
 
 // make a 2d array wrapper around a 64-byte buffer
-export function as2DArray(buf) {
+export function as2DArray(buf: ArrayBuffer): Board {
   return [
     new Int8Array(buf, 0, 8),
     new Int8Array(buf, 8, 8),
@@ -40,14 +42,14 @@ export function as2DArray(buf) {
   ];
 }
 
-export function coordsToNumber(x, y) {
+export function coordsToNumber(x: number, y: number): number {
   return ((y + 1) << 2) - (x >> 1);
 }
 
-export function moveToString(move) {
+export function moveToString(move: number[][]): string {
   if (move) {
     const [x, y] = move[0];
-    let str = coordsToNumber(x, y);
+    let str = String(coordsToNumber(x, y));
 
     for (let i = 1; i < move.length; ++i) {
       const [nx, ny] = move[i];

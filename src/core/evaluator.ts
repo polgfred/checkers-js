@@ -1,12 +1,21 @@
-export default class Evaluator {
-  constructor() {
-    // rules are represented as a 2D array of [pattern, score] pairs, where:
-    //  - `pattern` is an array of [dx, dy, value] pairs, and
-    //  - `score` is what will be awarded if the pattern matches
-    this.rules = [[], [], [], [], [], [], [], []];
-  }
+import { Board } from './rules';
 
-  addFormation(formation, scores) {
+export type Formation = [number, number, number][];
+export type FormationScores = [Formation, number][][][];
+
+export type Evaluator = {
+  scores: () => FormationScores,
+  addFormation: (formation: Formation, scores: number[][]) => void,
+  evaluate: (board: Board) => number,
+};
+
+export function makeEvaluator(): Evaluator {
+  // scores are represented as a 2D array of [pattern, score] pairs, where:
+  //  - `pattern` is an array of [dx, dy, value] pairs, and
+  //  - `score` is what will be awarded if the pattern matches
+  const scores: FormationScores = [[], [], [], [], [], [], [], []];
+
+  function addFormation(formation: Formation, values: number[][]) {
     // `formation` takes the form [[dx, dy, v], [dx, dy, v], ...], where:
     //  - (dx, dy) is the offset from the origin of the formation, and
     //  - v is the value to match against:
@@ -17,40 +26,38 @@ export default class Evaluator {
     //    - -1: a regular piece on my opponent's side
     //    - -2: a king on my opponent's side
     //    - -3: any piece on my opponent's side
-    // `scores` is an 8x8 array of values representing the bonus (or penalty)
+    // `values` is an 8x8 array of values representing the bonus (or penalty)
     //    awarded when the formation's origin matches the given position
-    const rules = this.rules;
 
     // push on the pattern and score for each non-zero slot
     for (let y = 0; y < 8; ++y) {
       for (let x = 0; x < 8; ++x) {
-        const score = scores[y][x];
+        const value = values[y][x];
 
-        if (score !== 0) {
-          rules[y][x] = rules[y][x] || [];
-          rules[y][x].push([formation, score]);
+        if (value !== 0) {
+          scores[y][x] = scores[y][x] || [];
+          scores[y][x].push([formation, value]);
         }
       }
     }
   }
 
-  evaluate(board) {
+  function evaluate(board: Board) {
     // match the board and side against the formations and return a score:
     //  - for each square on the board, get the set of formations on it
     //  - for each formation, see if it applies to red (+) from the top of
     //      the board, or white (-) from the bottom, and adjust the total
     //      score accordingly
-    const { rules } = this;
     let total = 0;
 
     for (let y = 0; y < 8; ++y) {
       for (let x = 0; x < 8; ++x) {
-        const r = rules[y][x];
+        const r = scores[y][x];
 
         if (r) {
           for (let j = 0; j < r.length; ++j) {
             const [formation, score] = r[j];
-            let match;
+            let match: boolean;
 
             // try the pattern as red
             match = true;
@@ -108,4 +115,10 @@ export default class Evaluator {
 
     return total;
   }
+
+  return {
+    scores: () => scores,
+    addFormation,
+    evaluate,
+  };
 }

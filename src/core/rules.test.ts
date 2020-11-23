@@ -1,20 +1,20 @@
-import Rules from '../src/core/rules';
-import { newBoard, newBoardFromData } from '../src/core/utils';
+import { Rules, makeRules } from './rules';
+import { newBoard, newBoardFromData } from './utils';
 
 describe('Rules', () => {
   describe('moves', () => {
-    let rules;
+    let rules: Rules;
 
     beforeEach(() => {
-      rules = new Rules(newBoard(), 1);
+      rules = makeRules(newBoard(), 1);
     });
 
     it('should initialize the board', () => {
-      expect(rules.board[0][0]).toBe(1);
+      expect(rules.board()[0][0]).toBe(1);
     });
 
     it('should initialize the side', () => {
-      expect(rules.side).toBe(1);
+      expect(rules.side()).toBe(1);
     });
 
     it('should find the moves from this position', () => {
@@ -22,13 +22,34 @@ describe('Rules', () => {
 
       expect(plays.length).toBe(7);
       expect(plays).toEqual([
-        [[0, 2], [1, 3]],
-        [[2, 2], [1, 3]],
-        [[2, 2], [3, 3]],
-        [[4, 2], [3, 3]],
-        [[4, 2], [5, 3]],
-        [[6, 2], [5, 3]],
-        [[6, 2], [7, 3]],
+        [
+          [0, 2],
+          [1, 3],
+        ],
+        [
+          [2, 2],
+          [1, 3],
+        ],
+        [
+          [2, 2],
+          [3, 3],
+        ],
+        [
+          [4, 2],
+          [3, 3],
+        ],
+        [
+          [4, 2],
+          [5, 3],
+        ],
+        [
+          [6, 2],
+          [5, 3],
+        ],
+        [
+          [6, 2],
+          [7, 3],
+        ],
       ]);
     });
 
@@ -43,7 +64,7 @@ describe('Rules', () => {
     let rules;
 
     beforeEach(() => {
-      rules = new Rules(
+      rules = makeRules(
         newBoardFromData(
           [
             [0, 0, 0, 0, 0, 0, 0, 0],
@@ -61,11 +82,11 @@ describe('Rules', () => {
     });
 
     it('should initialize the board', () => {
-      expect(rules.board[0][0]).toBe(0);
+      expect(rules.board()[0][0]).toBe(0);
     });
 
     it('should initialize the side', () => {
-      expect(rules.side).toBe(1);
+      expect(rules.side()).toBe(1);
     });
 
     it('should find the jumps from this position', () => {
@@ -73,9 +94,21 @@ describe('Rules', () => {
 
       expect(plays.length).toBe(3);
       expect(plays).toEqual([
-        [[2, 0], [0, 2, 1, 1]],
-        [[2, 0], [4, 2, 3, 1], [2, 4, 3, 3]],
-        [[2, 0], [4, 2, 3, 1], [6, 4, 5, 3], [4, 6, 5, 5]],
+        [
+          [2, 0],
+          [0, 2, 1, 1],
+        ],
+        [
+          [2, 0],
+          [4, 2, 3, 1],
+          [2, 4, 3, 3],
+        ],
+        [
+          [2, 0],
+          [4, 2, 3, 1],
+          [6, 4, 5, 3],
+          [4, 6, 5, 5],
+        ],
       ]);
     });
 

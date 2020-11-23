@@ -1,15 +1,31 @@
-export default class Rules {
-  constructor(board, side) {
-    this.board = board;
-    this.side = side;
-  }
+import { copyBoard } from './utils';
 
-  findJumps() {
-    const { board, side } = this;
+export type Board = Int8Array[];
+export type Segment = [number, number] | [number, number, number, number];
+export type Move = Segment[];
+export type Tree = { [key: string]: Tree };
+
+export type Rules = {
+  board: () => Board,
+  side: () => number,
+  findJumps: () => Move[],
+  nextJump: (cur: Move, jumps: Move[]) => boolean,
+  withJump: (jump: Move, action: () => void) => void,
+  findMoves: () => Move[],
+  withMove: (move: Move, action: () => void) => void,
+  findPlays: () => Move[],
+  buildTree: () => Tree,
+}
+
+export function makeRules(board: Board, side: number): Rules {
+  // don't mutate the caller's board
+  board = copyBoard(board);
+
+  function findJumps(): Move[] {
     const top = side === 1 ? 7 : 0;
     const out = top + side;
     const bottom = top ^ 7;
-    const jumps = [];
+    const jumps: Move[] = [];
 
     // loop through playable squares
     for (let y = bottom; y !== out; y += side) {
@@ -20,7 +36,7 @@ export default class Rules {
         if (side === 1 ? p > 0 : p < 0) {
           // checking for jumps is inherently recursive - as long as you find them,
           // you have to keep looking, and only termimal positions are valid
-          this.nextJump([[x, y]], jumps);
+          nextJump([[x, y]], jumps);
         }
       }
     }
@@ -28,8 +44,7 @@ export default class Rules {
     return jumps;
   }
 
-  nextJump(cur, jumps) {
-    const { board, side } = this;
+  function nextJump(cur: Move, jumps: Move[]) {
     const [x, y] = cur[cur.length - 1];
     const p = board[y][x];
     const top = side === 1 ? 7 : 0;
@@ -39,7 +54,10 @@ export default class Rules {
     // loop over directions (dx, dy) from the current square
     for (let dy = king ? -1 : 1; dy !== 3; dy += 2) {
       for (let dx = -1; dx !== 3; dx += 2) {
-        let mx, my, nx, ny;
+        let mx: number;
+        let my: number;
+        let nx: number;
+        let ny: number;
 
         // calculate middle and landing coordinates
         if (side === 1) {
@@ -72,7 +90,7 @@ export default class Rules {
             // if we're crowned, or there are no further jumps from here,
             // we've reached a terminal position
             cur.push([nx, ny, mx, my]);
-            if (crowned || !this.nextJump(cur, jumps)) {
+            if (crowned || !nextJump(cur, jumps)) {
               jumps.push(cur.slice());
             }
 
@@ -90,15 +108,14 @@ export default class Rules {
     return found;
   }
 
-  withJump(jump, action) {
-    const { board, side } = this;
+  function withJump(jump: Move, action: () => void) {
     const len = jump.length;
     const [x, y] = jump[0];
     const [fx, fy] = jump[len - 1];
     const p = board[y][x];
     const top = side === 1 ? 7 : 0;
     const crowned = p === side && fy === top;
-    const cap = new Array(len);
+    const cap: Segment = new Array(len) as Segment;
 
     // remove the initial piece
     cap[0] = p;
@@ -116,8 +133,15 @@ export default class Rules {
     // final piece
     board[fy][fx] = crowned ? p << 1 : p;
 
+    // switch sides
+    const origSide = side;
+    side = side === 1 ? -1 : 1;
+
     // do the action
     action();
+
+    // switch back
+    side = origSide;
 
     // remove the final piece
     board[fy][fx] = 0;
@@ -134,12 +158,11 @@ export default class Rules {
     board[y][x] = p;
   }
 
-  findMoves() {
-    const { board, side } = this;
+  function findMoves(): Move[] {
     const top = side === 1 ? 7 : 0;
     const out = top + side;
     const bottom = top ^ 7;
-    const moves = [];
+    const moves: Move[] = [];
 
     // loop through playable squares
     for (let y = bottom; y !== out; y += side) {
@@ -152,7 +175,8 @@ export default class Rules {
           // loop over directions (dx, dy) from the current square
           for (let dy = king ? -1 : 1; dy !== 3; dy += 2) {
             for (let dx = -1; dx !== 3; dx += 2) {
-              let nx, ny;
+              let nx: number;
+              let ny: number;
 
               // calculate landing coordinates
               if (side === 1) {
@@ -173,7 +197,10 @@ export default class Rules {
                   board[y][x] = 0;
                   board[ny][nx] = crowned ? p << 1 : p;
 
-                  moves.push([[x, y], [nx, ny]]);
+                  moves.push([
+                    [x, y],
+                    [nx, ny],
+                  ]);
 
                   // put things back where we found them
                   board[y][x] = p;
@@ -189,8 +216,7 @@ export default class Rules {
     return moves;
   }
 
-  withMove(move, action) {
-    const { board, side } = this;
+  function withMove(move: Move, action: () => void) {
     const [[x, y], [nx, ny]] = move;
     const p = board[y][x];
     const top = side === 1 ? 7 : 0;
@@ -200,28 +226,35 @@ export default class Rules {
     board[y][x] = 0;
     board[ny][nx] = crowned ? p << 1 : p;
 
+    // switch sides
+    const origSide = side;
+    side = side === 1 ? -1 : 1;
+
     // do the action
     action();
+
+    // switch back
+    side = origSide;
 
     // put things back where we found them
     board[ny][nx] = 0;
     board[y][x] = p;
   }
 
-  findPlays() {
-    const jumps = this.findJumps();
+  function findPlays(): Move[] {
+    const jumps = findJumps();
 
     // you have to jump if you can
     if (jumps.length) {
       return jumps;
     } else {
-      return this.findMoves();
+      return findMoves();
     }
   }
 
-  buildTree() {
-    const plays = this.findPlays();
-    const tree = {};
+  function buildTree(): Tree {
+    const plays = findPlays();
+    const tree: Tree = {};
 
     for (let i = 0; i < plays.length; ++i) {
       const play = plays[i];
@@ -238,4 +271,16 @@ export default class Rules {
 
     return tree;
   }
+
+  return {
+    board: () => board,
+    side: () => side,
+    findJumps,
+    nextJump,
+    withJump,
+    findMoves,
+    withMove,
+    findPlays,
+    buildTree,
+  };
 }

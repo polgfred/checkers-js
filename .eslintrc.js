@@ -21,7 +21,7 @@ module.exports = {
   settings: {
     'import/resolver': {
       node: {
-        extensions: ['.js', '.jsx'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
     },
     react: {
@@ -37,4 +37,13 @@ module.exports = {
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
   },
+  overrides: [
+    {
+      files: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+      env: {
+        jest: true,
+      },
+      extends: ['plugin:jest/recommended'],
+    },
+  ],
 };
