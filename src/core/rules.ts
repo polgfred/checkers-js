@@ -189,22 +189,12 @@ export function makeRules(_board: Board, side: number): Rules {
 
               // see if move is on the board
               if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
-                const crowned = !king && ny === top;
-
                 // see if the landing is open
                 if (board[ny][nx] === 0) {
-                  // keep track of the coordinates, and move the piece
-                  board[y][x] = 0;
-                  board[ny][nx] = crowned ? p << 1 : p;
-
                   moves.push([
                     [x, y],
                     [nx, ny],
                   ]);
-
-                  // put things back where we found them
-                  board[y][x] = p;
-                  board[ny][nx] = 0;
                 }
               }
             }
