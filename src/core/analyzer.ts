@@ -7,14 +7,10 @@ export function analyze(board: Board, side: number): [Move, number] {
   const level = 8;
 
   // make the rules for the current position
-  const {
-    getBoard,
-    getSide,
-    findJumps,
-    withJump,
-    findMoves,
-    withMove,
-  } = makeRules(board, side);
+  const { getBoard, getSide, findJumps, doJump, findMoves, doMove } = makeRules(
+    board,
+    side
+  );
 
   function loop(level: number, player: Evaluator): [Move, number] {
     const board = getBoard();
@@ -30,10 +26,10 @@ export function analyze(board: Board, side: number): [Move, number] {
       for (let i = 0; i < jumps.length; ++i) {
         const jump = jumps[i];
 
-        withJump(jump, () => {
-          // descend a level
-          current = loop(level - 1, player)[1];
-        });
+        // perform the jump and descend a level
+        const reverse = doJump(jump);
+        current = loop(level - 1, player)[1];
+        reverse();
 
         // keep track of the best move from this position
         if (
@@ -58,10 +54,10 @@ export function analyze(board: Board, side: number): [Move, number] {
         for (let i = 0; i < moves.length; ++i) {
           const move = moves[i];
 
-          withMove(move, () => {
-            // descend a level
-            current = loop(level - 1, player)[1];
-          });
+          // perform the jump and descend a level
+          const reverse = doMove(move);
+          current = loop(level - 1, player)[1];
+          reverse();
 
           // keep track of the best move from this position
           if (

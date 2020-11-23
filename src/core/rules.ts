@@ -11,9 +11,9 @@ export type Rules = {
   getSide: () => number;
   findJumps: () => Move[];
   nextJump: (cur: Move, jumps: Move[]) => boolean;
-  withJump: (jump: Move, action: () => void) => void;
+  doJump: (jump: Move) => () => void;
   findMoves: () => Move[];
-  withMove: (move: Move, action: () => void) => void;
+  doMove: (move: Move) => () => void;
   findPlays: () => Move[];
   buildTree: () => Tree;
 };
@@ -109,7 +109,7 @@ export function makeRules(_board: Board, side: number): Rules {
     return found;
   }
 
-  function withJump(jump: Move, action: () => void) {
+  function doJump(jump: Move): () => void {
     const len = jump.length;
     const [x, y] = jump[0];
     const [fx, fy] = jump[len - 1];
@@ -135,28 +135,27 @@ export function makeRules(_board: Board, side: number): Rules {
     board[fy][fx] = crowned ? p << 1 : p;
 
     // switch sides
-    const origSide = side;
-    side = side === 1 ? -1 : 1;
+    side = -side;
 
-    // do the action
-    action();
+    // reverse the jump
+    return () => {
+      // remove the final piece
+      board[fy][fx] = 0;
 
-    // switch back
-    side = origSide;
+      // loop over the passed in coords in reverse
+      for (let i = len - 1; i > 0; --i) {
+        const [, , mx, my] = jump[i];
 
-    // remove the final piece
-    board[fy][fx] = 0;
+        // put back the captured piece
+        board[my][mx] = cap[i];
+      }
 
-    // loop over the passed in coords in reverse
-    for (let i = len - 1; i > 0; --i) {
-      const [, , mx, my] = jump[i];
+      // put back initial piece
+      board[y][x] = p;
 
-      // put back the captured piece
-      board[my][mx] = cap[i];
-    }
-
-    // put back initial piece
-    board[y][x] = p;
+      // switch back to original side
+      side = -side;
+    };
   }
 
   function findMoves(): Move[] {
@@ -217,7 +216,7 @@ export function makeRules(_board: Board, side: number): Rules {
     return moves;
   }
 
-  function withMove(move: Move, action: () => void) {
+  function doMove(move: Move): () => void {
     const [[x, y], [nx, ny]] = move;
     const p = board[y][x];
     const top = side === 1 ? 7 : 0;
@@ -228,18 +227,17 @@ export function makeRules(_board: Board, side: number): Rules {
     board[ny][nx] = crowned ? p << 1 : p;
 
     // switch sides
-    const origSide = side;
-    side = side === 1 ? -1 : 1;
+    side = -side;
 
-    // do the action
-    action();
+    // reverse the move
+    return () => {
+      // put things back where we found them
+      board[ny][nx] = 0;
+      board[y][x] = p;
 
-    // switch back
-    side = origSide;
-
-    // put things back where we found them
-    board[ny][nx] = 0;
-    board[y][x] = p;
+      // switch back
+      side = -side;
+    };
   }
 
   function findPlays(): Move[] {
@@ -278,9 +276,9 @@ export function makeRules(_board: Board, side: number): Rules {
     getSide: () => side,
     findJumps,
     nextJump,
-    withJump,
+    doJump,
     findMoves,
-    withMove,
+    doMove,
     findPlays,
     buildTree,
   };
