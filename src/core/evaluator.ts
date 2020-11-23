@@ -1,19 +1,19 @@
 import { Board } from './rules';
 
 export type Formation = [number, number, number][];
-export type FormationScores = [Formation, number][][][];
+export type Scores = [Formation, number][][][];
 
 export type Evaluator = {
-  scores: () => FormationScores,
-  addFormation: (formation: Formation, scores: number[][]) => void,
-  evaluate: (board: Board) => number,
+  getScores: () => Scores;
+  addFormation: (formation: Formation, scores: number[][]) => void;
+  evaluate: (board: Board) => number;
 };
 
 export function makeEvaluator(): Evaluator {
   // scores are represented as a 2D array of [pattern, score] pairs, where:
-  //  - `pattern` is an array of [dx, dy, value] pairs, and
+  //  - `pattern` is an array of [dx, dy, value] triples, and
   //  - `score` is what will be awarded if the pattern matches
-  const scores: FormationScores = [[], [], [], [], [], [], [], []];
+  const scores: Scores = [[], [], [], [], [], [], [], []];
 
   function addFormation(formation: Formation, values: number[][]) {
     // `formation` takes the form [[dx, dy, v], [dx, dy, v], ...], where:
@@ -117,7 +117,7 @@ export function makeEvaluator(): Evaluator {
   }
 
   return {
-    scores: () => scores,
+    getScores: () => scores,
     addFormation,
     evaluate,
   };

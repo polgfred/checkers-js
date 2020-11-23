@@ -1,25 +1,26 @@
 import { copyBoard } from './utils';
 
+// types
 export type Board = Int8Array[];
 export type Segment = [number, number] | [number, number, number, number];
 export type Move = Segment[];
 export type Tree = { [key: string]: Tree };
 
 export type Rules = {
-  board: () => Board,
-  side: () => number,
-  findJumps: () => Move[],
-  nextJump: (cur: Move, jumps: Move[]) => boolean,
-  withJump: (jump: Move, action: () => void) => void,
-  findMoves: () => Move[],
-  withMove: (move: Move, action: () => void) => void,
-  findPlays: () => Move[],
-  buildTree: () => Tree,
-}
+  getBoard: () => Board;
+  getSide: () => number;
+  findJumps: () => Move[];
+  nextJump: (cur: Move, jumps: Move[]) => boolean;
+  withJump: (jump: Move, action: () => void) => void;
+  findMoves: () => Move[];
+  withMove: (move: Move, action: () => void) => void;
+  findPlays: () => Move[];
+  buildTree: () => Tree;
+};
 
-export function makeRules(board: Board, side: number): Rules {
+export function makeRules(_board: Board, side: number): Rules {
   // don't mutate the caller's board
-  board = copyBoard(board);
+  const board = copyBoard(_board);
 
   function findJumps(): Move[] {
     const top = side === 1 ? 7 : 0;
@@ -273,8 +274,8 @@ export function makeRules(board: Board, side: number): Rules {
   }
 
   return {
-    board: () => board,
-    side: () => side,
+    getBoard: () => board,
+    getSide: () => side,
     findJumps,
     nextJump,
     withJump,

@@ -1,29 +1,36 @@
 import { Board, Move, makeRules } from './rules';
-import defaultEvaluator from './default_evaluator';
 import { Evaluator } from './evaluator';
+import defaultEvaluator from './default_evaluator';
 
 export function analyze(board: Board, side: number): [Move, number] {
   // how many levels deep to search the tree
   const level = 8;
 
   // make the rules for the current position
-  const rules = makeRules(board, side);
+  const {
+    getBoard,
+    getSide,
+    findJumps,
+    withJump,
+    findMoves,
+    withMove,
+  } = makeRules(board, side);
 
   function loop(level: number, player: Evaluator): [Move, number] {
-    const board = rules.board();
-    let side = rules.side();
+    const board = getBoard();
+    const side = getSide();
     let bestScore = side / -0;
     let bestPlay: Move;
     let current: number;
 
     // always try to find counter-jumps from this position
-    const jumps = rules.findJumps();
+    const jumps = findJumps();
 
     if (jumps.length) {
       for (let i = 0; i < jumps.length; ++i) {
         const jump = jumps[i];
 
-        rules.withJump(jump, () => {
+        withJump(jump, () => {
           // descend a level
           current = loop(level - 1, player)[1];
         });
@@ -46,12 +53,12 @@ export function analyze(board: Board, side: number): [Move, number] {
         bestScore = current;
       } else {
         // find counter-moves from this position
-        const moves = rules.findMoves();
+        const moves = findMoves();
 
         for (let i = 0; i < moves.length; ++i) {
           const move = moves[i];
 
-          rules.withMove(move, () => {
+          withMove(move, () => {
             // descend a level
             current = loop(level - 1, player)[1];
           });
