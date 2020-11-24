@@ -1,5 +1,5 @@
 module.exports = {
-  parser: 'babel-eslint',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2018,
     ecmaFeatures: {
@@ -13,11 +13,14 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'prettier/@typescript-eslint',
+    'plugin:prettier/recommended',
+    'plugin:react/recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
-    'prettier',
   ],
-  plugins: ['import', 'react', 'react-hooks'],
+  plugins: ['@typescript-eslint', 'prettier', 'import', 'react', 'react-hooks'],
   settings: {
     'import/resolver': {
       node: {
