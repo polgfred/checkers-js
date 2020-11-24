@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext } from 'react';
 import { Board, Move } from '../core/rules';
 
 export type GameContextType = {

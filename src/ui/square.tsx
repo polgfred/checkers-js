@@ -19,7 +19,7 @@ export function Square({
   y: number;
   canDrop: (item: DragItem, xy: Coords) => boolean;
   children: ReactNode;
-}) {
+}): JSX.Element {
   const [{ _canDrop, _isOver }, connectDropTarget] = useDrop<
     DragItem,
     Coords,

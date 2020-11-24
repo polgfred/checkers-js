@@ -2,7 +2,7 @@ import React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { Board } from '../core/rules';
+import { Board as _Board } from '../core/rules';
 import { coordsToNumber } from '../core/utils';
 
 import { DragLayer } from './drag_layer';
@@ -20,11 +20,11 @@ export function Board({
   canDrop,
   endDrag,
 }: {
-  board: Board;
+  board: _Board;
   canDrag: (xy: Coords) => boolean;
   canDrop: (xy: Coords, nxny: Coords) => boolean;
   endDrag: (xy: Coords, nxny: Coords) => void;
-}) {
+}): JSX.Element {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="board-container">

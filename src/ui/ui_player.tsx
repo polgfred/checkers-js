@@ -6,7 +6,7 @@ import { GameContext } from './game_context';
 
 type Coords = { x: number; y: number };
 
-export function UIPlayer() {
+export function UIPlayer(): JSX.Element {
   const { getBoard, getSide, makeMove } = useContext(GameContext);
 
   const [{ board, side, plays, current }, setState] = useState(() => {
@@ -34,7 +34,7 @@ export function UIPlayer() {
   const canDrop = useCallback(
     ({ x, y }: Coords, { x: nx, y: ny }: Coords) => {
       // see if this move is in the tree
-      let next = plays[`${x},${y}`];
+      const next = plays[`${x},${y}`];
       if (next && next[`${nx},${ny}`]) {
         return true;
       }

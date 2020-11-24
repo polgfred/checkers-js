@@ -8,7 +8,7 @@ import { UIPlayer } from './ui_player';
 import { AIPlayer } from './ai_player';
 import { History } from './history';
 
-export function Game() {
+export function Game(): JSX.Element {
   const [{ board, side, hist }, setGame] = useState<{
     board: Board;
     side: number;

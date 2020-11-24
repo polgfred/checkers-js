@@ -1,13 +1,13 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Move, makeRules } from '../core/rules';
+import { Move } from '../core/rules';
 import { Board } from './board';
 import { GameContext } from './game_context';
 
 // create a worker once that we'll attach to as needed
 const worker = new Worker('./worker-bundle.js');
 
-export function AIPlayer() {
+export function AIPlayer(): JSX.Element {
   const { getBoard, getSide, makeMove } = useContext(GameContext);
   const [{ board, side }] = useState({
     board: getBoard(),
@@ -57,7 +57,7 @@ export function AIPlayer() {
       board={board}
       canDrag={() => false}
       canDrop={() => false}
-      endDrag={() => {}}
+      endDrag={() => undefined}
     />
   );
 }

@@ -1,4 +1,4 @@
-import { Rules, makeRules } from './rules';
+import { makeRules } from './rules';
 import { newBoard, newBoardFromData } from './utils';
 
 describe('Rules', () => {

@@ -10,7 +10,7 @@ type DragItem = {
   p: number;
 } & Coords;
 
-export function DragLayer() {
+export function DragLayer(): JSX.Element {
   const { item, isDragging, sourceClientOffset } = useDragLayer<{
     item: DragItem;
     isDragging: boolean;

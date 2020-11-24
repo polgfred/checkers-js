@@ -15,7 +15,7 @@ type DragItem = {
   p: number;
 } & Coords;
 
-export function getPieceElement(p: number) {
+export function getPieceElement(p: number): JSX.Element {
   switch (p) {
     case 1:
       return <RedPiece />;
@@ -42,7 +42,7 @@ export function Piece({
   p: number;
   canDrag: ({ x, y }: Coords) => boolean;
   endDrag: (item: DragItem, { x, y }: Coords) => void;
-}) {
+}): JSX.Element {
   const [{ _isDragging }, connectDragSource, connectDragPreview] = useDrag<
     DragItem,
     Coords,
