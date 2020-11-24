@@ -3,19 +3,23 @@ var path = require('path');
 module.exports = {
   mode: 'development',
   entry: {
-    main: './src/main.js',
-    worker: './src/worker.js',
+    main: './src/main.tsx',
+    worker: './src/worker.ts',
   },
   output: {
     path: __dirname,
     filename: '[name]-bundle.js',
   },
-  devtool: 'cheap-module-source-map',
+  devtool: 'source-map',
+  resolve: {
+    modules: ['node_modules', path.resolve(__dirname, 'src')],
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+  },
   module: {
     rules: [
       {
-        test: /\.js$/,
-        use: ['babel-loader'],
+        test: /\.tsx?$/,
+        use: ['ts-loader'],
         exclude: [path.resolve(__dirname, 'node_modules')],
       },
       {

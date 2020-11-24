@@ -1,10 +1,21 @@
 import React from 'react';
-import { useDragLayer } from 'react-dnd';
+import { DragSourceMonitor, XYCoord, useDragLayer } from 'react-dnd';
 
 import { getPieceElement } from './piece';
 
-export default function DragLayer() {
-  const { item, isDragging, sourceClientOffset } = useDragLayer(monitor => ({
+type Coords = { x: number; y: number };
+
+type DragItem = {
+  type: 'piece';
+  p: number;
+} & Coords;
+
+export function DragLayer() {
+  const { item, isDragging, sourceClientOffset } = useDragLayer<{
+    item: DragItem;
+    isDragging: boolean;
+    sourceClientOffset: XYCoord;
+  }>((monitor: DragSourceMonitor) => ({
     item: monitor.getItem(),
     isDragging: monitor.isDragging(),
     sourceClientOffset: monitor.getSourceClientOffset(),

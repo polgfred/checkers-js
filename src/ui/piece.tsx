@@ -8,7 +8,14 @@ import RedKing from '../images/red-king.svg';
 import WhitePiece from '../images/white-piece.svg';
 import WhiteKing from '../images/white-king.svg';
 
-export function getPieceElement(p) {
+type Coords = { x: number; y: number };
+
+type DragItem = {
+  type: 'piece';
+  p: number;
+} & Coords;
+
+export function getPieceElement(p: number) {
   switch (p) {
     case 1:
       return <RedPiece />;
@@ -23,17 +30,33 @@ export function getPieceElement(p) {
   }
 }
 
-export default function Piece({ x, y, p, canDrag, endDrag }) {
-  const [{ _isDragging }, connectDragSource, connectDragPreview] = useDrag({
+export function Piece({
+  x,
+  y,
+  p,
+  canDrag,
+  endDrag,
+}: {
+  x: number;
+  y: number;
+  p: number;
+  canDrag: ({ x, y }: Coords) => boolean;
+  endDrag: (item: DragItem, { x, y }: Coords) => void;
+}) {
+  const [{ _isDragging }, connectDragSource, connectDragPreview] = useDrag<
+    DragItem,
+    Coords,
+    { _isDragging: boolean }
+  >({
     item: { type: 'piece', x, y, p },
     canDrag: () => canDrag({ x, y }),
     end: (_, monitor) => {
-      const dropResult = monitor.getDropResult();
+      const dropResult: Coords = monitor.getDropResult();
       if (dropResult) {
         endDrag(monitor.getItem(), dropResult);
       }
     },
-    collect: monitor => ({
+    collect: (monitor) => ({
       _isDragging: monitor.isDragging(),
     }),
   });

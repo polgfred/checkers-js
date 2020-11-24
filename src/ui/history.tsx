@@ -1,11 +1,24 @@
-import React, { createRef, useCallback, useLayoutEffect } from 'react';
+import React, {
+  createRef,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useState,
+} from 'react';
 
 import { moveToString } from '../core/utils';
 
 import ThinkingSpinner from '../images/thinking.svg';
 
-export default function History({ moves }) {
-  const ref = createRef();
+import { GameContext } from './game_context';
+
+export function History() {
+  const { getHistory } = useContext(GameContext);
+  const [{ hist }] = useState(() => ({
+    hist: getHistory(),
+  }));
+
+  const ref = createRef<HTMLDivElement>();
 
   useLayoutEffect(() => {
     ref.current.scrollTop = ref.current.scrollHeight;
@@ -13,14 +26,14 @@ export default function History({ moves }) {
 
   // pad the row if there's only one move
   const getRow = useCallback(
-    i => {
-      const row = moves.slice(i * 2, i * 2 + 2);
+    (i: number) => {
+      const row = hist.slice(i * 2, i * 2 + 2);
       if (row.length == 1) {
         row.push(null);
       }
       return row;
     },
-    [moves]
+    [hist]
   );
 
   return (
@@ -33,8 +46,8 @@ export default function History({ moves }) {
           </tr>
         </thead>
         <tbody>
-          {Array(Math.ceil(moves.length / 2))
-            .fill()
+          {Array(Math.ceil(hist.length / 2))
+            .fill(null)
             .map((_, i) => (
               <tr key={i}>
                 {getRow(i).map((move, j) =>

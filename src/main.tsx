@@ -4,7 +4,7 @@ import 'regenerator-runtime/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Game from './ui/game';
+import { Game } from './ui/game';
 
 import './main.css';
 

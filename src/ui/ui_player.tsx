@@ -1,22 +1,28 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
-import Rules from '../core/rules';
-import { copyBoard } from '../core/utils';
-import Board from './board';
+import { Move, makeRules } from '../core/rules';
+import { Board } from './board';
+import { GameContext } from './game_context';
 
-export default function UIPlayer({ board: _board, side, moveComplete }) {
-  const [{ board, plays, current }, setState] = useState(() => {
-    // copy the game board to use locally
-    const board = copyBoard(_board);
+type Coords = { x: number; y: number };
+
+export function UIPlayer() {
+  const { getBoard, getSide, makeMove } = useContext(GameContext);
+
+  const [{ board, side, plays, current }, setState] = useState(() => {
+    const board = getBoard();
+    const side = getSide();
+    const { buildTree } = makeRules(board, side);
     return {
-      board,
-      plays: new Rules(board, side).buildTree(),
-      current: [],
+      board: getBoard(),
+      side: getSide(),
+      plays: buildTree(),
+      current: [] as Move,
     };
   });
 
   const canDrag = useCallback(
-    ({ x, y }) => {
+    ({ x, y }: Coords) => {
       // see if this position is in the tree
       if (plays[`${x},${y}`]) {
         return true;
@@ -26,7 +32,7 @@ export default function UIPlayer({ board: _board, side, moveComplete }) {
   );
 
   const canDrop = useCallback(
-    ({ x, y }, { x: nx, y: ny }) => {
+    ({ x, y }: Coords, { x: nx, y: ny }: Coords) => {
       // see if this move is in the tree
       let next = plays[`${x},${y}`];
       if (next && next[`${nx},${ny}`]) {
@@ -37,7 +43,7 @@ export default function UIPlayer({ board: _board, side, moveComplete }) {
   );
 
   const endDrag = useCallback(
-    ({ x, y }, { x: nx, y: ny }) => {
+    ({ x, y }: Coords, { x: nx, y: ny }: Coords) => {
       // see if this move is in the tree
       const next = plays[`${x},${y}`];
 
@@ -71,7 +77,7 @@ export default function UIPlayer({ board: _board, side, moveComplete }) {
 
           if (Object.keys(next2).length === 0) {
             // move is done, switch sides
-            moveComplete(board, current);
+            makeMove(current);
           } else {
             // commit this position
             setState({ board, side, plays: next, current });
@@ -79,13 +85,12 @@ export default function UIPlayer({ board: _board, side, moveComplete }) {
         }
       }
     },
-    [board, side, plays, current, moveComplete]
+    [board, side, plays, current, makeMove]
   );
 
   return (
     <Board
       board={board}
-      side={side}
       canDrag={canDrag}
       canDrop={canDrop}
       endDrag={endDrag}

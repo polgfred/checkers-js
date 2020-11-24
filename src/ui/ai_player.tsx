@@ -1,24 +1,21 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import Board from './board';
-
-import { copyBoard } from '../core/utils';
+import { Move, makeRules } from '../core/rules';
+import { Board } from './board';
+import { GameContext } from './game_context';
 
 // create a worker once that we'll attach to as needed
 const worker = new Worker('./worker-bundle.js');
 
-const isFalse = () => false;
-
-export default function AIPlayer({ board: _board, side, moveComplete }) {
-  const [{ board }] = useState(() => {
-    // copy the game board to use locally
-    return {
-      board: copyBoard(_board),
-    };
+export function AIPlayer() {
+  const { getBoard, getSide, makeMove } = useContext(GameContext);
+  const [{ board, side }] = useState({
+    board: getBoard(),
+    side: getSide(),
   });
 
   const onComplete = useCallback(
-    ({ data: { move } }) => {
+    ({ data: { move } }: { data: { move: Move } }) => {
       const len = move.length;
       const [x, y] = move[0];
       const [fx, fy] = move[len - 1];
@@ -42,9 +39,9 @@ export default function AIPlayer({ board: _board, side, moveComplete }) {
       board[fy][fx] = crowned ? p * 2 : p;
 
       // commit this position
-      moveComplete(board, move);
+      makeMove(move);
     },
-    [board, side, moveComplete]
+    [board, side, makeMove]
   );
 
   useEffect(() => {
@@ -58,10 +55,9 @@ export default function AIPlayer({ board: _board, side, moveComplete }) {
   return (
     <Board
       board={board}
-      side={side}
-      canDrag={isFalse}
-      canDrop={isFalse}
-      endDrag={isFalse}
+      canDrag={() => false}
+      canDrop={() => false}
+      endDrag={() => {}}
     />
   );
 }
