@@ -1,5 +1,3 @@
-var path = require('path');
-
 module.exports = {
   mode: 'development',
   entry: {
@@ -12,7 +10,7 @@ module.exports = {
   },
   devtool: 'source-map',
   resolve: {
-    modules: ['node_modules', path.resolve(__dirname, 'src')],
+    modules: ['node_modules', 'src'],
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
   module: {
@@ -20,7 +18,7 @@ module.exports = {
       {
         test: /\.tsx?$/,
         use: ['ts-loader'],
-        exclude: [path.resolve(__dirname, 'node_modules')],
+        exclude: [/node_modules/],
       },
       {
         test: /\.css$/,

@@ -1,11 +1,12 @@
-/* eslint-disable no-console */
+import http = require('http');
+import express = require('express');
+import webpack = require('webpack');
 
-import http from 'http';
-import express from 'express';
-import webpack from 'webpack';
-import WebpackDevMiddleware from 'webpack-dev-middleware';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import WebpackDevMiddleware = require('webpack-dev-middleware');
 
-import webpack_config from '../webpack.config.js';
+import webpack_config = require('../webpack.config');
 
 // set up the express server
 const app = express();
@@ -20,5 +21,6 @@ const server = http.createServer(app);
 
 // listen to incoming requests
 server.listen(8080, () => {
+  // eslint-disable-next-line no-console
   console.log('listening on http://localhost:8080/');
 });
