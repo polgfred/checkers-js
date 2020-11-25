@@ -1,12 +1,15 @@
 import React, { useCallback, useContext, useState } from 'react';
 
-import { MoveType, isPieceOf } from '../core/types';
+import { MoveType, SideType, PieceType, isPieceOf } from '../core/types';
 import { copyBoard } from '../core/utils';
 
 import { Board } from './board';
 import { GameContext } from './game_context';
 
 type Coords = { x: number; y: number };
+
+const { RED } = SideType;
+const { EMPTY } = PieceType;
 
 export function UIPlayer(): JSX.Element {
   const { board: _board, side, plays: _plays, makeMove } = useContext(
@@ -50,13 +53,13 @@ export function UIPlayer(): JSX.Element {
         const next2 = next[`${nx},${ny}`];
 
         if (next2) {
-          const p = board[y][x];
-          const top = side === 1 ? 7 : 0;
+          const p: PieceType = board[y][x];
+          const top = side === RED ? 7 : 0;
           const crowned = isPieceOf(side, p) && ny === top;
 
           // move the piece
-          board[y][x] = 0;
-          board[ny][nx] = crowned ? p * 2 : p;
+          board[y][x] = EMPTY;
+          board[ny][nx] = crowned ? p << 1 : p;
 
           // record the current leg
           if (current.length === 0) {
@@ -68,7 +71,7 @@ export function UIPlayer(): JSX.Element {
             const mx = (x + nx) >> 1;
             const my = (y + ny) >> 1;
 
-            board[my][mx] = 0;
+            board[my][mx] = EMPTY;
             current.push([nx, ny, mx, my]);
           } else {
             current.push([nx, ny]);
