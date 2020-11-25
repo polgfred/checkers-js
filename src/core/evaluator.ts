@@ -1,21 +1,21 @@
-import { Board } from './rules';
+import { BoardType } from './rules';
 
-export type Formation = [number, number, number][];
-export type Scores = [Formation, number][][][];
+export type FormationType = [number, number, number][];
+export type ScoresType = [FormationType, number][][][];
 
 export type Evaluator = {
-  getScores: () => Scores;
-  addFormation: (formation: Formation, scores: number[][]) => void;
-  evaluate: (board: Board) => number;
+  getScores: () => ScoresType;
+  addFormation: (formation: FormationType, scores: number[][]) => void;
+  evaluate: (board: BoardType) => number;
 };
 
 export function makeEvaluator(): Evaluator {
   // scores are represented as a 2D array of [pattern, score] pairs, where:
   //  - `pattern` is an array of [dx, dy, value] triples, and
   //  - `score` is what will be awarded if the pattern matches
-  const scores: Scores = [[], [], [], [], [], [], [], []];
+  const scores: ScoresType = [[], [], [], [], [], [], [], []];
 
-  function addFormation(formation: Formation, values: number[][]) {
+  function addFormation(formation: FormationType, values: number[][]) {
     // `formation` takes the form [[dx, dy, v], [dx, dy, v], ...], where:
     //  - (dx, dy) is the offset from the origin of the formation, and
     //  - v is the value to match against:
@@ -42,7 +42,7 @@ export function makeEvaluator(): Evaluator {
     }
   }
 
-  function evaluate(board: Board) {
+  function evaluate(board: BoardType) {
     // match the board and side against the formations and return a score:
     //  - for each square on the board, get the set of formations on it
     //  - for each formation, see if it applies to red (+) from the top of

@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react';
 
-import { Move } from '../core/rules';
+import { MoveType } from '../core/rules';
 import { copyBoard } from '../core/utils';
 
 import { Board } from './board';
@@ -17,7 +17,7 @@ export function UIPlayer(): JSX.Element {
   const [{ board, plays, current }, setState] = useState(() => ({
     board: copyBoard(_board),
     plays: _plays,
-    current: [] as Move,
+    current: [] as MoveType,
   }));
 
   const canDrag = useCallback(

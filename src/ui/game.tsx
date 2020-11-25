@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Move, makeRules } from '../core/rules';
+import { MoveType, makeRules } from '../core/rules';
 import { newBoard } from '../core/utils';
 
 import { GameContext } from './game_context';
@@ -10,7 +10,7 @@ import { History } from './history';
 
 export function Game(): JSX.Element {
   const [rules] = useState(() => makeRules(newBoard(), 1));
-  const [hist] = useState([] as Move[]);
+  const [hist] = useState([] as MoveType[]);
   const [, setClock] = useState(0);
 
   return (
@@ -20,7 +20,7 @@ export function Game(): JSX.Element {
         side: rules.getSide(),
         plays: rules.buildTree(),
         hist,
-        makeMove: (move: Move) => {
+        makeMove: (move: MoveType) => {
           rules.doPlay(move);
           hist.push(move);
           setClock(Date.now());

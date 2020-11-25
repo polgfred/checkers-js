@@ -1,8 +1,8 @@
-import { Board, Move, makeRules } from './rules';
+import { BoardType, MoveType, makeRules } from './rules';
 import { Evaluator } from './evaluator';
 import defaultEvaluator from './default_evaluator';
 
-export function analyze(board: Board, side: number): [Move, number] {
+export function analyze(board: BoardType, side: number): [MoveType, number] {
   // how many levels deep to search the tree
   const level = 8;
 
@@ -12,11 +12,11 @@ export function analyze(board: Board, side: number): [Move, number] {
     side
   );
 
-  function loop(level: number, player: Evaluator): [Move, number] {
+  function loop(level: number, player: Evaluator): [MoveType, number] {
     const board = getBoard();
     const side = getSide();
     let bestScore = side / -0;
-    let bestPlay: Move;
+    let bestPlay: MoveType;
     let current: number;
 
     // always try to find counter-jumps from this position

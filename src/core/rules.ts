@@ -1,33 +1,33 @@
 import { copyBoard } from './utils';
 
 // types
-export type Board = Int8Array[];
-export type Segment = [number, number] | [number, number, number, number];
-export type Move = Segment[];
-export type Tree = { [key: string]: Tree };
+export type BoardType = Int8Array[];
+export type SegmentType = [number, number] | [number, number, number, number];
+export type MoveType = SegmentType[];
+export type TreeType = { [key: string]: TreeType };
 
 export type Rules = {
-  getBoard: () => Board;
+  getBoard: () => BoardType;
   getSide: () => number;
-  findJumps: () => Move[];
-  nextJump: (cur: Move, jumps: Move[]) => boolean;
-  doJump: (jump: Move) => () => void;
-  findMoves: () => Move[];
-  doMove: (move: Move) => () => void;
-  findPlays: () => Move[];
-  doPlay: (play: Move) => () => void;
-  buildTree: () => Tree;
+  findJumps: () => MoveType[];
+  nextJump: (cur: MoveType, jumps: MoveType[]) => boolean;
+  doJump: (jump: MoveType) => () => void;
+  findMoves: () => MoveType[];
+  doMove: (move: MoveType) => () => void;
+  findPlays: () => MoveType[];
+  doPlay: (play: MoveType) => () => void;
+  buildTree: () => TreeType;
 };
 
-export function makeRules(_board: Board, side: number): Rules {
+export function makeRules(_board: BoardType, side: number): Rules {
   // don't mutate the caller's board
   const board = copyBoard(_board);
 
-  function findJumps(): Move[] {
+  function findJumps(): MoveType[] {
     const top = side === 1 ? 7 : 0;
     const out = top + side;
     const bottom = top ^ 7;
-    const jumps: Move[] = [];
+    const jumps: MoveType[] = [];
 
     // loop through playable squares
     for (let y = bottom; y !== out; y += side) {
@@ -46,7 +46,7 @@ export function makeRules(_board: Board, side: number): Rules {
     return jumps;
   }
 
-  function nextJump(cur: Move, jumps: Move[]) {
+  function nextJump(cur: MoveType, jumps: MoveType[]) {
     const [x, y] = cur[cur.length - 1];
     const p = board[y][x];
     const top = side === 1 ? 7 : 0;
@@ -110,14 +110,14 @@ export function makeRules(_board: Board, side: number): Rules {
     return found;
   }
 
-  function doJump(jump: Move): () => void {
+  function doJump(jump: MoveType): () => void {
     const len = jump.length;
     const [x, y] = jump[0];
     const [fx, fy] = jump[len - 1];
     const p = board[y][x];
     const top = side === 1 ? 7 : 0;
     const crowned = p === side && fy === top;
-    const cap: Segment = new Array(len) as Segment;
+    const cap: SegmentType = new Array(len) as SegmentType;
 
     // remove the initial piece
     cap[0] = p;
@@ -159,11 +159,11 @@ export function makeRules(_board: Board, side: number): Rules {
     };
   }
 
-  function findMoves(): Move[] {
+  function findMoves(): MoveType[] {
     const top = side === 1 ? 7 : 0;
     const out = top + side;
     const bottom = top ^ 7;
-    const moves: Move[] = [];
+    const moves: MoveType[] = [];
 
     // loop through playable squares
     for (let y = bottom; y !== out; y += side) {
@@ -207,7 +207,7 @@ export function makeRules(_board: Board, side: number): Rules {
     return moves;
   }
 
-  function doMove(move: Move): () => void {
+  function doMove(move: MoveType): () => void {
     const [[x, y], [nx, ny]] = move;
     const p = board[y][x];
     const top = side === 1 ? 7 : 0;
@@ -231,7 +231,7 @@ export function makeRules(_board: Board, side: number): Rules {
     };
   }
 
-  function findPlays(): Move[] {
+  function findPlays(): MoveType[] {
     const jumps = findJumps();
 
     // you have to jump if you can
@@ -242,7 +242,7 @@ export function makeRules(_board: Board, side: number): Rules {
     }
   }
 
-  function doPlay(play: Move): () => void {
+  function doPlay(play: MoveType): () => void {
     if (play[1].length > 2) {
       return doJump(play);
     } else {
@@ -250,9 +250,9 @@ export function makeRules(_board: Board, side: number): Rules {
     }
   }
 
-  function buildTree(): Tree {
+  function buildTree(): TreeType {
     const plays = findPlays();
-    const tree: Tree = {};
+    const tree: TreeType = {};
 
     for (let i = 0; i < plays.length; ++i) {
       const play = plays[i];

@@ -1,13 +1,13 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Move } from '../core/rules';
+import { MoveType } from '../core/rules';
 import { Board } from './board';
 import { GameContext } from './game_context';
 
 // create a worker once that we'll attach to as needed
 const worker = new Worker('./worker-bundle.js');
 
-type WorkerData = { data: { move: Move } };
+type WorkerData = { data: { move: MoveType } };
 
 export function AIPlayer(): JSX.Element {
   const { board, side, makeMove } = useContext(GameContext);

@@ -1,12 +1,12 @@
 import { createContext } from 'react';
-import { Board, Move, Tree } from '../core/rules';
+import { BoardType, MoveType, TreeType } from '../core/rules';
 
 export type GameContextType = {
-  board: Board;
+  board: BoardType;
   side: number;
-  plays: Tree;
-  hist: Move[];
-  makeMove: (move: Move) => void;
+  plays: TreeType;
+  hist: MoveType[];
+  makeMove: (move: MoveType) => void;
 };
 
 export const GameContext = createContext<GameContextType>(null);
