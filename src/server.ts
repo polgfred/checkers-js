@@ -1,12 +1,12 @@
-import http = require('http');
-import express = require('express');
-import webpack = require('webpack');
+import http from 'http';
+import express from 'express';
+import webpack from 'webpack';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import WebpackDevMiddleware = require('webpack-dev-middleware');
+import WebpackDevMiddleware from 'webpack-dev-middleware';
 
-import webpack_config = require('../webpack.config');
+import webpack_config from '../webpack.config';
 
 // set up the express server
 const app = express();
