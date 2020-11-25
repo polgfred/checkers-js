@@ -3,7 +3,6 @@ import React, {
   useCallback,
   useContext,
   useLayoutEffect,
-  useState,
 } from 'react';
 
 import { moveToString } from '../core/utils';
@@ -14,9 +13,7 @@ import { GameContext } from './game_context';
 
 export function History(): JSX.Element {
   const { getHistory } = useContext(GameContext);
-  const [{ hist }] = useState(() => ({
-    hist: getHistory(),
-  }));
+  const hist = getHistory();
 
   const ref = createRef<HTMLDivElement>();
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Board, Move } from '../core/rules';
+import { Move, makeRules } from '../core/rules';
 import { newBoard } from '../core/utils';
 
 import { GameContext } from './game_context';
@@ -9,30 +9,24 @@ import { AIPlayer } from './ai_player';
 import { History } from './history';
 
 export function Game(): JSX.Element {
-  const [{ board, side, hist }, setGame] = useState<{
-    board: Board;
-    side: number;
-    hist: Move[];
-  }>({
-    board: newBoard(),
-    side: 1,
-    hist: [],
-  });
+  const [rules] = useState(() => makeRules(newBoard(), 1));
+  const [hist, setHist] = useState([]);
 
   return (
     <GameContext.Provider
       value={{
-        getBoard: () => board,
-        getSide: () => side,
+        getBoard: () => rules.getBoard(),
+        getSide: () => rules.getSide(),
+        buildTree: () => rules.buildTree(),
         getHistory: () => hist,
         makeMove: (move: Move) => {
-          hist.push(move);
-          setGame({ board, side: -side, hist });
+          rules.doPlay(move);
+          setHist([...hist, move]);
         },
       }}
     >
       <div className="checkers-game">
-        {side === 1 ? <UIPlayer /> : <AIPlayer />}
+        {rules.getSide() === 1 ? <UIPlayer /> : <AIPlayer />}
         <History />
       </div>
     </GameContext.Provider>

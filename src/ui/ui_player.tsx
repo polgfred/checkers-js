@@ -1,21 +1,21 @@
 import React, { useCallback, useContext, useState } from 'react';
 
-import { Move, makeRules } from '../core/rules';
+import { Move } from '../core/rules';
+import { copyBoard } from '../core/utils';
+
 import { Board } from './board';
 import { GameContext } from './game_context';
 
 type Coords = { x: number; y: number };
 
 export function UIPlayer(): JSX.Element {
-  const { getBoard, getSide, makeMove } = useContext(GameContext);
+  const { getBoard, getSide, buildTree, makeMove } = useContext(GameContext);
 
-  const [{ board, side, plays, current }, setState] = useState(() => {
-    const board = getBoard();
-    const side = getSide();
-    const { buildTree } = makeRules(board, side);
+  const [board] = useState(() => copyBoard(getBoard()));
+  const side = getSide();
+
+  const [{ plays, current }, setState] = useState(() => {
     return {
-      board: getBoard(),
-      side: getSide(),
       plays: buildTree(),
       current: [] as Move,
     };
@@ -80,7 +80,7 @@ export function UIPlayer(): JSX.Element {
             makeMove(current);
           } else {
             // commit this position
-            setState({ board, side, plays: next, current });
+            setState({ plays: next, current });
           }
         }
       }

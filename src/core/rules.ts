@@ -15,6 +15,7 @@ export type Rules = {
   findMoves: () => Move[];
   doMove: (move: Move) => () => void;
   findPlays: () => Move[];
+  doPlay: (play: Move) => () => void;
   buildTree: () => Tree;
 };
 
@@ -241,6 +242,14 @@ export function makeRules(_board: Board, side: number): Rules {
     }
   }
 
+  function doPlay(play: Move): () => void {
+    if (play[1].length > 2) {
+      return doJump(play);
+    } else {
+      return doMove(play);
+    }
+  }
+
   function buildTree(): Tree {
     const plays = findPlays();
     const tree: Tree = {};
@@ -270,6 +279,7 @@ export function makeRules(_board: Board, side: number): Rules {
     findMoves,
     doMove,
     findPlays,
+    doPlay,
     buildTree,
   };
 }
