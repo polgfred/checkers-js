@@ -4,15 +4,14 @@ import {
   BoardType,
   SegmentType,
   MoveType,
-  TreeType,
   SideType,
+  PieceType,
+  TreeType,
   isPieceOf,
   isKingOf,
-  PieceType,
 } from './types';
 
 const { RED } = SideType;
-
 const { EMPTY } = PieceType;
 
 export type Rules = {
@@ -84,11 +83,11 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
 
         // see if jump is on the board
         if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
-          const m = board[my][mx];
-          const n = board[ny][nx];
+          const m: PieceType = board[my][mx];
+          const n: PieceType = board[ny][nx];
 
           // see if the middle piece is an opponent and the landing is open
-          if (n === 0 && (side === RED ? m < 0 : m > 0)) {
+          if (n === EMPTY && (side === RED ? m < 0 : m > 0)) {
             const crowned = !king && ny === top;
             found = true;
 
@@ -188,7 +187,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
               let ny: number;
 
               // calculate landing coordinates
-              if (side === 1) {
+              if (side === RED) {
                 nx = x + dx;
                 ny = y + dy;
               } else {
