@@ -7,15 +7,13 @@ import { GameContext } from './game_context';
 // create a worker once that we'll attach to as needed
 const worker = new Worker('./worker-bundle.js');
 
+type WorkerData = { data: { move: Move } };
+
 export function AIPlayer(): JSX.Element {
-  const { getBoard, getSide, makeMove } = useContext(GameContext);
-  const board = getBoard();
-  const side = getSide();
+  const { board, side, makeMove } = useContext(GameContext);
 
   const onComplete = useCallback(
-    ({ data: { move } }: { data: { move: Move } }) => {
-      makeMove(move);
-    },
+    ({ data: { move } }: WorkerData) => makeMove(move),
     [makeMove]
   );
 

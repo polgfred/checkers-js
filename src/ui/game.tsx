@@ -10,18 +10,20 @@ import { History } from './history';
 
 export function Game(): JSX.Element {
   const [rules] = useState(() => makeRules(newBoard(), 1));
-  const [hist, setHist] = useState([]);
+  const [hist] = useState([] as Move[]);
+  const [, setClock] = useState(0);
 
   return (
     <GameContext.Provider
       value={{
-        getBoard: () => rules.getBoard(),
-        getSide: () => rules.getSide(),
-        buildTree: () => rules.buildTree(),
-        getHistory: () => hist,
+        board: rules.getBoard(),
+        side: rules.getSide(),
+        plays: rules.buildTree(),
+        hist,
         makeMove: (move: Move) => {
           rules.doPlay(move);
-          setHist([...hist, move]);
+          hist.push(move);
+          setClock(Date.now());
         },
       }}
     >

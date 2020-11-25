@@ -9,17 +9,16 @@ import { GameContext } from './game_context';
 type Coords = { x: number; y: number };
 
 export function UIPlayer(): JSX.Element {
-  const { getBoard, getSide, buildTree, makeMove } = useContext(GameContext);
+  const { board: _board, side, plays: _plays, makeMove } = useContext(
+    GameContext
+  );
 
-  const [board] = useState(() => copyBoard(getBoard()));
-  const side = getSide();
-
-  const [{ plays, current }, setState] = useState(() => {
-    return {
-      plays: buildTree(),
-      current: [] as Move,
-    };
-  });
+  // make a copy of the board and plays tree in local state
+  const [{ board, plays, current }, setState] = useState(() => ({
+    board: copyBoard(_board),
+    plays: _plays,
+    current: [] as Move,
+  }));
 
   const canDrag = useCallback(
     ({ x, y }: Coords) => {
@@ -79,8 +78,8 @@ export function UIPlayer(): JSX.Element {
             // move is done, switch sides
             makeMove(current);
           } else {
-            // commit this position
-            setState({ plays: next, current });
+            // move to this position in the local state
+            setState({ board, plays: next, current });
           }
         }
       }

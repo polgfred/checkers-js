@@ -12,8 +12,7 @@ import ThinkingSpinner from '../images/thinking.svg';
 import { GameContext } from './game_context';
 
 export function History(): JSX.Element {
-  const { getHistory } = useContext(GameContext);
-  const hist = getHistory();
+  const { hist } = useContext(GameContext);
 
   const ref = createRef<HTMLDivElement>();
 
