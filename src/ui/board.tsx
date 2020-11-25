@@ -8,11 +8,10 @@ import { coordsToNumber } from '../core/utils';
 import { DragLayer } from './drag_layer';
 import { Square } from './square';
 import { Piece } from './piece';
+import { Coords } from './types';
 
 const COORDS = [0, 1, 2, 3, 4, 5, 6, 7];
 const REV_COORDS = COORDS.slice().reverse();
-
-type Coords = { x: number; y: number };
 
 export function Board({
   board,

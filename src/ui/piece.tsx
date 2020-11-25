@@ -9,12 +9,7 @@ import RedKing from '../images/red-king.svg';
 import WhitePiece from '../images/white-piece.svg';
 import WhiteKing from '../images/white-king.svg';
 
-type Coords = { x: number; y: number };
-
-type DragItem = {
-  type: 'piece';
-  p: PieceType;
-} & Coords;
+import { Coords, DragItem, DropResult } from './types';
 
 const { WHT_PIECE, WHT_KING, RED_PIECE, RED_KING } = PieceType;
 
@@ -43,20 +38,21 @@ export function Piece({
   x: number;
   y: number;
   p: PieceType;
-  canDrag: ({ x, y }: Coords) => boolean;
-  endDrag: (item: DragItem, { x, y }: Coords) => void;
+  canDrag: (xy: Coords) => boolean;
+  endDrag: (xy: Coords, nxny: Coords) => void;
 }): JSX.Element {
   const [{ _isDragging }, connectDragSource, connectDragPreview] = useDrag<
     DragItem,
-    Coords,
+    DropResult,
     { _isDragging: boolean }
   >({
     item: { type: 'piece', x, y, p },
     canDrag: () => canDrag({ x, y }),
     end: (_, monitor) => {
-      const dropResult: Coords = monitor.getDropResult();
-      if (dropResult) {
-        endDrag(monitor.getItem(), dropResult);
+      const target: DropResult = monitor.getDropResult();
+      if (target) {
+        const source: DragItem = monitor.getItem();
+        endDrag(source, target);
       }
     },
     collect: (monitor) => ({

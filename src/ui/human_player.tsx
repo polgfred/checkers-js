@@ -5,8 +5,7 @@ import { copyBoard } from '../core/utils';
 
 import { Board } from './board';
 import { GameContext } from './game_context';
-
-type Coords = { x: number; y: number };
+import { Coords } from './types';
 
 const { EMPTY } = PieceType;
 

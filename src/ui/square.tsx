@@ -2,14 +2,7 @@ import React, { ReactNode } from 'react';
 import { useDrop } from 'react-dnd';
 import classNames from 'classnames';
 
-import { PieceType } from '../core/types';
-
-type Coords = { x: number; y: number };
-
-type DragItem = {
-  type: 'piece';
-  p: PieceType;
-} & Coords;
+import { Coords, DragItem, DropResult } from './types';
 
 export function Square({
   x,
@@ -19,16 +12,19 @@ export function Square({
 }: {
   x: number;
   y: number;
-  canDrop: (item: DragItem, xy: Coords) => boolean;
+  canDrop: (xy: Coords, nxny: Coords) => boolean;
   children: ReactNode;
 }): JSX.Element {
   const [{ _canDrop, _isOver }, connectDropTarget] = useDrop<
     DragItem,
-    Coords,
+    DropResult,
     { _canDrop: boolean; _isOver: boolean }
   >({
     accept: 'piece',
-    canDrop: (_, monitor) => canDrop(monitor.getItem(), { x, y }),
+    canDrop: (_, monitor) => {
+      const source: DragItem = monitor.getItem();
+      return canDrop(source, { x, y });
+    },
     drop: () => ({ x, y }),
     collect: (monitor) => ({
       _canDrop: monitor.canDrop(),

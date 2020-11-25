@@ -1,15 +1,8 @@
 import React from 'react';
 import { DragSourceMonitor, XYCoord, useDragLayer } from 'react-dnd';
 
-import { PieceType } from '../core/types';
 import { getPieceElement } from './piece';
-
-type Coords = { x: number; y: number };
-
-type DragItem = {
-  type: 'piece';
-  p: PieceType;
-} & Coords;
+import { DragItem } from './types';
 
 export function DragLayer(): JSX.Element {
   const { item, isDragging, sourceClientOffset } = useDragLayer<{
