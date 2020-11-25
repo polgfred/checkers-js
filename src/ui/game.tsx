@@ -5,8 +5,8 @@ import { makeRules } from '../core/rules';
 import { newBoard } from '../core/utils';
 
 import { GameContext } from './game_context';
-import { UIPlayer } from './ui_player';
-import { AIPlayer } from './ai_player';
+import { HumanPlayer } from './human_player';
+import { ComputerPlayer } from './computer_player';
 import { History } from './history';
 
 export function Game(): JSX.Element {
@@ -29,7 +29,7 @@ export function Game(): JSX.Element {
       }}
     >
       <div className="checkers-game">
-        {rules.getSide() === 1 ? <UIPlayer /> : <AIPlayer />}
+        {rules.getSide() === 1 ? <HumanPlayer /> : <ComputerPlayer />}
         <History />
       </div>
     </GameContext.Provider>

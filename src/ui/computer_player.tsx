@@ -9,7 +9,7 @@ const worker = new Worker('./worker-bundle.js');
 
 type WorkerData = { data: { move: MoveType } };
 
-export function AIPlayer(): JSX.Element {
+export function ComputerPlayer(): JSX.Element {
   const { board, side, makeMove } = useContext(GameContext);
 
   const onComplete = useCallback(

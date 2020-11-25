@@ -11,7 +11,7 @@ type Coords = { x: number; y: number };
 const { RED } = SideType;
 const { EMPTY } = PieceType;
 
-export function UIPlayer(): JSX.Element {
+export function HumanPlayer(): JSX.Element {
   const { board: _board, side, plays: _plays, makeMove } = useContext(
     GameContext
   );
