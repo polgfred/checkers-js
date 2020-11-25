@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { MoveType } from '../core/types';
+import { MoveType, SideType } from '../core/types';
 import { makeRules } from '../core/rules';
 import { newBoard } from '../core/utils';
 
@@ -10,26 +10,31 @@ import { ComputerPlayer } from './computer_player';
 import { History } from './history';
 
 export function Game(): JSX.Element {
-  const [rules] = useState(() => makeRules(newBoard(), 1));
+  const [{ getBoard, getSide, doPlay, buildTree }] = useState(() =>
+    makeRules(newBoard(), 1)
+  );
+  const board = getBoard();
+  const side = getSide();
+  const plays = buildTree();
   const [hist] = useState([] as MoveType[]);
   const [, setClock] = useState(0);
 
   return (
     <GameContext.Provider
       value={{
-        board: rules.getBoard(),
-        side: rules.getSide(),
-        plays: rules.buildTree(),
+        board,
+        side,
+        plays,
         hist,
         makeMove: (move: MoveType) => {
-          rules.doPlay(move);
+          doPlay(move);
           hist.push(move);
           setClock(Date.now());
         },
       }}
     >
       <div className="checkers-game">
-        {rules.getSide() === 1 ? <HumanPlayer /> : <ComputerPlayer />}
+        {side === SideType.RED ? <HumanPlayer /> : <ComputerPlayer />}
         <History />
       </div>
     </GameContext.Provider>

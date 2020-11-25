@@ -8,7 +8,6 @@ import { GameContext } from './game_context';
 
 type Coords = { x: number; y: number };
 
-const { RED } = SideType;
 const { EMPTY } = PieceType;
 
 export function HumanPlayer(): JSX.Element {
@@ -54,7 +53,7 @@ export function HumanPlayer(): JSX.Element {
 
         if (next2) {
           const p: PieceType = board[y][x];
-          const top = side === RED ? 7 : 0;
+          const top = side === SideType.RED ? 7 : 0;
           const crowned = isPieceOf(side, p) && ny === top;
 
           // move the piece

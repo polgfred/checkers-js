@@ -8,7 +8,6 @@ export type ScoresType = [FormationType, number][][][];
 export enum SideType {
   RED = 1,
   WHT = -1,
-  WHITE = WHT,
 }
 
 export enum PieceType {
