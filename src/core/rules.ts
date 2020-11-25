@@ -19,11 +19,10 @@ export type Rules = {
   getBoard: () => BoardType;
   getSide: () => SideType;
   findJumps: () => MoveType[];
-  nextJump: (cur: MoveType, jumps: MoveType[]) => boolean;
-  doJump: (jump: MoveType) => () => void;
   findMoves: () => MoveType[];
-  doMove: (move: MoveType) => () => void;
   findPlays: () => MoveType[];
+  doJump: (jump: MoveType) => () => void;
+  doMove: (move: MoveType) => () => void;
   doPlay: (play: MoveType) => () => void;
   buildTree: () => TreeType;
 };
@@ -241,9 +240,8 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
   }
 
   function findPlays(): MoveType[] {
-    const jumps = findJumps();
-
     // you have to jump if you can
+    const jumps = findJumps();
     if (jumps.length) {
       return jumps;
     } else {
@@ -252,6 +250,8 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
   }
 
   function doPlay(play: MoveType): () => void {
+    // if the second segment has coords for the jumped piece,
+    // it has to be a jump
     if (play[1].length > 2) {
       return doJump(play);
     } else {
@@ -283,11 +283,10 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     getBoard: () => board,
     getSide: () => side,
     findJumps,
-    nextJump,
-    doJump,
     findMoves,
-    doMove,
     findPlays,
+    doJump,
+    doMove,
     doPlay,
     buildTree,
   };
