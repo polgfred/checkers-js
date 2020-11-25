@@ -16,15 +16,17 @@ type DragItem = {
   p: PieceType;
 } & Coords;
 
+const { WHT_PIECE, WHT_KING, RED_PIECE, RED_KING } = PieceType;
+
 export function getPieceElement(p: PieceType): JSX.Element {
   switch (p) {
-    case 1:
+    case RED_PIECE:
       return <RedPiece />;
-    case 2:
+    case RED_KING:
       return <RedKing />;
-    case -1:
+    case WHT_PIECE:
       return <WhitePiece />;
-    case -2:
+    case WHT_KING:
       return <WhiteKing />;
     default:
       return null;

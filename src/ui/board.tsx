@@ -2,7 +2,7 @@ import React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { BoardType } from '../core/types';
+import { BoardType, PieceType } from '../core/types';
 import { coordsToNumber } from '../core/utils';
 
 import { DragLayer } from './drag_layer';
@@ -33,11 +33,11 @@ export function Board({
             {REV_COORDS.map((y) => (
               <tr key={y}>
                 {COORDS.map((x) => {
-                  const p = board[y][x];
+                  const p: PieceType = board[y][x];
                   return (x + y) % 2 === 0 ? (
                     <Square key={x} x={x} y={y} canDrop={canDrop}>
                       <span>{coordsToNumber(x, y)}</span>
-                      {p !== 0 && (
+                      {p !== PieceType.EMPTY && (
                         <Piece
                           x={x}
                           y={y}

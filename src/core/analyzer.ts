@@ -3,10 +3,12 @@ import { makeRules } from './rules';
 import { Evaluator } from './evaluator';
 import defaultEvaluator from './default_evaluator';
 
-export function analyze(board: BoardType, side: SideType): [MoveType, number] {
-  // how many levels deep to search the tree
-  const level = 8;
+const { RED, WHT } = SideType;
 
+// how many levels deep to search the tree
+const LEVEL = 8;
+
+export function analyze(board: BoardType, side: SideType): [MoveType, number] {
   // make the rules for the current position
   const { getBoard, getSide, findJumps, doJump, findMoves, doMove } = makeRules(
     board,
@@ -34,8 +36,8 @@ export function analyze(board: BoardType, side: SideType): [MoveType, number] {
 
         // keep track of the best move from this position
         if (
-          (side === 1 && current > bestScore) ||
-          (side === -1 && current < bestScore)
+          (side === RED && current > bestScore) ||
+          (side === WHT && current < bestScore)
         ) {
           bestPlay = jump;
           bestScore = current;
@@ -62,8 +64,8 @@ export function analyze(board: BoardType, side: SideType): [MoveType, number] {
 
           // keep track of the best move from this position
           if (
-            (side === 1 && current > bestScore) ||
-            (side === -1 && current < bestScore)
+            (side === RED && current > bestScore) ||
+            (side === WHT && current < bestScore)
           ) {
             bestPlay = move;
             bestScore = current;
@@ -78,5 +80,5 @@ export function analyze(board: BoardType, side: SideType): [MoveType, number] {
 
   // start at the top level
   // use default evaluator for both sides (but feel free to change it)
-  return loop(level, defaultEvaluator);
+  return loop(LEVEL, defaultEvaluator);
 }

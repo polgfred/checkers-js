@@ -1,14 +1,20 @@
 import { copyBoard } from './utils';
 
-import type {
+import {
   BoardType,
   SegmentType,
   MoveType,
   TreeType,
   SideType,
+  isPieceOf,
+  isKingOf,
+  PieceType,
 } from './types';
 
-// types
+const { RED } = SideType;
+
+const { EMPTY } = PieceType;
+
 export type Rules = {
   getBoard: () => BoardType;
   getSide: () => SideType;
@@ -27,7 +33,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
   const board = copyBoard(_board);
 
   function findJumps(): MoveType[] {
-    const top = side === 1 ? 7 : 0;
+    const top = side === RED ? 7 : 0;
     const out = top + side;
     const bottom = top ^ 7;
     const jumps = [] as MoveType[];
@@ -36,9 +42,9 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     for (let y = bottom; y !== out; y += side) {
       for (let x = bottom; x !== out; x += side) {
         // see if it's our piece
-        const p = board[y][x];
+        const p: PieceType = board[y][x];
 
-        if (side === 1 ? p > 0 : p < 0) {
+        if (side === RED ? p > 0 : p < 0) {
           // checking for jumps is inherently recursive - as long as you find them,
           // you have to keep looking, and only termimal positions are valid
           nextJump([[x, y]], jumps);
@@ -51,9 +57,9 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
 
   function nextJump(cur: MoveType, jumps: MoveType[]) {
     const [x, y] = cur[cur.length - 1];
-    const p = board[y][x];
-    const top = side === 1 ? 7 : 0;
-    const king = p === side << 1;
+    const p: PieceType = board[y][x];
+    const top = side === RED ? 7 : 0;
+    const king = isKingOf(side, p);
     let found = false;
 
     // loop over directions (dx, dy) from the current square
@@ -83,13 +89,13 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
           const n = board[ny][nx];
 
           // see if the middle piece is an opponent and the landing is open
-          if (n === 0 && (side === 1 ? m < 0 : m > 0)) {
+          if (n === 0 && (side === RED ? m < 0 : m > 0)) {
             const crowned = !king && ny === top;
             found = true;
 
             // keep track of the coordinates, and move the piece
-            board[y][x] = 0;
-            board[my][mx] = 0;
+            board[y][x] = EMPTY;
+            board[my][mx] = EMPTY;
             board[ny][nx] = crowned ? p << 1 : p;
 
             // if we're crowned, or there are no further jumps from here,
@@ -103,7 +109,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
             cur.pop();
             board[y][x] = p;
             board[my][mx] = m;
-            board[ny][nx] = 0;
+            board[ny][nx] = EMPTY;
           }
         }
       }
@@ -117,14 +123,14 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     const len = jump.length;
     const [x, y] = jump[0];
     const [fx, fy] = jump[len - 1];
-    const p = board[y][x];
-    const top = side === 1 ? 7 : 0;
-    const crowned = p === side && fy === top;
+    const p: PieceType = board[y][x];
+    const top = side === RED ? 7 : 0;
+    const crowned = isPieceOf(side, p) && fy === top;
     const cap: SegmentType = new Array(len) as SegmentType;
 
     // remove the initial piece
     cap[0] = p;
-    board[y][x] = 0;
+    board[y][x] = EMPTY;
 
     // loop over the passed in coords
     for (let i = 1; i < len; ++i) {
@@ -132,7 +138,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
 
       // perform the jump
       cap[i] = board[my][mx];
-      board[my][mx] = 0;
+      board[my][mx] = EMPTY;
     }
 
     // final piece
@@ -144,7 +150,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     // reverse the jump
     return () => {
       // remove the final piece
-      board[fy][fx] = 0;
+      board[fy][fx] = EMPTY;
 
       // loop over the passed in coords in reverse
       for (let i = len - 1; i > 0; --i) {
@@ -163,7 +169,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
   }
 
   function findMoves(): MoveType[] {
-    const top = side === 1 ? 7 : 0;
+    const top = side === RED ? 7 : 0;
     const out = top + side;
     const bottom = top ^ 7;
     const moves: MoveType[] = [];
@@ -171,11 +177,11 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     // loop through playable squares
     for (let y = bottom; y !== out; y += side) {
       for (let x = bottom; x !== out; x += side) {
-        const p = board[y][x];
-        const king = p === side << 1;
+        const p: PieceType = board[y][x];
+        const king = isKingOf(side, p);
 
         // see if it's our piece
-        if (side === 1 ? p > 0 : p < 0) {
+        if (side === RED ? p > 0 : p < 0) {
           // loop over directions (dx, dy) from the current square
           for (let dy = king ? -1 : 1; dy !== 3; dy += 2) {
             for (let dx = -1; dx !== 3; dx += 2) {
@@ -194,7 +200,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
               // see if move is on the board
               if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
                 // see if the landing is open
-                if (board[ny][nx] === 0) {
+                if (board[ny][nx] === EMPTY) {
                   moves.push([
                     [x, y],
                     [nx, ny],
@@ -212,12 +218,12 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
 
   function doMove(move: MoveType): () => void {
     const [[x, y], [nx, ny]] = move;
-    const p = board[y][x];
-    const top = side === 1 ? 7 : 0;
-    const crowned = p === side && ny === top;
+    const p: PieceType = board[y][x];
+    const top = side === RED ? 7 : 0;
+    const crowned = isPieceOf(side, p) && ny === top;
 
     // perform the jump
-    board[y][x] = 0;
+    board[y][x] = EMPTY;
     board[ny][nx] = crowned ? p << 1 : p;
 
     // switch sides
@@ -226,7 +232,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     // reverse the move
     return () => {
       // put things back where we found them
-      board[ny][nx] = 0;
+      board[ny][nx] = EMPTY;
       board[y][x] = p;
 
       // switch back

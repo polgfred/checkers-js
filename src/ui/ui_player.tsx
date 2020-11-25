@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react';
 
-import { MoveType } from '../core/types';
+import { MoveType, isPieceOf } from '../core/types';
 import { copyBoard } from '../core/utils';
 
 import { Board } from './board';
@@ -52,7 +52,7 @@ export function UIPlayer(): JSX.Element {
         if (next2) {
           const p = board[y][x];
           const top = side === 1 ? 7 : 0;
-          const crowned = p === side && ny === top;
+          const crowned = isPieceOf(side, p) && ny === top;
 
           // move the piece
           board[y][x] = 0;

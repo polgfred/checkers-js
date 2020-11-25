@@ -1,22 +1,25 @@
 import { makeRules } from './rules';
+import { SideType } from './types';
 import { newBoard, newBoardFromData } from './utils';
+
+const { RED } = SideType;
 
 describe('Rules', () => {
   describe('moves', () => {
     it('should initialize the board', () => {
-      const { getBoard } = makeRules(newBoard(), 1);
+      const { getBoard } = makeRules(newBoard(), RED);
       const board = getBoard();
       expect(board[0][0]).toBe(1);
     });
 
     it('should initialize the side', () => {
-      const { getSide } = makeRules(newBoard(), 1);
+      const { getSide } = makeRules(newBoard(), RED);
       const side = getSide();
       expect(side).toBe(1);
     });
 
     it('should find the moves from this position', () => {
-      const { findMoves } = makeRules(newBoard(), 1);
+      const { findMoves } = makeRules(newBoard(), RED);
       const plays = findMoves();
 
       expect(plays.length).toBe(7);
@@ -33,7 +36,7 @@ describe('Rules', () => {
     });
 
     it('should find the jumps from this position', () => {
-      const { findJumps } = makeRules(newBoard(), 1);
+      const { findJumps } = makeRules(newBoard(), RED);
       const plays = findJumps();
 
       expect(plays.length).toBe(0);
@@ -54,19 +57,19 @@ describe('Rules', () => {
     ].reverse();
 
     it('should initialize the board', () => {
-      const { getBoard } = makeRules(newBoardFromData(initialData), 1);
+      const { getBoard } = makeRules(newBoardFromData(initialData), RED);
       const board = getBoard();
       expect(board[0][0]).toBe(0);
     });
 
     it('should initialize the side', () => {
-      const { getSide } = makeRules(newBoardFromData(initialData), 1);
+      const { getSide } = makeRules(newBoardFromData(initialData), RED);
       const side = getSide();
       expect(side).toBe(1);
     });
 
     it('should find the jumps from this position', () => {
-      const { findJumps } = makeRules(newBoardFromData(initialData), 1);
+      const { findJumps } = makeRules(newBoardFromData(initialData), RED);
       const plays = findJumps();
 
       expect(plays.length).toBe(3);

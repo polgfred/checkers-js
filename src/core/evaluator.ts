@@ -1,10 +1,20 @@
-import { BoardType, FormationType, ScoresType } from './types';
+import { BoardType, FormationType, ScoresType, PieceType } from './types';
 
 export type Evaluator = {
   getScores: () => ScoresType;
   addFormation: (formation: FormationType, scores: number[][]) => void;
   evaluate: (board: BoardType) => number;
 };
+
+const {
+  EMPTY,
+  WHT_PIECE,
+  WHT_KING,
+  WHT_EITHER,
+  RED_PIECE,
+  RED_KING,
+  RED_EITHER,
+} = PieceType;
 
 export function makeEvaluator(): Evaluator {
   // scores are represented as a 2D array of [pattern, score] pairs, where:
@@ -65,11 +75,11 @@ export function makeEvaluator(): Evaluator {
               // see if the formation matches for this square
               if (
                 !(
-                  (v === 0 && p === 0) ||
-                  ((v === 1 || v === 3) && p === 1) ||
-                  ((v === 2 || v === 3) && p === 2) ||
-                  ((v === -1 || v === -3) && p === -1) ||
-                  ((v === -2 || v === -3) && p === -2)
+                  (v === EMPTY && p === EMPTY) ||
+                  ((v === RED_PIECE || v === RED_EITHER) && p === RED_PIECE) ||
+                  ((v === RED_KING || v === RED_EITHER) && p === RED_KING) ||
+                  ((v === WHT_PIECE || v === WHT_EITHER) && p === WHT_PIECE) ||
+                  ((v === WHT_KING || v === WHT_EITHER) && p === WHT_KING)
                 )
               ) {
                 // bail out and flag as failed
@@ -90,11 +100,11 @@ export function makeEvaluator(): Evaluator {
               // see if the pattern matches for this square
               if (
                 !(
-                  (v === 0 && p === 0) ||
-                  ((v === 1 || v === 3) && p === -1) ||
-                  ((v === 2 || v === 3) && p === -2) ||
-                  ((v === -1 || v === -3) && p === 1) ||
-                  ((v === -2 || v === -3) && p === 2)
+                  (v === EMPTY && p === EMPTY) ||
+                  ((v === RED_PIECE || v === RED_EITHER) && p === WHT_PIECE) ||
+                  ((v === RED_KING || v === RED_EITHER) && p === WHT_KING) ||
+                  ((v === WHT_PIECE || v === WHT_EITHER) && p === RED_PIECE) ||
+                  ((v === WHT_KING || v === WHT_EITHER) && p === RED_KING)
                 )
               ) {
                 // bail out and flag as failed
