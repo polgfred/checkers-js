@@ -93,7 +93,7 @@ describe('Rules', () => {
     });
 
     it('should build a jump tree from this position', () => {
-      const { buildTree } = makeRules(newBoardFromData(initialData), 1);
+      const { buildTree } = makeRules(newBoardFromData(initialData), RED);
       const plays = buildTree();
 
       expect(plays['2,0']['4,2']['6,4']['4,6']).toEqual({});

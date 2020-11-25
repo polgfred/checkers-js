@@ -9,9 +9,11 @@ import { HumanPlayer } from './human_player';
 import { ComputerPlayer } from './computer_player';
 import { History } from './history';
 
+const { RED } = SideType;
+
 export function Game(): JSX.Element {
   const [{ getBoard, getSide, doPlay, buildTree }] = useState(() =>
-    makeRules(newBoard(), 1)
+    makeRules(newBoard(), RED)
   );
   const board = getBoard();
   const side = getSide();
@@ -34,7 +36,7 @@ export function Game(): JSX.Element {
       }}
     >
       <div className="checkers-game">
-        {side === SideType.RED ? <HumanPlayer /> : <ComputerPlayer />}
+        {side === RED ? <HumanPlayer /> : <ComputerPlayer />}
         <History />
       </div>
     </GameContext.Provider>
