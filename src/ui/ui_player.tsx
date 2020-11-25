@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react';
 
-import { MoveType } from '../core/rules';
+import { MoveType } from '../core/types';
 import { copyBoard } from '../core/utils';
 
 import { Board } from './board';

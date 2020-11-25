@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
-import { MoveType, makeRules } from '../core/rules';
+import { MoveType } from '../core/types';
+import { makeRules } from '../core/rules';
 import { newBoard } from '../core/utils';
 
 import { GameContext } from './game_context';

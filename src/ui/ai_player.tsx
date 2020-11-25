@@ -1,6 +1,6 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 
-import { MoveType } from '../core/rules';
+import { MoveType } from '../core/types';
 import { Board } from './board';
 import { GameContext } from './game_context';
 

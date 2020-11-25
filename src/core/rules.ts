@@ -1,11 +1,8 @@
 import { copyBoard } from './utils';
 
-// types
-export type BoardType = Int8Array[];
-export type SegmentType = [number, number] | [number, number, number, number];
-export type MoveType = SegmentType[];
-export type TreeType = { [key: string]: TreeType };
+import type { BoardType, SegmentType, MoveType, TreeType } from './types';
 
+// types
 export type Rules = {
   getBoard: () => BoardType;
   getSide: () => number;

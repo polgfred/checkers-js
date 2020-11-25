@@ -1,7 +1,4 @@
-import { BoardType } from './rules';
-
-export type FormationType = [number, number, number][];
-export type ScoresType = [FormationType, number][][][];
+import { BoardType, FormationType, ScoresType } from './types';
 
 export type Evaluator = {
   getScores: () => ScoresType;

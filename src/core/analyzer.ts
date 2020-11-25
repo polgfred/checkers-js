@@ -1,4 +1,5 @@
-import { BoardType, MoveType, makeRules } from './rules';
+import { BoardType, MoveType } from './types';
+import { makeRules } from './rules';
 import { Evaluator } from './evaluator';
 import defaultEvaluator from './default_evaluator';
 

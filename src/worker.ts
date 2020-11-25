@@ -1,4 +1,4 @@
-import { BoardType } from './core/rules';
+import { BoardType } from './core/types';
 import { analyze } from './core/analyzer';
 
 // tell typescript that we're in a web worker, as the

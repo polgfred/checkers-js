@@ -1,4 +1,4 @@
-import { BoardType } from './rules';
+import { BoardType } from './types';
 
 // set up the initial board position
 const initial: BoardType = as2DArray(new ArrayBuffer(64));
