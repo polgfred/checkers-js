@@ -44,12 +44,10 @@ export function analyze(board: BoardType, side: SideType): [MoveType, number] {
         }
       }
     } else {
-      current = player.evaluate(board);
-
       // see if we've hit bottom
       if (level <= 0) {
         // return score for this position
-        bestScore = current;
+        bestScore = player.evaluate(board);
       } else {
         // find counter-moves from this position
         const moves = findMoves();
