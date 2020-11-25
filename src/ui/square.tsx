@@ -2,11 +2,13 @@ import React, { ReactNode } from 'react';
 import { useDrop } from 'react-dnd';
 import classNames from 'classnames';
 
+import { PieceType } from '../core/types';
+
 type Coords = { x: number; y: number };
 
 type DragItem = {
   type: 'piece';
-  p: number;
+  p: PieceType;
 } & Coords;
 
 export function Square({

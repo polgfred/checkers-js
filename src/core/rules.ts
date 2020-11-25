@@ -1,11 +1,17 @@
 import { copyBoard } from './utils';
 
-import type { BoardType, SegmentType, MoveType, TreeType } from './types';
+import type {
+  BoardType,
+  SegmentType,
+  MoveType,
+  TreeType,
+  SideType,
+} from './types';
 
 // types
 export type Rules = {
   getBoard: () => BoardType;
-  getSide: () => number;
+  getSide: () => SideType;
   findJumps: () => MoveType[];
   nextJump: (cur: MoveType, jumps: MoveType[]) => boolean;
   doJump: (jump: MoveType) => () => void;
@@ -16,7 +22,7 @@ export type Rules = {
   buildTree: () => TreeType;
 };
 
-export function makeRules(_board: BoardType, side: number): Rules {
+export function makeRules(_board: BoardType, side: SideType): Rules {
   // don't mutate the caller's board
   const board = copyBoard(_board);
 
@@ -24,7 +30,7 @@ export function makeRules(_board: BoardType, side: number): Rules {
     const top = side === 1 ? 7 : 0;
     const out = top + side;
     const bottom = top ^ 7;
-    const jumps: MoveType[] = [];
+    const jumps = [] as MoveType[];
 
     // loop through playable squares
     for (let y = bottom; y !== out; y += side) {

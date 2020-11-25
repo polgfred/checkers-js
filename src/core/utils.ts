@@ -1,4 +1,4 @@
-import { BoardType } from './types';
+import { BoardType, MoveType, PieceType } from './types';
 
 // set up the initial board position
 const initial: BoardType = as2DArray(new ArrayBuffer(64));
@@ -20,7 +20,7 @@ export function copyBoard(board: BoardType): BoardType {
 }
 
 // make a new board from the passed in array data
-export function newBoardFromData(data: number[][]): BoardType {
+export function newBoardFromData(data: PieceType[][]): BoardType {
   const board = as2DArray(new ArrayBuffer(64));
   for (let i = 0; i < 8; ++i) {
     board[i].set(data[i]);
@@ -46,7 +46,7 @@ export function coordsToNumber(x: number, y: number): number {
   return ((y + 1) << 2) - (x >> 1);
 }
 
-export function moveToString(move: number[][]): string {
+export function moveToString(move: MoveType): string {
   if (move) {
     const [x, y] = move[0];
     let str = String(coordsToNumber(x, y));

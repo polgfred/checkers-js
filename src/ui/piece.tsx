@@ -3,6 +3,7 @@ import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import classNames from 'classnames';
 
+import { PieceType } from '../core/types';
 import RedPiece from '../images/red-piece.svg';
 import RedKing from '../images/red-king.svg';
 import WhitePiece from '../images/white-piece.svg';
@@ -12,10 +13,10 @@ type Coords = { x: number; y: number };
 
 type DragItem = {
   type: 'piece';
-  p: number;
+  p: PieceType;
 } & Coords;
 
-export function getPieceElement(p: number): JSX.Element {
+export function getPieceElement(p: PieceType): JSX.Element {
   switch (p) {
     case 1:
       return <RedPiece />;
@@ -39,7 +40,7 @@ export function Piece({
 }: {
   x: number;
   y: number;
-  p: number;
+  p: PieceType;
   canDrag: ({ x, y }: Coords) => boolean;
   endDrag: (item: DragItem, { x, y }: Coords) => void;
 }): JSX.Element {

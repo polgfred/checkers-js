@@ -1,9 +1,9 @@
-import { BoardType, MoveType } from './types';
+import { BoardType, MoveType, SideType } from './types';
 import { makeRules } from './rules';
 import { Evaluator } from './evaluator';
 import defaultEvaluator from './default_evaluator';
 
-export function analyze(board: BoardType, side: number): [MoveType, number] {
+export function analyze(board: BoardType, side: SideType): [MoveType, number] {
   // how many levels deep to search the tree
   const level = 8;
 
