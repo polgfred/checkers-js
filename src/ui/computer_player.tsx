@@ -4,9 +4,6 @@ import { Board } from './board';
 import { GameContext } from './game_context';
 import { WorkerData } from './types';
 
-// create a worker once that we'll attach to as needed
-const worker = new Worker('./worker-bundle.js');
-
 export function ComputerPlayer(): JSX.Element {
   const { board, side, makeMove } = useContext(GameContext);
 
@@ -16,10 +13,13 @@ export function ComputerPlayer(): JSX.Element {
   );
 
   useEffect(() => {
+    const worker = new Worker('./worker-bundle.js');
     worker.addEventListener('message', onComplete, false);
     worker.postMessage({ board, side });
+
     return () => {
       worker.removeEventListener('message', onComplete, false);
+      worker.terminate();
     };
   }, [board, side, onComplete]);
 
