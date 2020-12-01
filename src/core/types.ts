@@ -1,9 +1,12 @@
 export type BoardType = Int8Array[];
-export type SegmentType = [number, number] | [number, number, number, number];
-export type MoveType = SegmentType[];
+export type SegmentType =
+  | readonly [number, number]
+  | readonly [number, number, number, number];
+export type MoveType = readonly SegmentType[];
+export type _MutableMoveType = SegmentType[]; // used internally to build up moves
 export type TreeType = { [key: string]: TreeType };
-export type FormationType = [number, number, PieceType][];
-export type ScoresType = [FormationType, number][][][];
+export type FormationType = readonly [number, number, PieceType][];
+export type ScoresType = readonly [FormationType, number][][][];
 
 export enum SideType {
   RED = 1,

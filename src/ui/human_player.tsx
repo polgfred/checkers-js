@@ -1,6 +1,11 @@
 import React, { useCallback, useContext, useState } from 'react';
 
-import { MoveType, SideType, PieceType, isPieceOf } from '../core/types';
+import {
+  SideType,
+  PieceType,
+  isPieceOf,
+  _MutableMoveType,
+} from '../core/types';
 import { copyBoard } from '../core/utils';
 
 import { Board } from './board';
@@ -18,7 +23,7 @@ export function HumanPlayer(): JSX.Element {
   const [{ board, plays, current }, setState] = useState(() => ({
     board: copyBoard(_board),
     plays: _plays,
-    current: [] as MoveType,
+    current: [] as _MutableMoveType,
   }));
 
   const canDrag = useCallback(

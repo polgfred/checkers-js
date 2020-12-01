@@ -1,11 +1,5 @@
 import { BoardType, FormationType, ScoresType, PieceType } from './types';
 
-export type Evaluator = {
-  getScores: () => ScoresType;
-  addFormation: (formation: FormationType, scores: number[][]) => void;
-  evaluate: (board: BoardType) => number;
-};
-
 const {
   EMPTY,
   WHT_PIECE,
@@ -16,13 +10,19 @@ const {
   RED_EITHER,
 } = PieceType;
 
+export type Evaluator = {
+  getScores: () => ScoresType;
+  addFormation: (formation: FormationType, scores: readonly number[][]) => void;
+  evaluate: (board: BoardType) => number;
+};
+
 export function makeEvaluator(): Evaluator {
   // scores are represented as a 2D array of [pattern, score] pairs, where:
   //  - `pattern` is an array of [dx, dy, value] triples, and
   //  - `score` is what will be awarded if the pattern matches
-  const scores: ScoresType = [[], [], [], [], [], [], [], []];
+  const scores = [[], [], [], [], [], [], [], []] as ScoresType;
 
-  function addFormation(formation: FormationType, values: number[][]) {
+  function addFormation(formation: FormationType, values: readonly number[][]) {
     // `formation` takes the form [[dx, dy, v], [dx, dy, v], ...], where:
     //  - (dx, dy) is the offset from the origin of the formation, and
     //  - v is the value to match against:
@@ -49,7 +49,7 @@ export function makeEvaluator(): Evaluator {
     }
   }
 
-  function evaluate(board: BoardType) {
+  function evaluate(board: BoardType): number {
     // match the board and side against the formations and return a score:
     //  - for each square on the board, get the set of formations on it
     //  - for each formation, see if it applies to red (+) from the top of

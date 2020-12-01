@@ -12,7 +12,7 @@ export function analyze(
   board: BoardType,
   side: SideType,
   player: Evaluator = defaultEvaluator
-): [MoveType, number] {
+): readonly [MoveType, number] {
   // make the rules for the current position
   const { getBoard, getSide, findJumps, doJump, findMoves, doMove } = makeRules(
     board,

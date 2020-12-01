@@ -20,7 +20,7 @@ export function copyBoard(board: BoardType): BoardType {
 }
 
 // make a new board from the passed in array data
-export function newBoardFromData(data: PieceType[][]): BoardType {
+export function newBoardFromData(data: readonly PieceType[][]): BoardType {
   const board = as2DArray(new ArrayBuffer(64));
   for (let i = 0; i < 8; ++i) {
     board[i].set(data[i]);

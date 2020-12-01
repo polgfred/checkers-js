@@ -2,35 +2,35 @@ import { copyBoard } from './utils';
 
 import {
   BoardType,
-  SegmentType,
   MoveType,
   SideType,
   PieceType,
   TreeType,
   isPieceOf,
   isKingOf,
+  _MutableMoveType,
 } from './types';
 
 const { RED } = SideType;
 const { EMPTY } = PieceType;
 
 export type Rules = {
-  getBoard: () => BoardType;
-  getSide: () => SideType;
-  findJumps: () => MoveType[];
-  findMoves: () => MoveType[];
-  findPlays: () => MoveType[];
-  doJump: (jump: MoveType) => () => void;
-  doMove: (move: MoveType) => () => void;
-  doPlay: (play: MoveType) => () => void;
-  buildTree: () => TreeType;
+  readonly getBoard: () => BoardType;
+  readonly getSide: () => SideType;
+  readonly findJumps: () => readonly MoveType[];
+  readonly findMoves: () => readonly MoveType[];
+  readonly findPlays: () => readonly MoveType[];
+  readonly doJump: (jump: MoveType) => () => void;
+  readonly doMove: (move: MoveType) => () => void;
+  readonly doPlay: (play: MoveType) => () => void;
+  readonly buildTree: () => TreeType;
 };
 
 export function makeRules(_board: BoardType, side: SideType): Rules {
   // don't mutate the caller's board
   const board = copyBoard(_board);
 
-  function findJumps(): MoveType[] {
+  function findJumps(): readonly MoveType[] {
     const top = side === RED ? 7 : 0;
     const out = top + side;
     const bottom = top ^ 7;
@@ -53,7 +53,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     return jumps;
   }
 
-  function nextJump(cur: MoveType, jumps: MoveType[]) {
+  function nextJump(cur: _MutableMoveType, jumps: MoveType[]) {
     const [x, y] = cur[cur.length - 1];
     const p: PieceType = board[y][x];
     const top = side === RED ? 7 : 0;
@@ -124,7 +124,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     const p: PieceType = board[y][x];
     const top = side === RED ? 7 : 0;
     const crowned = isPieceOf(side, p) && fy === top;
-    const cap: SegmentType = new Array(len) as SegmentType;
+    const cap = new Array(len) as number[];
 
     // remove the initial piece
     cap[0] = p;
@@ -166,11 +166,11 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     };
   }
 
-  function findMoves(): MoveType[] {
+  function findMoves(): readonly MoveType[] {
     const top = side === RED ? 7 : 0;
     const out = top + side;
     const bottom = top ^ 7;
-    const moves: MoveType[] = [];
+    const moves = [] as MoveType[];
 
     // loop through playable squares
     for (let y = bottom; y !== out; y += side) {
@@ -238,7 +238,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     };
   }
 
-  function findPlays(): MoveType[] {
+  function findPlays(): readonly MoveType[] {
     // you have to jump if you can
     const jumps = findJumps();
     if (jumps.length) {
