@@ -61,8 +61,8 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     let found = false;
 
     // loop over directions (dx, dy) from the current square
-    for (let dy = king ? -1 : 1; dy !== 3; dy += 2) {
-      for (let dx = -1; dx !== 3; dx += 2) {
+    for (let dy = king ? -1 : 1; dy <= 1; dy += 2) {
+      for (let dx = -1; dx <= 1; dx += 2) {
         let mx: number;
         let my: number;
         let nx: number;
@@ -181,8 +181,8 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
         // see if it's our piece
         if (side === RED ? p > 0 : p < 0) {
           // loop over directions (dx, dy) from the current square
-          for (let dy = king ? -1 : 1; dy !== 3; dy += 2) {
-            for (let dx = -1; dx !== 3; dx += 2) {
+          for (let dy = king ? -1 : 1; dy <= 1; dy += 2) {
+            for (let dx = -1; dx <= 1; dx += 2) {
               let nx: number;
               let ny: number;
 
