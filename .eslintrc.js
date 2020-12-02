@@ -19,6 +19,7 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
+    'plugin:postcss-modules/recommended',
   ],
   plugins: ['@typescript-eslint', 'prettier', 'import', 'react', 'react-hooks'],
   settings: {
