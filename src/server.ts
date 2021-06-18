@@ -1,20 +1,17 @@
+import process from 'process';
 import http from 'http';
 import express from 'express';
-import webpack from 'webpack';
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import WebpackDevMiddleware from 'webpack-dev-middleware';
-
-import webpack_config from '../webpack.config';
 
 // set up the express server
 const app = express();
-app.use(express.static('.'));
+app.use(express.static('./static'));
 
-// wire up webpack hot module replacement
-const compiler = webpack(webpack_config as webpack.Configuration);
-app.use(WebpackDevMiddleware(compiler));
+if (process.env.WEBPACK_DEV_SERVER) {
+  // wire up webpack hot module replacement
+  const webpack = require('webpack');
+  const WebpackDevMiddleware = require('webpack-dev-middleware');
+  app.use(WebpackDevMiddleware(webpack(require('../webpack.config'))));
+}
 
 // create the server
 const server = http.createServer(app);

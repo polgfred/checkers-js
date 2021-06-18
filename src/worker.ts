@@ -3,7 +3,7 @@ import { analyze } from './core/analyzer';
 
 // tell typescript that we're in a web worker, as the
 // postMessage API is slightly different
-declare const self: DedicatedWorkerGlobalScope;
+declare const self: Worker;
 
 self.addEventListener(
   'message',

@@ -5,7 +5,7 @@ module.exports = {
     worker: './src/worker.ts',
   },
   output: {
-    path: __dirname,
+    path: __dirname + '/static',
     filename: '[name]-bundle.js',
   },
   devtool: 'source-map',
@@ -30,10 +30,7 @@ module.exports = {
       },
       {
         test: /\.svg$/,
-        use: [
-          'babel-loader',
-          { loader: 'react-svg-loader', options: { jsx: true } },
-        ],
+        use: ['svg-react-loader'],
       },
     ],
   },

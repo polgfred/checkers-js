@@ -1,16 +1,15 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
+    "outDir": "./lib/",
     "noImplicitAny": true,
     "jsx": "react",
     "target": "es6",
     "allowJs": true,
-    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
     "sourceMap": true,
-    "lib": ["es2020", "DOM", "webworker"]
+    "lib": ["es2020", "dom"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules/**"]
+  "exclude": ["node_modules/**/*"]
 }
