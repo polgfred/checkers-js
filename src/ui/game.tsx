@@ -35,7 +35,7 @@ export function Game(): JSX.Element {
         },
       }}
     >
-      <div className="checkers-game">
+      <div className="game-container">
         {side === RED ? <HumanPlayer /> : <ComputerPlayer />}
         <History />
       </div>
