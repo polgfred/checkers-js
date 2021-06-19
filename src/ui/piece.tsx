@@ -45,7 +45,8 @@ export function Piece({
     DragItem,
     DropResult,
     { _isDragging: boolean }
-  >({
+  >(() => ({
+    type: 'piece',
     item: { type: 'piece', x, y, p },
     canDrag: () => canDrag({ x, y }),
     end: (_, monitor) => {
@@ -58,7 +59,7 @@ export function Piece({
     collect: (monitor) => ({
       _isDragging: monitor.isDragging(),
     }),
-  });
+  }));
 
   // since we're using a custom drag layer
   useEffect(() => {

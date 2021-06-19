@@ -19,7 +19,7 @@ export function Square({
     DragItem,
     DropResult,
     { _canDrop: boolean; _isOver: boolean }
-  >({
+  >(() => ({
     accept: 'piece',
     canDrop: (_, monitor) => {
       const source: DragItem = monitor.getItem();
@@ -30,7 +30,7 @@ export function Square({
       _canDrop: monitor.canDrop(),
       _isOver: monitor.isOver(),
     }),
-  });
+  }));
 
   return connectDropTarget(
     <td
