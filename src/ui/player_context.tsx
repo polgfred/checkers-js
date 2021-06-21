@@ -3,13 +3,13 @@ import { createContext } from 'react';
 import { Coords } from './types';
 
 export type PlayerContextType = {
-  canDrag: (xy: Coords) => boolean;
-  canDrop: (xy: Coords, nxny: Coords) => boolean;
-  endDrag: (xy: Coords, nxny: Coords) => void;
+  canMove: (xy: Coords) => boolean;
+  canMoveTo: (xy: Coords, nxny: Coords) => boolean;
+  moveTo: (xy: Coords, nxny: Coords) => void;
 };
 
 export const PlayerContext = createContext<PlayerContextType>({
-  canDrag: () => false,
-  canDrop: () => false,
-  endDrag: () => undefined,
+  canMove: () => false,
+  canMoveTo: () => false,
+  moveTo: () => undefined,
 });

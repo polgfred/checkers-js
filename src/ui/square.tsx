@@ -14,30 +14,30 @@ export function Square({
   y: number;
   children: ReactNode;
 }): JSX.Element {
-  const { canDrop } = useContext(PlayerContext);
-  const [{ _canDrop, _isOver }, connectDropTarget] = useDrop<
+  const { canMoveTo } = useContext(PlayerContext);
+  const [{ canDrop, isOver }, connectDropTarget] = useDrop<
     DragItem,
     DropResult,
-    { _canDrop: boolean; _isOver: boolean }
-  >(() => ({
-    accept: 'piece',
-    canDrop: (_, monitor) => {
-      const source: DragItem = monitor.getItem();
-      return canDrop(source, { x, y });
-    },
-    drop: () => ({ x, y }),
-    collect: (monitor) => ({
-      _canDrop: monitor.canDrop(),
-      _isOver: monitor.isOver(),
+    { canDrop: boolean; isOver: boolean }
+  >(
+    () => ({
+      accept: 'piece',
+      canDrop: (source) => canMoveTo(source, { x, y }),
+      drop: () => ({ x, y }),
+      collect: (monitor) => ({
+        canDrop: monitor.canDrop(),
+        isOver: monitor.isOver(),
+      }),
     }),
-  }));
+    [x, y]
+  );
 
   return connectDropTarget(
     <td
       className={classNames({
         playable: true,
-        'can-drop': _canDrop,
-        'is-over': _isOver,
+        'can-drop': canDrop,
+        'is-over': isOver,
       })}
     >
       {children}

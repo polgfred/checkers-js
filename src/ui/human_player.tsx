@@ -25,7 +25,7 @@ export function HumanPlayer(): JSX.Element {
     current: [] as _MutableMoveType,
   }));
 
-  const canDrag = useCallback(
+  const canMove = useCallback(
     ({ x, y }: Coords) => {
       // see if this position is in the tree
       if (cplays[`${x},${y}`]) {
@@ -35,7 +35,7 @@ export function HumanPlayer(): JSX.Element {
     [cplays]
   );
 
-  const canDrop = useCallback(
+  const canMoveTo = useCallback(
     ({ x, y }: Coords, { x: nx, y: ny }: Coords) => {
       // see if this move is in the tree
       const next = cplays[`${x},${y}`];
@@ -46,7 +46,7 @@ export function HumanPlayer(): JSX.Element {
     [cplays]
   );
 
-  const endDrag = useCallback(
+  const moveTo = useCallback(
     ({ x, y }: Coords, { x: nx, y: ny }: Coords) => {
       // see if this move is in the tree
       const next = cplays[`${x},${y}`];
@@ -95,9 +95,9 @@ export function HumanPlayer(): JSX.Element {
   return (
     <PlayerContext.Provider
       value={{
-        canDrag,
-        canDrop,
-        endDrag,
+        canMove,
+        canMoveTo,
+        moveTo,
       }}
     >
       <Board board={cboard} />

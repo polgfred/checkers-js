@@ -42,26 +42,28 @@ export function Piece({
     return null;
   }
 
-  const { canDrag, endDrag } = useContext(PlayerContext);
-  const [{ _isDragging }, connectDragSource, connectDragPreview] = useDrag<
+  const { canMove, moveTo } = useContext(PlayerContext);
+  const [{ isDragging }, connectDragSource, connectDragPreview] = useDrag<
     DragItem,
     DropResult,
-    { _isDragging: boolean }
-  >(() => ({
-    type: 'piece',
-    item: { type: 'piece', x, y, p },
-    canDrag: () => canDrag({ x, y }),
-    end: (_, monitor) => {
-      const target: DropResult = monitor.getDropResult();
-      if (target) {
-        const source: DragItem = monitor.getItem();
-        endDrag(source, target);
-      }
-    },
-    collect: (monitor) => ({
-      _isDragging: monitor.isDragging(),
+    { isDragging: boolean }
+  >(
+    () => ({
+      type: 'piece',
+      item: { type: 'piece', x, y, p },
+      canDrag: () => canMove({ x, y }),
+      end: (source, monitor) => {
+        const target = monitor.getDropResult();
+        if (target) {
+          moveTo(source, target);
+        }
+      },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
     }),
-  }));
+    [x, y, p]
+  );
 
   // since we're using a custom drag layer
   useEffect(() => {
@@ -72,7 +74,7 @@ export function Piece({
     <div
       className={classNames({
         'piece-container': true,
-        'is-dragging': _isDragging,
+        'is-dragging': isDragging,
       })}
     >
       {getPieceElement(p)}
