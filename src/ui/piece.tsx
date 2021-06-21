@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import classNames from 'classnames';
@@ -9,7 +9,8 @@ import RedKing from '../images/red-king.svg';
 import WhitePiece from '../images/white-piece.svg';
 import WhiteKing from '../images/white-king.svg';
 
-import { Coords, DragItem, DropResult } from './types';
+import { PlayerContext } from './player_context';
+import { DragItem, DropResult } from './types';
 
 const { WHT_PIECE, WHT_KING, RED_PIECE, RED_KING } = PieceType;
 
@@ -32,15 +33,16 @@ export function Piece({
   x,
   y,
   p,
-  canDrag,
-  endDrag,
 }: {
   x: number;
   y: number;
   p: PieceType;
-  canDrag: (xy: Coords) => boolean;
-  endDrag: (xy: Coords, nxny: Coords) => void;
 }): JSX.Element {
+  if (p === PieceType.EMPTY) {
+    return null;
+  }
+
+  const { canDrag, endDrag } = useContext(PlayerContext);
   const [{ _isDragging }, connectDragSource, connectDragPreview] = useDrag<
     DragItem,
     DropResult,

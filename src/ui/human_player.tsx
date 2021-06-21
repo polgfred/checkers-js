@@ -10,59 +10,58 @@ import { copyBoard } from '../core/utils';
 
 import { Board } from './board';
 import { GameContext } from './game_context';
+import { PlayerContext } from './player_context';
 import { Coords } from './types';
 
 const { EMPTY } = PieceType;
 
 export function HumanPlayer(): JSX.Element {
-  const { board: _board, side, plays: _plays, makeMove } = useContext(
-    GameContext
-  );
+  const { board, side, plays, makeMove } = useContext(GameContext);
 
   // make a copy of the board and plays tree in local state
-  const [{ board, plays, current }, setState] = useState(() => ({
-    board: copyBoard(_board),
-    plays: _plays,
+  const [{ cboard, cplays, current }, setState] = useState(() => ({
+    cboard: copyBoard(board),
+    cplays: plays,
     current: [] as _MutableMoveType,
   }));
 
   const canDrag = useCallback(
     ({ x, y }: Coords) => {
       // see if this position is in the tree
-      if (plays[`${x},${y}`]) {
+      if (cplays[`${x},${y}`]) {
         return true;
       }
     },
-    [plays]
+    [cplays]
   );
 
   const canDrop = useCallback(
     ({ x, y }: Coords, { x: nx, y: ny }: Coords) => {
       // see if this move is in the tree
-      const next = plays[`${x},${y}`];
+      const next = cplays[`${x},${y}`];
       if (next && next[`${nx},${ny}`]) {
         return true;
       }
     },
-    [plays]
+    [cplays]
   );
 
   const endDrag = useCallback(
     ({ x, y }: Coords, { x: nx, y: ny }: Coords) => {
       // see if this move is in the tree
-      const next = plays[`${x},${y}`];
+      const next = cplays[`${x},${y}`];
 
       if (next) {
         const next2 = next[`${nx},${ny}`];
 
         if (next2) {
-          const p: PieceType = board[y][x];
+          const p: PieceType = cboard[y][x];
           const top = side === SideType.RED ? 7 : 0;
           const crowned = isPieceOf(side, p) && ny === top;
 
           // move the piece
-          board[y][x] = EMPTY;
-          board[ny][nx] = crowned ? p << 1 : p;
+          cboard[y][x] = EMPTY;
+          cboard[ny][nx] = crowned ? p << 1 : p;
 
           // record the current leg
           if (current.length === 0) {
@@ -74,7 +73,7 @@ export function HumanPlayer(): JSX.Element {
             const mx = (x + nx) >> 1;
             const my = (y + ny) >> 1;
 
-            board[my][mx] = EMPTY;
+            cboard[my][mx] = EMPTY;
             current.push([nx, ny, mx, my]);
           } else {
             current.push([nx, ny]);
@@ -85,20 +84,23 @@ export function HumanPlayer(): JSX.Element {
             makeMove(current);
           } else {
             // move to this position in the local state
-            setState({ board, plays: next, current });
+            setState({ cboard, cplays: next, current });
           }
         }
       }
     },
-    [board, side, plays, current, makeMove]
+    [cboard, side, cplays, current, makeMove]
   );
 
   return (
-    <Board
-      board={board}
-      canDrag={canDrag}
-      canDrop={canDrop}
-      endDrag={endDrag}
-    />
+    <PlayerContext.Provider
+      value={{
+        canDrag,
+        canDrop,
+        endDrag,
+      }}
+    >
+      <Board board={cboard} />
+    </PlayerContext.Provider>
   );
 }

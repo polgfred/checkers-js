@@ -5,7 +5,7 @@ export type GameContextType = {
   board: BoardType;
   side: SideType;
   plays: TreeType;
-  hist: MoveType[];
+  hist: readonly MoveType[];
   makeMove: (move: MoveType) => void;
 };
 

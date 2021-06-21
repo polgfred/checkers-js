@@ -23,12 +23,5 @@ export function ComputerPlayer(): JSX.Element {
     };
   }, [board, side, onComplete]);
 
-  return (
-    <Board
-      board={board}
-      canDrag={() => false}
-      canDrop={() => false}
-      endDrag={() => undefined}
-    />
-  );
+  return <Board board={board} />;
 }

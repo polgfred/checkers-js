@@ -1,20 +1,20 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useContext } from 'react';
 import { useDrop } from 'react-dnd';
 import classNames from 'classnames';
 
-import { Coords, DragItem, DropResult } from './types';
+import { PlayerContext } from './player_context';
+import { DragItem, DropResult } from './types';
 
 export function Square({
   x,
   y,
-  canDrop,
   children,
 }: {
   x: number;
   y: number;
-  canDrop: (xy: Coords, nxny: Coords) => boolean;
   children: ReactNode;
 }): JSX.Element {
+  const { canDrop } = useContext(PlayerContext);
   const [{ _canDrop, _isOver }, connectDropTarget] = useDrop<
     DragItem,
     DropResult,
