@@ -1,5 +1,4 @@
-FROM alpine
-RUN apk add nodejs npm
+FROM node
 WORKDIR /checkers
 COPY \
 	package.json \
@@ -14,8 +13,7 @@ COPY ./static ./static
 RUN npm run build:client
 RUN npm run build:server
 
-FROM alpine
-RUN apk add nodejs npm
+FROM node:slim
 WORKDIR /checkers
 COPY \
 	package.json \
