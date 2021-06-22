@@ -1,3 +1,5 @@
+var TerserPlugin = require('terser-webpack-plugin');
+
 module.exports = {
   mode: 'development',
   entry: {
@@ -34,4 +36,10 @@ module.exports = {
       },
     ],
   },
+  optimization: process.env.WEBPACK_DEV_SERVER
+    ? {}
+    : {
+        minimize: true,
+        minimizer: [new TerserPlugin({ extractComments: false })],
+      },
 };
