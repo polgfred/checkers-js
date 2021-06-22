@@ -1,8 +1,27 @@
 FROM alpine
-RUN apk add --update nodejs npm
-COPY . /checkers
+RUN apk add nodejs npm
 WORKDIR /checkers
+COPY \
+	package.json \
+	package-lock.json \
+	postcss.config.js \
+	tsconfig.json \
+	webpack.config.js \
+	./
 RUN npm install
+COPY ./src ./src
+COPY ./static ./static
 RUN npm run build
+
+FROM alpine
+RUN apk add nodejs npm
+WORKDIR /checkers
+COPY \
+	package.json \
+	package-lock.json \
+	./
+RUN npm install --only=production
+COPY --from=0 /checkers/lib ./lib
+COPY --from=0 /checkers/static ./static
 EXPOSE 8080
-ENTRYPOINT ["node", "--require", "esm", "./lib/server.js"]
+ENTRYPOINT ["npm", "start"]
