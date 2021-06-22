@@ -4,7 +4,8 @@
   "description": "Checkers in JavaScript",
   "scripts": {
     "clean": "rm -rf lib static/*-bundle.{js,js.map}",
-    "build": "webpack && tsc",
+    "build:client": "webpack",
+    "build:server": "tsc",
     "start": "node --require esm ./lib/server.js",
     "start:dev": "WEBPACK_DEV_SERVER=true ts-node ./src/server.ts",
     "test": "jest",
@@ -23,6 +24,8 @@
     "@types/react-dom": "^17.0.8",
     "@typescript-eslint/eslint-plugin": "^4.27.0",
     "@typescript-eslint/parser": "^4.27.0",
+    "classnames": "^2.3.1",
+    "core-js": "^3.14.0",
     "css-loader": "^5.2.6",
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
@@ -38,24 +41,22 @@
     "postcss-loader": "^6.1.0",
     "postcss-preset-env": "^6.7.0",
     "prettier": "^2.3.1",
-    "style-loader": "^2.0.0",
-    "svg-react-loader": "^0.4.6",
-    "ts-loader": "^9.2.3",
-    "webpack": "^5.39.1",
-    "webpack-cli": "^4.7.2",
-    "webpack-dev-middleware": "^5.0.0"
-  },
-  "dependencies": {
-    "classnames": "^2.3.1",
-    "core-js": "^3.14.0",
-    "esm": "^3.2.25",
-    "express": "^4.17.1",
     "react": "^17.0.2",
     "react-dnd": "^14.0.2",
     "react-dnd-html5-backend": "^14.0.0",
     "react-dom": "^17.0.1",
     "regenerator-runtime": "^0.13.7",
+    "style-loader": "^2.0.0",
+    "svg-react-loader": "^0.4.6",
+    "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
-    "typescript": "^4.3.4"
+    "typescript": "^4.3.4",
+    "webpack": "^5.39.1",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-middleware": "^5.0.0"
+  },
+  "dependencies": {
+    "esm": "^3.2.25",
+    "express": "^4.17.1"
   }
 }

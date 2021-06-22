@@ -11,7 +11,8 @@ COPY \
 RUN npm install
 COPY ./src ./src
 COPY ./static ./static
-RUN npm run build
+RUN npm run build:client
+RUN npm run build:server
 
 FROM alpine
 RUN apk add nodejs npm
