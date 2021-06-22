@@ -6,7 +6,7 @@ import express from 'express';
 const app = express();
 app.use(express.static('./static'));
 
-if (process.env.WEBPACK_DEV_SERVER) {
+if (process.env.NODE_ENV === 'development') {
   // wire up webpack hot module replacement
   const webpack = require('webpack');
   const WebpackDevMiddleware = require('webpack-dev-middleware');

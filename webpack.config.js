@@ -36,10 +36,11 @@ module.exports = {
       },
     ],
   },
-  optimization: process.env.WEBPACK_DEV_SERVER
-    ? {}
-    : {
-        minimize: true,
-        minimizer: [new TerserPlugin({ extractComments: false })],
-      },
+  optimization:
+    process.env.NODE_ENV === 'development'
+      ? {}
+      : {
+          minimize: true,
+          minimizer: [new TerserPlugin({ extractComments: false })],
+        },
 };

@@ -1,13 +1,13 @@
 {
   "name": "checkers",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Checkers in JavaScript",
   "scripts": {
     "clean": "rm -rf lib static/*-bundle.{js,js.map}",
-    "build:client": "webpack",
-    "build:server": "tsc",
-    "start": "node --require esm ./lib/server.js",
-    "start:dev": "WEBPACK_DEV_SERVER=true ts-node ./src/server.ts",
+    "build:client": "NODE_ENV=production webpack",
+    "build:server": "NODE_ENV=production tsc",
+    "start": "NODE_ENV=production node --require esm ./lib/server.js",
+    "start:dev": "NODE_ENV=development ts-node ./src/server.ts",
     "test": "jest",
     "format": "prettier --write ./src/**/*.{ts,tsx}",
     "lint": "eslint --config .eslintrc.js ./src"
@@ -16,7 +16,7 @@
     "type": "git",
     "url": "git+https://github.com/polgfred/checkers-js.git"
   },
-  "author": "",
+  "author": "Frederick Polgardy <fred@polgardy.com>",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.11",
