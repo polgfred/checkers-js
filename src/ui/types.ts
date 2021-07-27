@@ -1,16 +1,18 @@
 import { MoveType, PieceType } from '../core/types';
 
-export type Coords = { x: number; y: number };
+export interface Coords {
+  x: number;
+  y: number;
+}
+
+export interface PieceAtCoords extends Coords {
+  p: PieceType;
+}
 
 // web worker
 
-export type WorkerData = { data: { move: MoveType } };
-
-// drag and drop
-
-export type DragItem = {
-  type: 'piece';
-  p: PieceType;
-} & Coords;
-
-export type DropResult = Coords;
+export interface WorkerData {
+  data: {
+    move: MoveType;
+  };
+}

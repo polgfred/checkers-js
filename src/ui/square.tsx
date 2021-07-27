@@ -3,21 +3,17 @@ import { useDrop } from 'react-dnd';
 import classNames from 'classnames';
 
 import { PlayerContext } from './player_context';
-import { DragItem, DropResult } from './types';
+import { PieceAtCoords, Coords } from './types';
 
 export function Square({
   x,
   y,
   children,
-}: {
-  x: number;
-  y: number;
-  children: ReactNode;
-}): JSX.Element {
+}: Coords & { children: ReactNode }): JSX.Element {
   const { canMoveTo } = useContext(PlayerContext);
   const [{ canDrop, isOver }, connectDropTarget] = useDrop<
-    DragItem,
-    DropResult,
+    PieceAtCoords,
+    Coords,
     { canDrop: boolean; isOver: boolean }
   >(
     () => ({

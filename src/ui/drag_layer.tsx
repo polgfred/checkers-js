@@ -2,11 +2,11 @@ import React from 'react';
 import { DragSourceMonitor, XYCoord, useDragLayer } from 'react-dnd';
 
 import { getPieceElement } from './piece';
-import { DragItem } from './types';
+import { PieceAtCoords } from './types';
 
 export function DragLayer(): JSX.Element {
   const { item, isDragging, sourceClientOffset } = useDragLayer<{
-    item: DragItem;
+    item: PieceAtCoords;
     isDragging: boolean;
     sourceClientOffset: XYCoord;
   }>((monitor: DragSourceMonitor) => ({

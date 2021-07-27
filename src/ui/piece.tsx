@@ -10,7 +10,7 @@ import WhitePiece from '../images/white-piece.svg';
 import WhiteKing from '../images/white-king.svg';
 
 import { PlayerContext } from './player_context';
-import { DragItem, DropResult } from './types';
+import { PieceAtCoords, Coords } from './types';
 
 const { WHT_PIECE, WHT_KING, RED_PIECE, RED_KING } = PieceType;
 
@@ -29,28 +29,20 @@ export function getPieceElement(p: PieceType): JSX.Element {
   }
 }
 
-export function Piece({
-  x,
-  y,
-  p,
-}: {
-  x: number;
-  y: number;
-  p: PieceType;
-}): JSX.Element {
+export function Piece({ x, y, p }: PieceAtCoords): JSX.Element {
   if (p === PieceType.EMPTY) {
     return null;
   }
 
   const { canMove, moveTo } = useContext(PlayerContext);
   const [{ isDragging }, connectDragSource, connectDragPreview] = useDrag<
-    DragItem,
-    DropResult,
+    PieceAtCoords,
+    Coords,
     { isDragging: boolean }
   >(
     () => ({
       type: 'piece',
-      item: { type: 'piece', x, y, p },
+      item: { x, y, p },
       canDrag: () => canMove({ x, y }),
       end: (source, monitor) => {
         const target = monitor.getDropResult();
