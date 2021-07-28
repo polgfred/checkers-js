@@ -38,8 +38,7 @@ export function HumanPlayer(): JSX.Element {
   const canMoveTo = useCallback(
     ({ x, y }: Coords, { x: nx, y: ny }: Coords) => {
       // see if this move is in the tree
-      const next = cplays[`${x},${y}`];
-      if (next && next[`${nx},${ny}`]) {
+      if (cplays[`${x},${y}`]?.[`${nx},${ny}`]) {
         return true;
       }
     },
