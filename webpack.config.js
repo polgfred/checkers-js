@@ -1,7 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 var TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
-  mode: 'development',
+  mode: process.env.NODE_ENV,
   entry: {
     main: './src/main.tsx',
     worker: './src/worker.ts',
