@@ -2,11 +2,11 @@ import { createContext } from 'react';
 
 import { Coords } from './types';
 
-export type PlayerContextType = {
+export interface PlayerContextType {
   canMove: (xy: Coords) => boolean;
   canMoveTo: (xy: Coords, nxny: Coords) => boolean;
   moveTo: (xy: Coords, nxny: Coords) => void;
-};
+}
 
 export const PlayerContext = createContext<PlayerContextType>({
   canMove: () => false,

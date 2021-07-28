@@ -10,11 +10,11 @@ const {
   RED_EITHER,
 } = PieceType;
 
-export type Evaluator = {
+export interface Evaluator {
   getScores: () => ScoresType;
   addFormation: (formation: FormationType, scores: readonly number[][]) => void;
   evaluate: (board: BoardType) => number;
-};
+}
 
 export function makeEvaluator(): Evaluator {
   // scores are represented as a 2D array of [pattern, score] pairs, where:

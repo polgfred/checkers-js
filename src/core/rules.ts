@@ -14,7 +14,7 @@ import {
 const { RED } = SideType;
 const { EMPTY } = PieceType;
 
-export type Rules = {
+export interface Rules {
   readonly getBoard: () => BoardType;
   readonly getSide: () => SideType;
   readonly findJumps: () => readonly MoveType[];
@@ -24,7 +24,7 @@ export type Rules = {
   readonly doMove: (move: MoveType) => () => void;
   readonly doPlay: (play: MoveType) => () => void;
   readonly buildTree: () => TreeType;
-};
+}
 
 export function makeRules(_board: BoardType, side: SideType): Rules {
   // don't mutate the caller's board
