@@ -30,10 +30,6 @@ export function getPieceElement(p: PieceType): JSX.Element {
 }
 
 export function Piece({ x, y, p }: PieceAtCoords): JSX.Element {
-  if (p === PieceType.EMPTY) {
-    return null;
-  }
-
   const { canMove, moveTo } = useContext(PlayerContext);
   const [{ isDragging }, connectDragSource, connectDragPreview] = useDrag<
     PieceAtCoords,
@@ -62,16 +58,14 @@ export function Piece({ x, y, p }: PieceAtCoords): JSX.Element {
     connectDragPreview(getEmptyImage());
   }, [connectDragPreview]);
 
-  return p === PieceType.EMPTY
-    ? null
-    : connectDragSource(
-        <div
-          className={classNames({
-            'piece-container': true,
-            'is-dragging': isDragging,
-          })}
-        >
-          {getPieceElement(p)}
-        </div>
-      );
+  return connectDragSource(
+    <div
+      className={classNames({
+        'piece-container': true,
+        'is-dragging': isDragging,
+      })}
+    >
+      {getPieceElement(p)}
+    </div>
+  );
 }

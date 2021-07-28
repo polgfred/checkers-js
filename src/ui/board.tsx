@@ -2,7 +2,7 @@ import React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { BoardType } from '../core/types';
+import { BoardType, PieceType } from '../core/types';
 import { coordsToNumber } from '../core/utils';
 
 import { DragLayer } from './drag_layer';
@@ -24,7 +24,9 @@ export function Board({ board }: { board: BoardType }): JSX.Element {
                   (x + y) % 2 === 0 ? (
                     <Square key={x} x={x} y={y}>
                       <span>{coordsToNumber(x, y)}</span>
-                      <Piece x={x} y={y} p={board[y][x]} />
+                      {board[y][x] === PieceType.EMPTY ? null : (
+                        <Piece x={x} y={y} p={board[y][x]} />
+                      )}
                     </Square>
                   ) : (
                     <td key={x} />
