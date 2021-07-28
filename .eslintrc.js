@@ -14,14 +14,12 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'prettier/@typescript-eslint',
-    'plugin:prettier/recommended',
     'plugin:react/recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
-    'plugin:postcss-modules/recommended',
+    'prettier',
   ],
-  plugins: ['@typescript-eslint', 'prettier', 'import', 'react', 'react-hooks'],
+  plugins: ['prettier', 'import', 'react', 'react-hooks'],
   settings: {
     'import/resolver': {
       node: {

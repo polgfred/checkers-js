@@ -62,14 +62,16 @@ export function Piece({ x, y, p }: PieceAtCoords): JSX.Element {
     connectDragPreview(getEmptyImage());
   }, [connectDragPreview]);
 
-  return connectDragSource(
-    <div
-      className={classNames({
-        'piece-container': true,
-        'is-dragging': isDragging,
-      })}
-    >
-      {getPieceElement(p)}
-    </div>
-  );
+  return p === PieceType.EMPTY
+    ? null
+    : connectDragSource(
+        <div
+          className={classNames({
+            'piece-container': true,
+            'is-dragging': isDragging,
+          })}
+        >
+          {getPieceElement(p)}
+        </div>
+      );
 }
