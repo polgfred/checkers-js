@@ -8,10 +8,7 @@ import { newBoard, newBoardFromData } from './utils';
 
 const { RED, WHT } = SideType;
 
-function duration(
-  action: () => void,
-  times: number
-): [sec: number, nsec: number] {
+function duration(action: () => void, times: number) {
   const start = process.hrtime();
   for (let i = 0; i < times; ++i) {
     action();

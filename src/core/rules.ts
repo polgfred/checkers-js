@@ -30,7 +30,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
   // don't mutate the caller's board
   const board = copyBoard(_board);
 
-  function findJumps(): readonly MoveType[] {
+  function findJumps() {
     const top = side === RED ? 7 : 0;
     const out = top + side;
     const bottom = top ^ 7;
@@ -117,7 +117,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     return found;
   }
 
-  function doJump(jump: MoveType): () => void {
+  function doJump(jump: MoveType) {
     const len = jump.length;
     const [x, y] = jump[0];
     const [fx, fy] = jump[len - 1];
@@ -166,7 +166,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     };
   }
 
-  function findMoves(): readonly MoveType[] {
+  function findMoves() {
     const top = side === RED ? 7 : 0;
     const out = top + side;
     const bottom = top ^ 7;
@@ -214,7 +214,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     return moves;
   }
 
-  function doMove(move: MoveType): () => void {
+  function doMove(move: MoveType) {
     const [[x, y], [nx, ny]] = move;
     const p: PieceType = board[y][x];
     const top = side === RED ? 7 : 0;
@@ -238,7 +238,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     };
   }
 
-  function findPlays(): readonly MoveType[] {
+  function findPlays() {
     // you have to jump if you can
     const jumps = findJumps();
     if (jumps.length) {
@@ -248,7 +248,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     }
   }
 
-  function doPlay(play: MoveType): () => void {
+  function doPlay(play: MoveType) {
     // if the second segment has coords for the jumped piece,
     // it has to be a jump
     if (play[1].length > 2) {
@@ -258,7 +258,7 @@ export function makeRules(_board: BoardType, side: SideType): Rules {
     }
   }
 
-  function buildTree(): TreeType {
+  function buildTree() {
     const plays = findPlays();
     const tree: TreeType = {};
 

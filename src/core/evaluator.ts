@@ -49,7 +49,7 @@ export function makeEvaluator(): Evaluator {
     }
   }
 
-  function evaluate(board: BoardType): number {
+  function evaluate(board: BoardType) {
     // match the board and side against the formations and return a score:
     //  - for each square on the board, get the set of formations on it
     //  - for each formation, see if it applies to red (+) from the top of

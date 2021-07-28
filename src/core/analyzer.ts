@@ -19,7 +19,7 @@ export function analyze(
     side
   );
 
-  function loop(level: number): [MoveType, number] {
+  function loop(level: number) {
     const board = getBoard();
     const side = getSide();
     let bestScore = side / -0;
@@ -75,7 +75,7 @@ export function analyze(
     }
 
     // a pair representing the winning play and score for this turn
-    return [bestPlay, bestScore];
+    return [bestPlay, bestScore] as const;
   }
 
   // start the descent
