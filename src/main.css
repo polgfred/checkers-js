@@ -30,7 +30,7 @@
         height: 64px;
         padding: 0;
         position: relative;
-        transition: background-color 0.5s;
+        transition: 0.5s;
         width: 64px;
 
         &.playable {
@@ -41,7 +41,8 @@
           &.can-drop {
             background-color: var(--droppable);
             &.is-over {
-              background-color: color-mod(var(--primary) tint(40%));
+              background-color: var(--primary);
+              filter: brightness(140%);
             }
           }
         }
@@ -131,12 +132,12 @@
       }
 
       & tbody {
-        & tr:nth-child(odd) td {
+        & tr td {
           background-color: var(--secondary);
         }
 
         & tr:nth-child(even) td {
-          background-color: color(var(--secondary) shade(20%));
+          filter: brightness(80%);
         }
       }
     }
