@@ -22,9 +22,7 @@ module.exports = {
   plugins: ['prettier', 'import', 'react', 'react-hooks'],
   settings: {
     'import/resolver': {
-      node: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
-      },
+      typescript: {},
     },
     react: {
       version: 'detect',
