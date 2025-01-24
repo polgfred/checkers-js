@@ -10,7 +10,7 @@
     "start:dev": "NODE_ENV=development node --require ts-node/register ./src/server.ts",
     "test": "jest",
     "format": "prettier --write ./src/**/*.{ts,tsx}",
-    "lint": "eslint --config .eslintrc.js ./src",
+    "lint": "eslint ./src",
     "types": "tsc --noEmit"
   },
   "repository": {
@@ -23,8 +23,6 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/react-dom": "^19.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.21.0",
-    "@typescript-eslint/parser": "^8.21.0",
     "classnames": "^2.5.1",
     "core-js": "^3.40.0",
     "css-loader": "^7.1.2",
@@ -55,6 +53,7 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3",
+    "typescript-eslint": "^8.21.0",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1",
     "webpack-dev-middleware": "^7.4.2"
