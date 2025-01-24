@@ -9,7 +9,7 @@ export function Square({
   x,
   y,
   children,
-}: Coords & { children: ReactNode }): JSX.Element {
+}: Coords & { children: ReactNode }) {
   const { canMoveTo } = useContext(PlayerContext);
   const [{ canDrop, isOver }, connectDropTarget] = useDrop<
     PieceAtCoords,

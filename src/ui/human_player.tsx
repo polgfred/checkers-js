@@ -15,7 +15,7 @@ import { Coords } from './types';
 
 const { EMPTY } = PieceType;
 
-export function HumanPlayer(): JSX.Element {
+export function HumanPlayer() {
   const { board, side, plays, makeMove } = useContext(GameContext);
 
   // make a copy of the board and plays tree in local state

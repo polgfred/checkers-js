@@ -11,7 +11,7 @@ import { History } from './history';
 
 const { RED } = SideType;
 
-export function Game(): JSX.Element {
+export function Game() {
   const [{ getBoard, getSide, doPlay, buildTree }] = useState(() =>
     makeRules(newBoard(), RED)
   );
