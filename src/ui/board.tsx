@@ -12,7 +12,7 @@ import { Piece } from './piece';
 const COORDS = [0, 1, 2, 3, 4, 5, 6, 7];
 const REV_COORDS = COORDS.slice().reverse();
 
-export function Board({ board }: { board: BoardType }): JSX.Element {
+export function Board({ board }: { board: BoardType }) {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="board-container">

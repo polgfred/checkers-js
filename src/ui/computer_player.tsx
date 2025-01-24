@@ -4,7 +4,7 @@ import { Board } from './board';
 import { GameContext } from './game_context';
 import { WorkerData } from './types';
 
-export function ComputerPlayer(): JSX.Element {
+export function ComputerPlayer() {
   const { board, side, makeMove } = useContext(GameContext);
 
   const onComplete = useCallback(

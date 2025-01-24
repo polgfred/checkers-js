@@ -14,7 +14,7 @@ import { PieceAtCoords, Coords } from './types';
 
 const { WHT_PIECE, WHT_KING, RED_PIECE, RED_KING } = PieceType;
 
-export function getPieceElement(p: PieceType): JSX.Element {
+export function getPieceElement(p: PieceType) {
   switch (p) {
     case RED_PIECE:
       return <RedPiece />;
@@ -29,7 +29,7 @@ export function getPieceElement(p: PieceType): JSX.Element {
   }
 }
 
-export function Piece({ x, y, p }: PieceAtCoords): JSX.Element {
+export function Piece({ x, y, p }: PieceAtCoords) {
   const { canMove, moveTo } = useContext(PlayerContext);
   const [{ isDragging }, connectDragSource, connectDragPreview] = useDrag<
     PieceAtCoords,
