@@ -1,13 +1,13 @@
+import classNames from 'classnames';
 import React, { useContext, useEffect } from 'react';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
-import classNames from 'classnames';
 
 import { PieceType } from '../core/types';
-import RedPiece from '../images/red-piece.svg';
 import RedKing from '../images/red-king.svg';
-import WhitePiece from '../images/white-piece.svg';
+import RedPiece from '../images/red-piece.svg';
 import WhiteKing from '../images/white-king.svg';
+import WhitePiece from '../images/white-piece.svg';
 
 import { PlayerContext } from './player_context';
 import { PieceAtCoords, Coords } from './types';

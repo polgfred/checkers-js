@@ -6,7 +6,6 @@ import React, {
 } from 'react';
 
 import { moveToString } from '../core/utils';
-
 import ThinkingSpinner from '../images/thinking.svg';
 
 import { GameContext } from './game_context';

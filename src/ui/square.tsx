@@ -1,6 +1,6 @@
+import classNames from 'classnames';
 import React, { ReactNode, useContext } from 'react';
 import { useDrop } from 'react-dnd';
-import classNames from 'classnames';
 
 import { PlayerContext } from './player_context';
 import { PieceAtCoords, Coords } from './types';

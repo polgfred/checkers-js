@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+import http from 'node:http';
+import process from 'node:process';
 
-import process from 'process';
-import http from 'http';
 import express from 'express';
 
 // set up the express server

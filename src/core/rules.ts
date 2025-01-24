@@ -1,5 +1,3 @@
-import { copyBoard } from './utils';
-
 import {
   BoardType,
   MoveType,
@@ -10,6 +8,8 @@ import {
   isKingOf,
   _MutableMoveType,
 } from './types';
+import { copyBoard } from './utils';
+
 
 const { RED } = SideType;
 const { EMPTY } = PieceType;

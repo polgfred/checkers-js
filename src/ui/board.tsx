@@ -6,8 +6,8 @@ import { BoardType, PieceType } from '../core/types';
 import { coordsToNumber } from '../core/utils';
 
 import { DragLayer } from './drag_layer';
-import { Square } from './square';
 import { Piece } from './piece';
+import { Square } from './square';
 
 const COORDS = [0, 1, 2, 3, 4, 5, 6, 7];
 const REV_COORDS = COORDS.slice().reverse();
