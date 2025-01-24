@@ -3,9 +3,10 @@
     "outDir": "./lib/",
     "noImplicitAny": true,
     "jsx": "react",
-    "target": "es6",
+    "target": "es2020",
     "allowJs": true,
     "esModuleInterop": true,
+    "module": "esnext",
     "moduleResolution": "node",
     "sourceMap": true,
     "lib": ["es2020", "dom"]
