@@ -1,0 +1,15 @@
+{
+	"name": "Checkers-JS",
+	"image": "mcr.microsoft.com/devcontainers/base:jammy",
+	"features": {
+		"./features/node": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"dbaeumer.vscode-eslint",
+				"ms-vscode.vscode-typescript-next"
+			]
+		}
+	}
+}
