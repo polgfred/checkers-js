@@ -1,4 +1,18 @@
-- Init: `npm install`
-- Develop: `npm start`, open http://localhost:8080
-- Build: `npm run build`, serve from index.html (web workers don't work with `file://` URLs)
-- Test: `npm test`
+# Development
+
+Install NPM pages and start the development server:
+
+```console
+% npm install
+% npm test
+% npm start:dev
+```
+
+# Docker
+
+Build the app as a docker container:
+
+```console
+% docker build --tag checkers .
+% docker run -it --rm -p 8080:80 checkers
+```
