@@ -14,9 +14,12 @@ export function newBoard(): BoardType {
   return copyBoard(initial);
 }
 
-// only use this on boards that are backed by a shared buffer!
-export function copyBoard(board: BoardType): BoardType {
-  return as2DArray(board[0].buffer.slice(0));
+export function copyBoard(_board: BoardType): BoardType {
+  const board = as2DArray(new ArrayBuffer(64));
+  for (let i = 0; i < 8; ++i) {
+    board[i].set(_board[i]);
+  }
+  return board;
 }
 
 // make a new board from the passed in array data
