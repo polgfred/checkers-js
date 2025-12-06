@@ -1,4 +1,4 @@
-import { MoveType, PieceType } from '../core/types';
+import { MoveType, PieceType } from '../core/types.js';
 
 export interface Coords {
   x: number;

@@ -1,6 +1,6 @@
-import { analyze } from './analyzer';
-import { SideType } from './types';
-import { newBoardFromData } from './utils';
+import { analyze } from './analyzer.js';
+import { SideType } from './types.js';
+import { newBoardFromData } from './utils.js';
 
 const { RED } = SideType;
 

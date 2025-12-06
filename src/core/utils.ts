@@ -1,4 +1,4 @@
-import { BoardType, MoveType, PieceType } from './types';
+import { BoardType, MoveType, PieceType } from './types.js';
 
 // set up the initial board position
 const initial: BoardType = as2DArray(new ArrayBuffer(64));

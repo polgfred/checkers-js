@@ -5,13 +5,13 @@ import {
   PieceType,
   isPieceOf,
   _MutableMoveType,
-} from '../core/types';
-import { copyBoard } from '../core/utils';
+} from '../core/types.js';
+import { copyBoard } from '../core/utils.js';
 
-import { Board } from './board';
-import { GameContext } from './game_context';
-import { PlayerContext } from './player_context';
-import { Coords } from './types';
+import { Board } from './board.js';
+import { GameContext } from './game_context.js';
+import { PlayerContext } from './player_context.js';
+import { Coords } from './types.js';
 
 const { EMPTY } = PieceType;
 

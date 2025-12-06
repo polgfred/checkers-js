@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
-import { MoveType, SideType } from '../core/types';
-import { makeRules } from '../core/rules';
-import { newBoard } from '../core/utils';
+import { MoveType, SideType } from '../core/types.js';
+import { makeRules } from '../core/rules.js';
+import { newBoard } from '../core/utils.js';
 
-import { GameContext } from './game_context';
-import { HumanPlayer } from './human_player';
-import { ComputerPlayer } from './computer_player';
-import { History } from './history';
+import { GameContext } from './game_context.js';
+import { HumanPlayer } from './human_player.js';
+import { ComputerPlayer } from './computer_player.js';
+import { History } from './history.js';
 
 const { RED } = SideType;
 

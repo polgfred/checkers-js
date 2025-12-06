@@ -1,20 +1,25 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-var TerserPlugin = require('terser-webpack-plugin');
+import path from 'node:path';
+import TerserPlugin from 'terser-webpack-plugin';
 
-module.exports = {
+export default {
   mode: process.env.NODE_ENV,
   entry: {
     main: './src/main.tsx',
     worker: './src/worker.ts',
   },
   output: {
-    path: __dirname + '/static',
+    path: path.resolve('./static'),
     filename: '[name]-bundle.js',
   },
   devtool: 'source-map',
   resolve: {
     modules: ['node_modules', 'src'],
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    extensionAlias: {
+      '.js': ['.ts', '.tsx', '.js'],
+      '.jsx': ['.tsx', '.jsx'],
+    },
   },
   module: {
     rules: [

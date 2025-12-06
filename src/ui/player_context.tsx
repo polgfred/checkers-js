@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { Coords } from './types';
+import { Coords } from './types.js';
 
 export interface PlayerContextType {
   canMove: (xy: Coords) => boolean;

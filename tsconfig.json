@@ -3,12 +3,13 @@
     "outDir": "./lib/",
     "noImplicitAny": true,
     "jsx": "react",
-    "target": "es6",
+    "target": "esnext",
     "allowJs": true,
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "sourceMap": true,
-    "lib": ["es2020", "dom"]
+    "lib": ["ESNext", "DOM"],
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules/**/*"]

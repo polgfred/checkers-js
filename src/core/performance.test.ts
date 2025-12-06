@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 import process from 'process';
 
-import { SideType } from './types';
-import { makeRules } from './rules';
-import { analyze } from './analyzer';
-import { newBoard, newBoardFromData } from './utils';
+import { SideType } from './types.js';
+import { makeRules } from './rules.js';
+import { analyze } from './analyzer.js';
+import { newBoard, newBoardFromData } from './utils.js';
 
 const { RED, WHT } = SideType;
 

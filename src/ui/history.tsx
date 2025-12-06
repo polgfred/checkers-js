@@ -5,11 +5,11 @@ import React, {
   useLayoutEffect,
 } from 'react';
 
-import { moveToString } from '../core/utils';
+import { moveToString } from '../core/utils.js';
 
 import ThinkingSpinner from '../images/thinking.svg';
 
-import { GameContext } from './game_context';
+import { GameContext } from './game_context.js';
 
 export function History() {
   const { hist } = useContext(GameContext);

@@ -1,4 +1,4 @@
-import { BoardType, FormationType, ScoresType, PieceType } from './types';
+import { BoardType, FormationType, ScoresType, PieceType } from './types.js';
 
 const {
   EMPTY,

@@ -1,7 +1,7 @@
-import { BoardType, MoveType, SideType } from './types';
-import { makeRules } from './rules';
-import { Evaluator } from './evaluator';
-import defaultEvaluator from './default_evaluator';
+import { BoardType, MoveType, SideType } from './types.js';
+import { makeRules } from './rules.js';
+import { Evaluator } from './evaluator.js';
+import defaultEvaluator from './default_evaluator.js';
 
 const { RED, WHT } = SideType;
 

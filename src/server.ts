@@ -8,9 +8,10 @@ app.use(express.static('./static'));
 
 if (process.env.NODE_ENV === 'development') {
   // wire up webpack hot module replacement
-  const webpack = require('webpack');
-  const WebpackDevMiddleware = require('webpack-dev-middleware');
-  app.use(WebpackDevMiddleware(webpack(require('../webpack.config'))));
+  const { default: webpack } = await import('webpack');
+  const { default: WebpackDevMiddleware } = await import('webpack-dev-middleware');
+  const { default: config } = await import('../webpack.config.js');
+  app.use(WebpackDevMiddleware(webpack(config as any)));
 }
 
 // create the server

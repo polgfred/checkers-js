@@ -2,8 +2,8 @@ import React, { ReactNode, useContext } from 'react';
 import { useDrop } from 'react-dnd';
 import classNames from 'classnames';
 
-import { PlayerContext } from './player_context';
-import { PieceAtCoords, Coords } from './types';
+import { PlayerContext } from './player_context.js';
+import { PieceAtCoords, Coords } from './types.js';
 
 export function Square({ x, y, children }: Coords & { children: ReactNode }) {
   const { canMoveTo } = useContext(PlayerContext);

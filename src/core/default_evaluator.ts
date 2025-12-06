@@ -1,4 +1,4 @@
-import { makeEvaluator } from './evaluator';
+import { makeEvaluator } from './evaluator.js';
 
 const defaultEvaluator = makeEvaluator();
 

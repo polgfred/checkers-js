@@ -2,12 +2,12 @@ import React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { BoardType, PieceType } from '../core/types';
-import { coordsToNumber } from '../core/utils';
+import { BoardType, PieceType } from '../core/types.js';
+import { coordsToNumber } from '../core/utils.js';
 
-import { DragLayer } from './drag_layer';
-import { Square } from './square';
-import { Piece } from './piece';
+import { DragLayer } from './drag_layer.js';
+import { Square } from './square.js';
+import { Piece } from './piece.js';
 
 const COORDS = [0, 1, 2, 3, 4, 5, 6, 7];
 const REV_COORDS = COORDS.slice().reverse();

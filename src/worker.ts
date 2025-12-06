@@ -1,5 +1,5 @@
-import { BoardType, SideType } from './core/types';
-import { analyze } from './core/analyzer';
+import { BoardType, SideType } from './core/types.js';
+import { analyze } from './core/analyzer.js';
 
 // tell typescript that we're in a web worker, as the
 // postMessage API is slightly different

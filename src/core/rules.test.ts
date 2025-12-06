@@ -1,6 +1,6 @@
-import { makeRules } from './rules';
-import { SideType } from './types';
-import { newBoard, newBoardFromData } from './utils';
+import { makeRules } from './rules.js';
+import { SideType } from './types.js';
+import { newBoard, newBoardFromData } from './utils.js';
 
 const { RED } = SideType;
 

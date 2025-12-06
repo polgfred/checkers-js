@@ -1,4 +1,4 @@
-import { copyBoard } from './utils';
+import { copyBoard } from './utils.js';
 
 import {
   BoardType,
@@ -9,7 +9,7 @@ import {
   isPieceOf,
   isKingOf,
   _MutableMoveType,
-} from './types';
+} from './types.js';
 
 const { RED } = SideType;
 const { EMPTY } = PieceType;

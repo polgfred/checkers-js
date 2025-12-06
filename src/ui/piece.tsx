@@ -3,14 +3,14 @@ import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import classNames from 'classnames';
 
-import { PieceType } from '../core/types';
+import { PieceType } from '../core/types.js';
 import RedPiece from '../images/red-piece.svg';
 import RedKing from '../images/red-king.svg';
 import WhitePiece from '../images/white-piece.svg';
 import WhiteKing from '../images/white-king.svg';
 
-import { PlayerContext } from './player_context';
-import { PieceAtCoords, Coords } from './types';
+import { PlayerContext } from './player_context.js';
+import { PieceAtCoords, Coords } from './types.js';
 
 const { WHT_PIECE, WHT_KING, RED_PIECE, RED_KING } = PieceType;
 
