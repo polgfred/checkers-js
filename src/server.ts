@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 import process from 'process';
 import http from 'http';
 import express from 'express';

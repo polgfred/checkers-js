@@ -59,6 +59,7 @@ export function HumanPlayer() {
           const crowned = isPieceOf(side, p) && ny === top;
 
           // move the piece
+          // eslint-disable-next-line react-hooks/immutability
           cboard[y][x] = EMPTY;
           cboard[ny][nx] = crowned ? p << 1 : p;
 
