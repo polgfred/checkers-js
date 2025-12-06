@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext } from 'react';
+import { ReactNode, useContext } from 'react';
 import { useDrop } from 'react-dnd';
 import classNames from 'classnames';
 

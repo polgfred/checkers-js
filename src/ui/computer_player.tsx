@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 
 import { Board } from './board.js';
 import { GameContext } from './game_context.js';

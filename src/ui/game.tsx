@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { MoveType, SideType } from '../core/types.js';
 import { makeRules } from '../core/rules.js';

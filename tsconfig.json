@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./lib/",
     "noImplicitAny": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "target": "esnext",
     "allowJs": true,
     "esModuleInterop": true,
