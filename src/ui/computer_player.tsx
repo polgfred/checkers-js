@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 
 import { Board } from './board';
 import { GameContext } from './game_context';
@@ -13,7 +13,7 @@ export function ComputerPlayer() {
   );
 
   useEffect(() => {
-    const worker = new Worker('./worker-bundle.js');
+    const worker = new Worker(new URL('/worker.js', window.origin));
     worker.addEventListener('message', onComplete, false);
     worker.postMessage({ board, side });
 

@@ -13,7 +13,7 @@ export default [
     ignores: ['**/node_modules/', '.git/', 'dist/', 'lib/', 'static/'],
   },
   {
-    files: ['**/*.{ts,tsx,js,jsx}'],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -52,6 +52,7 @@ export default [
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'react/jsx-no-undef': 'error',
       'react/jsx-no-target-blank': 'error',
+      'react/react-in-jsx-scope': 'off',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       '@typescript-eslint/no-require-imports': 'off',

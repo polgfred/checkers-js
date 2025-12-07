@@ -2,11 +2,12 @@
   "compilerOptions": {
     "outDir": "./lib/",
     "noImplicitAny": true,
-    "jsx": "react",
-    "target": "es6",
+    "jsx": "react-jsx",
+    "target": "esnext",
     "allowJs": true,
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "sourceMap": true,
     "lib": ["es2020", "dom"]
   },

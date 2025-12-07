@@ -2,13 +2,13 @@
 	"name": "Checkers-JS",
 	"image": "mcr.microsoft.com/devcontainers/base:jammy",
 	"features": {
-		"./features/node": {}
+		"./features/bun": {}
 	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"dbaeumer.vscode-eslint",
-				"ms-vscode.vscode-typescript-next"
+				"dbaeumer.vscode-typescript-javascript"
 			]
 		}
 	}
