@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf lib static/*-bundle.{js,js.map}",
     "build": "NODE_ENV=production bun build.ts",
-    "start": "NODE_ENV=production bun ./src/server.ts",
+    "start": "NODE_ENV=production bun ./src/index.ts",
     "start:dev": "NODE_ENV=development bun ./src/index.ts",
     "format": "prettier --write ./src/**/*.{ts,tsx}",
     "lint": "eslint ./src/**/*.{ts,tsx}"
