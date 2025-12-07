@@ -2,23 +2,19 @@
 
 import Bun from 'bun';
 import frontendBundle from './index.html';
-
-// bundle the worker script (won't hot reload)
-const {
-  outputs: [output],
-} = await Bun.build({
-  entrypoints: ['./src/worker.ts'],
-});
-
-const workerBundle = await output.text();
+import { analyze } from './core/analyzer';
 
 const server = Bun.serve({
   port: 8080,
   routes: {
     '/': frontendBundle,
-    '/worker.js': new Response(workerBundle, {
-      headers: { 'Content-Type': 'application/javascript' },
-    }),
+    '/move': {
+      async POST(request) {
+        const { board, side } = await request.json();
+        const [move] = analyze(board, side);
+        return Response.json(move);
+      },
+    },
   },
 
   development: process.env.NODE_ENV !== 'production' && {

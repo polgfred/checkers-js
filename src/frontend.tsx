@@ -5,18 +5,13 @@
  * It is included in `src/index.html`.
  */
 
-import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Game } from './ui/game';
 
 import './frontend.css';
 
 const elem = document.getElementById('checkers-container')!;
-const app = (
-  <StrictMode>
-    <Game />
-  </StrictMode>
-);
+const app = <Game />;
 
 if (import.meta.hot) {
   // With hot module reloading, `import.meta.hot.data` is persisted.

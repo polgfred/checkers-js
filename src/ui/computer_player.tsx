@@ -2,26 +2,27 @@ import { useCallback, useContext, useEffect } from 'react';
 
 import { Board } from './board';
 import { GameContext } from './game_context';
-import { WorkerData } from './types';
+import { SideType } from '../core/types';
 
 export function ComputerPlayer() {
   const { board, side, makeMove } = useContext(GameContext);
 
-  const onComplete = useCallback(
-    ({ data: { move } }: WorkerData) => makeMove(move),
-    [makeMove]
-  );
+  const getMove = useCallback(async () => {
+    if (side === SideType.RED) {
+      return;
+    }
+    const response = await fetch('/move', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ board, side }),
+    });
+    const move = await response.json();
+    makeMove(move);
+  }, [board, side, makeMove]);
 
   useEffect(() => {
-    const worker = new Worker(new URL('/worker.js', window.origin));
-    worker.addEventListener('message', onComplete, false);
-    worker.postMessage({ board, side });
-
-    return () => {
-      worker.removeEventListener('message', onComplete, false);
-      worker.terminate();
-    };
-  }, [board, side, onComplete]);
+    getMove();
+  }, [getMove]);
 
   return <Board board={board} />;
 }

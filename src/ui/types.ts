@@ -1,4 +1,4 @@
-import { MoveType, PieceType } from '../core/types';
+import type { PieceType } from '../core/types';
 
 export interface Coords {
   x: number;
@@ -7,12 +7,4 @@ export interface Coords {
 
 export interface PieceAtCoords extends Coords {
   p: PieceType;
-}
-
-// web worker
-
-export interface WorkerData {
-  data: {
-    move: MoveType;
-  };
 }
