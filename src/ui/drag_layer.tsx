@@ -1,4 +1,3 @@
-import React from 'react';
 import { DragSourceMonitor, XYCoord, useDragLayer } from 'react-dnd';
 
 import { getPieceElement } from './piece';
