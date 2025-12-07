@@ -1,6 +1,6 @@
 import { makeRules } from './rules';
 import { SideType } from './types';
-import { newBoard, newBoardFromData } from './utils';
+import { copyBoard, newBoard, reverseBoard } from './utils';
 
 const { RED } = SideType;
 
@@ -45,7 +45,7 @@ describe('Rules', () => {
 
   describe('jumps', () => {
     // prettier-ignore
-    const initialData = [
+    const initialData = reverseBoard([
       [ 0,  0,  0,  0,  0,  0,  0,  0 ],
       [ 0,  0,  0,  0,  0,  0,  0,  0 ],
       [ 0,  0,  0,  0,  0, -1,  0,  0 ],
@@ -54,22 +54,22 @@ describe('Rules', () => {
       [ 0,  0,  0,  0,  0,  0,  0,  0 ],
       [ 0, -1,  0, -1,  0,  0,  0,  0 ],
       [ 0,  0,  1,  0,  0,  0,  0,  0 ],
-    ].reverse();
+    ]);
 
     it('should initialize the board', () => {
-      const { getBoard } = makeRules(newBoardFromData(initialData), RED);
+      const { getBoard } = makeRules(copyBoard(initialData), RED);
       const board = getBoard();
       expect(board[0][0]).toBe(0);
     });
 
     it('should initialize the side', () => {
-      const { getSide } = makeRules(newBoardFromData(initialData), RED);
+      const { getSide } = makeRules(copyBoard(initialData), RED);
       const side = getSide();
       expect(side).toBe(1);
     });
 
     it('should find the jumps from this position', () => {
-      const { findJumps } = makeRules(newBoardFromData(initialData), RED);
+      const { findJumps } = makeRules(copyBoard(initialData), RED);
       const plays = findJumps();
 
       expect(plays.length).toBe(3);
@@ -93,7 +93,7 @@ describe('Rules', () => {
     });
 
     it('should build a jump tree from this position', () => {
-      const { buildTree } = makeRules(newBoardFromData(initialData), RED);
+      const { buildTree } = makeRules(copyBoard(initialData), RED);
       const plays = buildTree();
 
       expect(plays['2,0']['4,2']['6,4']['4,6']).toEqual({});

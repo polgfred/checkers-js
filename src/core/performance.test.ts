@@ -4,7 +4,7 @@ import process from 'process';
 import { SideType } from './types';
 import { makeRules } from './rules';
 import { analyze } from './analyzer';
-import { newBoard, newBoardFromData } from './utils';
+import { copyBoard, newBoard, reverseBoard } from './utils';
 
 const { RED, WHT } = SideType;
 
@@ -34,24 +34,20 @@ describe('Performance', () => {
   });
 
   describe('jumps', () => {
-    it('should find the jumps from this position', () => {
-      const { findJumps } = makeRules(
-        newBoardFromData(
-          // prettier-ignore
-          [
-            [ 0,  0,  0,  0,  0,  0,  0,  0 ],
-            [ 0,  0,  0,  0,  0,  0,  0,  0 ],
-            [ 0,  0,  0,  0,  0, -1,  0,  0 ],
-            [ 0,  0,  0,  0,  0,  0,  0,  0 ],
-            [ 0,  0,  0, -1,  0, -1,  0,  0 ],
-            [ 0,  0,  0,  0,  0,  0,  0,  0 ],
-            [ 0, -1,  0, -1,  0,  0,  0,  0 ],
-            [ 0,  0,  1,  0,  0,  0,  0,  0 ],
-          ].reverse()
-        ),
-        RED
-      );
+    // prettier-ignore
+    const initialData = reverseBoard([
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0, -1,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0, -1,  0, -1,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0, -1,  0, -1,  0,  0,  0,  0 ],
+      [ 0,  0,  1,  0,  0,  0,  0,  0 ],
+    ]);
 
+    it('should find the jumps from this position', () => {
+      const { findJumps } = makeRules(copyBoard(initialData), RED);
       const [sec, nsec] = duration(findJumps, 1000);
       console.log('findJumps', sec + nsec / 1e9);
       expect(sec * 1e9 + nsec).toBeGreaterThan(0);
@@ -59,24 +55,21 @@ describe('Performance', () => {
   });
 
   describe('analyzer', () => {
+    // prettier-ignore
+    const initialData = reverseBoard([
+      [ 0,  0,  0, -1,  0, -1,  0,  0 ],
+      [-1,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0, -1,  0,  0,  0,  0 ],
+      [ 1,  0,  1,  0,  0,  0, -1,  0 ],
+      [ 0,  1,  0,  0,  0, -1,  0,  0 ],
+      [ 1,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  1 ],
+      [ 0,  0,  0,  0, -2,  0,  1,  0 ],
+    ]);
+
     it('should return a move and score from this position', () => {
       const start = process.hrtime();
-      const [move] = analyze(
-        newBoardFromData(
-          // prettier-ignore
-          [
-            [ 0,  0,  0, -1,  0, -1,  0,  0 ],
-            [-1,  0,  0,  0,  0,  0,  0,  0 ],
-            [ 0,  0,  0, -1,  0,  0,  0,  0 ],
-            [ 1,  0,  1,  0,  0,  0, -1,  0 ],
-            [ 0,  1,  0,  0,  0, -1,  0,  0 ],
-            [ 1,  0,  0,  0,  0,  0,  0,  0 ],
-            [ 0,  0,  0,  0,  0,  0,  0,  1 ],
-            [ 0,  0,  0,  0, -2,  0,  1,  0 ],
-          ].reverse()
-        ),
-        WHT
-      );
+      const [move] = analyze(copyBoard(initialData), WHT);
       const [sec, nsec] = process.hrtime(start);
       console.log('analyze', sec + nsec / 1e9);
       expect(move).toEqual([
