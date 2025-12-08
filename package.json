@@ -38,8 +38,9 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.2.1",
-    "serve-static-bun": "^0.5.3",
     "svgo": "^4.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "serve-static-bun": "^0.5.3"
+  }
 }
