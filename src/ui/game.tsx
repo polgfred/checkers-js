@@ -4,9 +4,9 @@ import { type MoveType, SideType } from '../core/types';
 import { makeRules } from '../core/rules';
 import { newBoard } from '../core/utils';
 
-import { GameContext } from './game_context';
-import { HumanPlayer } from './human_player';
-import { ComputerPlayer } from './computer_player';
+import { GameContext } from './game-context';
+import { HumanPlayer } from './human-player';
+import { ComputerPlayer } from './computer-player';
 import { History } from './history';
 
 const { RED } = SideType;

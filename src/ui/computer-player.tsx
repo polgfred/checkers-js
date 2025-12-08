@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect } from 'react';
 
 import { Board } from './board';
-import { GameContext } from './game_context';
+import { GameContext } from './game-context';
 
 export function ComputerPlayer() {
   const { board, side, handlePlay } = useContext(GameContext);

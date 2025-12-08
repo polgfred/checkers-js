@@ -4,7 +4,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { BoardType, PieceType } from '../core/types';
 import { coordsToNumber } from '../core/utils';
 
-import { DragLayer } from './drag_layer';
+import { DragLayer } from './drag-layer';
 import { Square } from './square';
 import { Piece } from './piece';
 

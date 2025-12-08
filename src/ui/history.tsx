@@ -9,7 +9,7 @@ import { moveToString } from '../core/utils';
 
 import ThinkingSpinner from '../images/thinking.svg';
 
-import { GameContext } from './game_context';
+import { GameContext } from './game-context';
 
 export function History() {
   const { hist } = useContext(GameContext);

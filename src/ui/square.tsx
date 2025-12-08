@@ -2,7 +2,7 @@ import { ReactNode, useContext } from 'react';
 import { useDrop } from 'react-dnd';
 import classNames from 'classnames';
 
-import { PlayerContext } from './player_context';
+import { PlayerContext } from './player-context';
 import type { PieceAtCoords, Coords } from './types';
 
 export function Square({ x, y, children }: Coords & { children: ReactNode }) {
