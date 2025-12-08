@@ -1,11 +1,9 @@
-FROM node
-WORKDIR /checkers
-COPY package.json package-lock.json ./
-RUN npm install
-COPY postcss.config.js tsconfig.json webpack.config.js ./
-COPY ./src ./src
-COPY ./static ./static
-RUN npm run build:client
+FROM oven/bun
 
-FROM nginx:alpine
-COPY --from=0 /checkers/static /usr/share/nginx/html
+WORKDIR /checkers
+COPY package.json bun.lock ./
+RUN bun install
+COPY bunfig.toml build.ts server.ts ./
+COPY ./src ./src
+RUN bun build.ts
+CMD bun server.ts
