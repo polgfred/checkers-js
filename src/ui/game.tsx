@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { MoveType, SideType } from '../core/types';
+import { type MoveType, SideType } from '../core/types';
 import { makeRules } from '../core/rules';
 import { newBoard } from '../core/utils';
 

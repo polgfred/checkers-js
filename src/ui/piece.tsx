@@ -10,7 +10,7 @@ import WhitePiece from '../images/white-piece.svg';
 import WhiteKing from '../images/white-king.svg';
 
 import { PlayerContext } from './player_context';
-import { PieceAtCoords, Coords } from './types';
+import type { PieceAtCoords, Coords } from './types';
 
 const { WHT_PIECE, WHT_KING, RED_PIECE, RED_KING } = PieceType;
 

@@ -1,4 +1,4 @@
-import { BoardType, SideType } from './core/types';
+import type { BoardType, SideType } from './core/types';
 import { analyze } from './core/analyzer';
 
 // tell typescript that we're in a web worker, as the

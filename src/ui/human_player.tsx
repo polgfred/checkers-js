@@ -11,7 +11,7 @@ import { copyBoard } from '../core/utils';
 import { Board } from './board';
 import { GameContext } from './game_context';
 import { PlayerContext } from './player_context';
-import { Coords } from './types';
+import type { Coords } from './types';
 
 const { EMPTY } = PieceType;
 

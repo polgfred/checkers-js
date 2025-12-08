@@ -3,7 +3,7 @@ import { useDrop } from 'react-dnd';
 import classNames from 'classnames';
 
 import { PlayerContext } from './player_context';
-import { PieceAtCoords, Coords } from './types';
+import type { PieceAtCoords, Coords } from './types';
 
 export function Square({ x, y, children }: Coords & { children: ReactNode }) {
   const { canMoveTo } = useContext(PlayerContext);

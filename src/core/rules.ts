@@ -1,14 +1,14 @@
 import { copyBoard } from './utils';
 
 import {
-  BoardType,
-  MoveType,
+  type BoardType,
+  type MoveType,
   SideType,
   PieceType,
-  TreeType,
+  type TreeType,
   isPieceOf,
   isKingOf,
-  _MutableMoveType,
+  type _MutableMoveType,
 } from './types';
 
 const { RED } = SideType;

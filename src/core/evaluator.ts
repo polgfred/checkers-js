@@ -1,4 +1,9 @@
-import { BoardType, FormationType, ScoresType, PieceType } from './types';
+import {
+  type BoardType,
+  type FormationType,
+  type ScoresType,
+  PieceType,
+} from './types';
 
 const {
   EMPTY,
