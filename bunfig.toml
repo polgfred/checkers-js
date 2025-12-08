@@ -1,2 +1,2 @@
 [serve.static]
-plugins = ["./src/bun-plugin-svg.ts"]
+plugins = ["./plugin-react-svg.ts"]
