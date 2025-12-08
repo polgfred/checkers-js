@@ -1,5 +1,5 @@
 import Bun from 'bun';
-import reactSvgPlugin from './src/bun-plugin-svg.js';
+import reactSvgPlugin from './plugin-react-svg.js';
 
 await Bun.build({
   entrypoints: ['./src/index.html'],

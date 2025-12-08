@@ -2,7 +2,7 @@ FROM oven/bun
 WORKDIR /checkers
 COPY package.json bun.lock ./
 RUN bun install
-COPY bunfig.toml build.ts ./
+COPY bunfig.toml build.ts plugin-react-svg.ts ./
 COPY ./src ./src
 RUN bun build.ts
 
