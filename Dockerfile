@@ -13,4 +13,5 @@ RUN bun install --production
 COPY bunfig.toml server.ts ./
 COPY ./src ./src
 COPY --from=0 /checkers/dist ./dist
+EXPOSE 8080
 CMD bun server.ts
