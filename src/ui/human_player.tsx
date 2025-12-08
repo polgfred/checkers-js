@@ -16,7 +16,7 @@ import type { Coords } from './types';
 const { EMPTY } = PieceType;
 
 export function HumanPlayer() {
-  const { board, side, plays, makeMove } = useContext(GameContext);
+  const { board, side, plays, handlePlay } = useContext(GameContext);
 
   // make a copy of the board and plays tree in local state
   const [{ cboard, cplays, current }, setState] = useState(() => ({
@@ -81,7 +81,7 @@ export function HumanPlayer() {
 
           if (Object.keys(next2).length === 0) {
             // move is done, switch sides
-            makeMove(current);
+            handlePlay(current);
           } else {
             // move to this position in the local state
             setState({ cboard, cplays: next, current });
@@ -89,7 +89,7 @@ export function HumanPlayer() {
         }
       }
     },
-    [cboard, side, cplays, current, makeMove]
+    [cboard, side, cplays, current, handlePlay]
   );
 
   return (

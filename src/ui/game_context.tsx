@@ -6,7 +6,7 @@ export interface GameContextType {
   side: SideType;
   plays: TreeType;
   hist: readonly MoveType[];
-  makeMove: (move: MoveType) => void;
+  handlePlay(move: MoveType): void;
 }
 
 export const GameContext = createContext<GameContextType>(null);

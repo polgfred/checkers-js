@@ -28,7 +28,7 @@ export function Game() {
         side,
         plays,
         hist,
-        makeMove: (move: MoveType) => {
+        handlePlay(move: MoveType) {
           doPlay(move);
           hist.push(move);
           setClock(Date.now());
