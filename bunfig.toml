@@ -1,3 +1,2 @@
 [serve.static]
-env = "BUN_PUBLIC_*"
 plugins = ["./src/bun-plugin-svg.ts"]

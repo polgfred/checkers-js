@@ -5,9 +5,9 @@
   "description": "Checkers in JavaScript",
   "scripts": {
     "clean": "rm -rf lib static/*-bundle.{js,js.map}",
-    "build": "NODE_ENV=production bun build.ts",
-    "start": "NODE_ENV=production bun ./src/index.ts",
-    "start:dev": "NODE_ENV=development bun ./src/index.ts",
+    "build": "bun build.ts",
+    "start": "bun server.ts",
+    "start:dev": "bun dev.ts",
     "format": "prettier --write ./src/**/*.{ts,tsx}",
     "lint": "eslint ./src/**/*.{ts,tsx}"
   },
@@ -38,8 +38,8 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.2.1",
+    "serve-static-bun": "^0.5.3",
     "svgo": "^4.0.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

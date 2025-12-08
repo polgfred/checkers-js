@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
 
 import Bun from 'bun';
-import frontendBundle from './index.html';
-import { analyze } from './core/analyzer';
+import frontendBundle from './src/index.html';
+import { analyze } from './src/core/analyzer';
 
 const server = Bun.serve({
+  development: true,
   port: 8080,
   routes: {
     '/': frontendBundle,
@@ -15,11 +16,6 @@ const server = Bun.serve({
         return Response.json(move);
       },
     },
-  },
-
-  development: process.env.NODE_ENV !== 'production' && {
-    hmr: true,
-    console: true,
   },
 });
 
