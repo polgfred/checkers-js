@@ -25,13 +25,12 @@ export interface Rules {
 // `board` will be mutated by the rules engine, so make a copy first
 export function makeRules(board: BoardType, side: SideType): Rules {
   function findJumps() {
-    const out = side === RED ? 8 : -1;
     const bottom = side === RED ? 0 : 7;
     const jumps = [] as MoveType[];
 
     // loop through playable squares
-    for (let y = bottom; y !== out; y += side) {
-      for (let x = bottom; x !== out; x += side) {
+    for (let y = bottom; (y & ~7) === 0; y += side) {
+      for (let x = bottom; (x & ~7) === 0; x += side) {
         // see if it's our piece
         const p = board[y][x];
 
@@ -56,12 +55,11 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     // loop over directions (dx, dy) from the current square
     for (let dy = king ? -1 : 1; dy <= 1; dy += 2) {
       for (let dx = -1; dx <= 1; dx += 2) {
+        // calculate middle and landing coordinates
         let mx: number;
         let my: number;
         let nx: number;
         let ny: number;
-
-        // calculate middle and landing coordinates
         if (side === RED) {
           mx = x + dx;
           my = y + dy;
@@ -75,7 +73,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
         }
 
         // see if jump is on the board
-        if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+        if (((nx | ny) & ~7) === 0) {
           const m = board[my][mx];
           const n = board[ny][nx];
 
@@ -118,7 +116,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     const p = board[y][x];
     const crowned =
       side === RED ? p === RED_PIECE && fy === 7 : p === WHT_PIECE && fy === 0;
-    const cap = new Array(len) as PieceType[];
+    const cap = Array(len) as PieceType[];
 
     // remove the initial piece
     cap[0] = p;
@@ -126,9 +124,8 @@ export function makeRules(board: BoardType, side: SideType): Rules {
 
     // loop over the passed in coords
     for (let i = 1; i < len; ++i) {
-      const [, , mx, my] = jump[i];
-
       // perform the jump
+      const [, , mx, my] = jump[i];
       cap[i] = board[my][mx];
       board[my][mx] = EMPTY;
     }
@@ -136,8 +133,6 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     // final piece
     // @ts-expect-error
     board[fy][fx] = crowned ? p << 1 : p;
-
-    // switch sides
     // @ts-expect-error
     side = -side;
 
@@ -148,29 +143,25 @@ export function makeRules(board: BoardType, side: SideType): Rules {
 
       // loop over the passed in coords in reverse
       for (let i = len - 1; i > 0; --i) {
-        const [, , mx, my] = jump[i];
-
         // put back the captured piece
+        const [, , mx, my] = jump[i];
         board[my][mx] = cap[i];
       }
 
       // put back initial piece
       board[y][x] = p;
-
-      // switch back to original side
       // @ts-expect-error
       side = -side;
     };
   }
 
   function findMoves() {
-    const out = side === RED ? 8 : -1;
     const bottom = side === RED ? 0 : 7;
     const moves = [] as MoveType[];
 
     // loop through playable squares
-    for (let y = bottom; y !== out; y += side) {
-      for (let x = bottom; x !== out; x += side) {
+    for (let y = bottom; (y & ~7) === 0; y += side) {
+      for (let x = bottom; (x & ~7) === 0; x += side) {
         const p = board[y][x];
         const king = p === (side === RED ? RED_KING : WHT_KING);
 
@@ -179,10 +170,9 @@ export function makeRules(board: BoardType, side: SideType): Rules {
           // loop over directions (dx, dy) from the current square
           for (let dy = king ? -1 : 1; dy <= 1; dy += 2) {
             for (let dx = -1; dx <= 1; dx += 2) {
+              // calculate landing coordinates
               let nx: number;
               let ny: number;
-
-              // calculate landing coordinates
               if (side === RED) {
                 nx = x + dx;
                 ny = y + dy;
@@ -192,7 +182,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
               }
 
               // see if move is on the board
-              if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+              if (((nx | ny) & ~7) === 0) {
                 // see if the landing is open
                 if (board[ny][nx] === EMPTY) {
                   moves.push([
@@ -220,8 +210,6 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     board[y][x] = EMPTY;
     // @ts-expect-error
     board[ny][nx] = crowned ? p << 1 : p;
-
-    // switch sides
     // @ts-expect-error
     side = -side;
 
@@ -230,8 +218,6 @@ export function makeRules(board: BoardType, side: SideType): Rules {
       // put things back where we found them
       board[ny][nx] = EMPTY;
       board[y][x] = p;
-
-      // switch back
       // @ts-expect-error
       side = -side;
     };
