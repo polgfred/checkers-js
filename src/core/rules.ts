@@ -8,7 +8,7 @@ import {
 } from './types';
 
 const { RED } = SideType;
-const { EMPTY, RED_KING, WHT_KING } = PieceType;
+const { EMPTY, RED_PIECE, RED_KING, WHT_PIECE, WHT_KING } = PieceType;
 
 type MoveGenerator = Generator<MoveType, void, void>;
 
@@ -18,6 +18,9 @@ export interface Rules {
   readonly findJumps: () => MoveGenerator;
   readonly findMoves: () => MoveGenerator;
   readonly findPlays: () => MoveGenerator;
+  readonly doJump: (jump: MoveType) => void;
+  readonly doMove: (move: MoveType) => void;
+  readonly doPlay: (play: MoveType) => void;
   readonly buildTree: () => TreeType;
 }
 
@@ -184,6 +187,42 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     }
   }
 
+  function doJump(jump: MoveType) {
+    const len = jump.length;
+    const [x, y] = jump[0];
+    const [fx, fy] = jump[len - 1];
+    const p = board[y][x];
+    const crowned =
+      side === RED ? p === RED_PIECE && fy === 7 : p === WHT_PIECE && fy === 0;
+
+    board[y][x] = EMPTY;
+    for (let i = 1; i < len; ++i) {
+      const [, , mx, my] = jump[i];
+      board[my][mx] = EMPTY;
+    }
+    board[fy][fx] = crowned ? ((p << 1) as PieceType) : p;
+    side = -side as SideType;
+  }
+
+  function doMove(move: MoveType) {
+    const [[x, y], [nx, ny]] = move;
+    const p = board[y][x];
+    const crowned =
+      side === RED ? p === RED_PIECE && ny === 7 : p === WHT_PIECE && ny === 0;
+
+    board[y][x] = EMPTY;
+    board[ny][nx] = crowned ? ((p << 1) as PieceType) : p;
+    side = -side as SideType;
+  }
+
+  function doPlay(play: MoveType) {
+    if (play[1].length > 2) {
+      doJump(play);
+    } else {
+      doMove(play);
+    }
+  }
+
   function buildTree() {
     const tree = {} as TreeType;
 
@@ -208,6 +247,9 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     findJumps,
     findMoves,
     findPlays,
+    doJump,
+    doMove,
+    doPlay,
     buildTree,
   };
 }
