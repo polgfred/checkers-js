@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+import { describe, expect, it } from 'bun:test';
+
 import { hrtime } from 'process';
 
 import { SideType } from './types';

@@ -25,7 +25,7 @@ export function analyze(
     let current: number;
     let found = false;
 
-    // analyze counter-jumps from this position
+    // analyze jumps from this position
     for (const jump of findJumps()) {
       found = true;
       [, current] = loop(level - 1);
@@ -40,7 +40,7 @@ export function analyze(
     // no jumps found, so analyze regular moves
     if (!found) {
       if (level > 0) {
-        // analyze counter-moves from this position
+        // analyze moves from this position
         for (const move of findMoves()) {
           [, current] = loop(level - 1);
 

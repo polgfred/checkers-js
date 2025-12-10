@@ -4,6 +4,9 @@
   "workspaces": {
     "": {
       "name": "checkers",
+      "dependencies": {
+        "serve-static-bun": "^0.5.3",
+      },
       "devDependencies": {
         "@svgr/core": "^8.1.0",
         "@svgr/plugin-jsx": "^8.1.0",
@@ -25,7 +28,6 @@
         "react-dnd": "^16.0.1",
         "react-dnd-html5-backend": "^16.0.1",
         "react-dom": "^19.2.1",
-        "serve-static-bun": "^0.5.3",
         "svgo": "^4.0.0",
       },
     },

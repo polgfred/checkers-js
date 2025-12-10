@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'bun:test';
+
 import { makeRules } from './rules';
 import { PieceType, SideType } from './types';
 import { copyBoard, newBoard, reverseBoard } from './utils';

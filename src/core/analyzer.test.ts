@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'bun:test';
+
 import { analyze } from './analyzer';
 import { SideType } from './types';
 import { copyBoard, reverseBoard } from './utils';
