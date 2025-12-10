@@ -1,6 +1,7 @@
 import {
   type BoardType,
   type MoveType,
+  type SegmentType,
   type TreeType,
   type _MutableMoveType,
   SideType,
@@ -8,25 +9,24 @@ import {
 } from './types';
 
 const { RED } = SideType;
-const { EMPTY, RED_PIECE, RED_KING, WHT_PIECE, WHT_KING } = PieceType;
+const { EMPTY, RED_KING, WHT_KING } = PieceType;
+
+type MoveGenerator = Generator<MoveType, boolean, void>;
 
 export interface Rules {
   readonly getBoard: () => BoardType;
   readonly getSide: () => SideType;
-  readonly findJumps: () => readonly MoveType[];
-  readonly findMoves: () => readonly MoveType[];
-  readonly findPlays: () => readonly MoveType[];
-  readonly doJump: (jump: MoveType) => () => void;
-  readonly doMove: (move: MoveType) => () => void;
-  readonly doPlay: (play: MoveType) => () => void;
+  readonly findJumps: () => MoveGenerator;
+  readonly findMoves: () => MoveGenerator;
+  readonly findPlays: () => MoveGenerator;
   readonly buildTree: () => TreeType;
 }
 
 // `board` will be mutated by the rules engine, so make a copy first
 export function makeRules(board: BoardType, side: SideType): Rules {
-  function findJumps() {
+  function* findJumps(): MoveGenerator {
     const bottom = side === RED ? 0 : 7;
-    const jumps = [] as MoveType[];
+    let found = false;
 
     // loop through playable squares
     for (let y = bottom; (y & ~7) === 0; y += side) {
@@ -37,15 +37,16 @@ export function makeRules(board: BoardType, side: SideType): Rules {
         if (side === RED ? p > 0 : p < 0) {
           // checking for jumps is inherently recursive - as long as you find them,
           // you have to keep looking, and only termimal positions are valid
-          nextJump([[x, y]], jumps);
+          const more = yield* nextJump([[x, y]]);
+          found ||= more;
         }
       }
     }
 
-    return jumps;
+    return found;
   }
 
-  function nextJump(cur: _MutableMoveType, jumps: MoveType[]) {
+  function* nextJump(cur: _MutableMoveType): MoveGenerator {
     const [x, y] = cur[cur.length - 1];
     const p = board[y][x];
     const top = side === RED ? 7 : 0;
@@ -91,8 +92,8 @@ export function makeRules(board: BoardType, side: SideType): Rules {
             // if we're crowned, or there are no further jumps from here,
             // we've reached a terminal position
             cur.push([nx, ny, mx, my]);
-            if (crowned || !nextJump(cur, jumps)) {
-              jumps.push(cur.slice());
+            if (crowned || !(yield* nextJump(cur))) {
+              yield [...cur];
             }
 
             // put things back where we found them
@@ -109,61 +110,17 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     return found;
   }
 
-  function doJump(jump: MoveType) {
-    const len = jump.length;
-    const [x, y] = jump[0];
-    const [fx, fy] = jump[len - 1];
-    const p = board[y][x];
-    const crowned =
-      side === RED ? p === RED_PIECE && fy === 7 : p === WHT_PIECE && fy === 0;
-    const cap = Array(len) as PieceType[];
-
-    // remove the initial piece
-    cap[0] = p;
-    board[y][x] = EMPTY;
-
-    // loop over the passed in coords
-    for (let i = 1; i < len; ++i) {
-      // perform the jump
-      const [, , mx, my] = jump[i];
-      cap[i] = board[my][mx];
-      board[my][mx] = EMPTY;
-    }
-
-    // final piece
-    // @ts-expect-error
-    board[fy][fx] = crowned ? p << 1 : p;
-    // @ts-expect-error
-    side = -side;
-
-    // reverse the jump
-    return () => {
-      // remove the final piece
-      board[fy][fx] = EMPTY;
-
-      // loop over the passed in coords in reverse
-      for (let i = len - 1; i > 0; --i) {
-        // put back the captured piece
-        const [, , mx, my] = jump[i];
-        board[my][mx] = cap[i];
-      }
-
-      // put back initial piece
-      board[y][x] = p;
-      // @ts-expect-error
-      side = -side;
-    };
-  }
-
-  function findMoves() {
+  function* findMoves(): MoveGenerator {
     const bottom = side === RED ? 0 : 7;
-    const moves = [] as MoveType[];
+    let found = false;
 
     // loop through playable squares
     for (let y = bottom; (y & ~7) === 0; y += side) {
       for (let x = bottom; (x & ~7) === 0; x += side) {
         const p = board[y][x];
+        const top = side === RED ? 7 : 0;
         const king = p === (side === RED ? RED_KING : WHT_KING);
+        const cur = [x, y] as SegmentType;
 
         // see if it's our piece
         if (side === RED ? p > 0 : p < 0) {
@@ -185,10 +142,20 @@ export function makeRules(board: BoardType, side: SideType): Rules {
               if (((nx | ny) & ~7) === 0) {
                 // see if the landing is open
                 if (board[ny][nx] === EMPTY) {
-                  moves.push([
-                    [x, y],
-                    [nx, ny],
-                  ]);
+                  const crowned = !king && ny === top;
+                  found = true;
+
+                  // move the piece
+                  board[y][x] = EMPTY;
+                  // @ts-expect-error
+                  board[ny][nx] = crowned ? p << 1 : p;
+
+                  // this is a terminal position
+                  yield [cur, [nx, ny]];
+
+                  // put things back where we found them
+                  board[y][x] = p;
+                  board[ny][nx] = EMPTY;
                 }
               }
             }
@@ -197,58 +164,18 @@ export function makeRules(board: BoardType, side: SideType): Rules {
       }
     }
 
-    return moves;
+    return found;
   }
 
-  function doMove(move: MoveType) {
-    const [[x, y], [nx, ny]] = move;
-    const p = board[y][x];
-    const crowned =
-      side === RED ? p === RED_PIECE && ny === 7 : p === WHT_PIECE && ny === 0;
-
-    // perform the jump
-    board[y][x] = EMPTY;
-    // @ts-expect-error
-    board[ny][nx] = crowned ? p << 1 : p;
-    // @ts-expect-error
-    side = -side;
-
-    // reverse the move
-    return () => {
-      // put things back where we found them
-      board[ny][nx] = EMPTY;
-      board[y][x] = p;
-      // @ts-expect-error
-      side = -side;
-    };
-  }
-
-  function findPlays() {
+  function* findPlays() {
     // you have to jump if you can
-    const jumps = findJumps();
-    if (jumps.length) {
-      return jumps;
-    } else {
-      return findMoves();
-    }
-  }
-
-  function doPlay(play: MoveType) {
-    // if the second segment has coords for the jumped piece,
-    // it has to be a jump
-    if (play[1].length > 2) {
-      return doJump(play);
-    } else {
-      return doMove(play);
-    }
+    return (yield* findJumps()) || (yield* findMoves());
   }
 
   function buildTree() {
-    const plays = findPlays();
     const tree = {} as TreeType;
 
-    for (let i = 0; i < plays.length; ++i) {
-      const play = plays[i];
+    for (const play of findPlays()) {
       let root = tree;
 
       for (let j = 0; j < play.length; ++j) {
@@ -269,9 +196,6 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     findJumps,
     findMoves,
     findPlays,
-    doJump,
-    doMove,
-    doPlay,
     buildTree,
   };
 }

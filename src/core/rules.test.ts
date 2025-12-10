@@ -21,7 +21,7 @@ describe('Rules', () => {
 
     it('should find the moves from this position', () => {
       const { findMoves } = makeRules(newBoard(), RED);
-      const moves = findMoves();
+      const moves = [...findMoves()];
 
       expect(moves.length).toBe(7);
       // prettier-ignore
@@ -38,9 +38,9 @@ describe('Rules', () => {
 
     it('should find the jumps from this position', () => {
       const { findJumps } = makeRules(newBoard(), RED);
-      const plays = findJumps();
+      const jumps = [...findJumps()];
 
-      expect(plays.length).toBe(0);
+      expect(jumps.length).toBe(0);
     });
   });
 
@@ -71,7 +71,7 @@ describe('Rules', () => {
 
     it('should find the jumps from this position', () => {
       const { findJumps } = makeRules(copyBoard(initialData), RED);
-      const jumps = findJumps();
+      const jumps = [...findJumps()];
 
       expect(jumps.length).toBe(3);
       expect(jumps).toEqual([
