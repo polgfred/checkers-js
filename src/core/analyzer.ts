@@ -14,10 +14,7 @@ export function analyze(
   player: Evaluator = defaultEvaluator
 ): readonly [MoveType, number] {
   // make the rules for the current position
-  const { getBoard, getSide, findJumps, doJump, findMoves, doMove } = makeRules(
-    board,
-    side
-  );
+  const { getBoard, getSide, findJumps, findMoves } = makeRules(board, side);
 
   function loop(level: number) {
     const board = getBoard();
@@ -25,47 +22,38 @@ export function analyze(
     let bestScore = side / -0;
     let bestPlay: MoveType;
     let current: number;
+    let found = false;
 
-    // if there are jumps from this position, keep searching
-    const jumps = findJumps();
-    if (jumps.length) {
-      // analyze counter-jumps from this position
-      for (let i = 0; i < jumps.length; ++i) {
-        const jump = jumps[i];
+    // analyze counter-jumps from this position
+    for (const jump of findJumps()) {
+      found = true;
+      current = loop(level - 1)[1];
 
-        // perform the jump and descend a level
-        const reverse = doJump(jump);
-        current = loop(level - 1)[1];
-        reverse();
-
-        // keep track of the best move from this position
-        if (side === RED ? current > bestScore : current < bestScore) {
-          bestPlay = jump;
-          bestScore = current;
-        }
+      // keep track of the best move from this position
+      if (side === RED ? current > bestScore : current < bestScore) {
+        bestPlay = jump;
+        bestScore = current;
       }
-    } else if (level > 0) {
-      // analyze counter-moves from this position
-      const moves = findMoves();
+    }
 
-      for (let i = 0; i < moves.length; ++i) {
-        const move = moves[i];
+    // no jumps found, so analyze regular moves
+    if (!found) {
+      if (level > 0) {
+        // analyze counter-moves from this position
+        for (const move of findMoves()) {
+          current = loop(level - 1)[1];
 
-        // perform the jump and descend a level
-        const reverse = doMove(move);
-        current = loop(level - 1)[1];
-        reverse();
-
-        // keep track of the best move from this position
-        if (side === RED ? current > bestScore : current < bestScore) {
-          bestPlay = move;
-          bestScore = current;
+          // keep track of the best move from this position
+          if (side === RED ? current > bestScore : current < bestScore) {
+            bestPlay = move;
+            bestScore = current;
+          }
         }
+      } else {
+        // we've hit bottom and there are no jumps, so just return
+        // the score for this position
+        bestScore = player.evaluate(board);
       }
-    } else {
-      // we've hit bottom and there are no jumps, so just return
-      // the score for this position
-      bestScore = player.evaluate(board);
     }
 
     // a pair representing the winning play and score for this turn

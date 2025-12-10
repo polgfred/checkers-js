@@ -86,14 +86,15 @@ export function makeRules(board: BoardType, side: SideType): Rules {
             // keep track of the coordinates, and move the piece
             board[y][x] = EMPTY;
             board[my][mx] = EMPTY;
-            // @ts-expect-error
-            board[ny][nx] = crowned ? p << 1 : p;
+            board[ny][nx] = crowned ? ((p << 1) as PieceType) : p;
 
             // if we're crowned, or there are no further jumps from here,
             // we've reached a terminal position
             cur.push([nx, ny, mx, my]);
             if (crowned || !(yield* nextJump(cur))) {
+              side = -side as SideType;
               yield [...cur];
+              side = -side as SideType;
             }
 
             // put things back where we found them
@@ -106,7 +107,6 @@ export function makeRules(board: BoardType, side: SideType): Rules {
       }
     }
 
-    // return whether more jumps were found from this position
     return found;
   }
 
@@ -147,13 +147,12 @@ export function makeRules(board: BoardType, side: SideType): Rules {
 
                   // move the piece
                   board[y][x] = EMPTY;
-                  // @ts-expect-error
-                  board[ny][nx] = crowned ? p << 1 : p;
-
-                  // this is a terminal position
+                  board[ny][nx] = crowned ? ((p << 1) as PieceType) : p;
+                  side = -side as SideType;
                   yield [cur, [nx, ny]];
 
                   // put things back where we found them
+                  side = -side as SideType;
                   board[y][x] = p;
                   board[ny][nx] = EMPTY;
                 }
