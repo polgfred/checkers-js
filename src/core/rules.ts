@@ -87,6 +87,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
             // keep track of the coordinates, and move the piece
             board[y][x] = EMPTY;
             board[my][mx] = EMPTY;
+            // @ts-expect-error
             board[ny][nx] = crowned ? p << 1 : p;
 
             // if we're crowned, or there are no further jumps from here,
@@ -133,9 +134,11 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     }
 
     // final piece
+    // @ts-expect-error
     board[fy][fx] = crowned ? p << 1 : p;
 
     // switch sides
+    // @ts-expect-error
     side = -side;
 
     // reverse the jump
@@ -155,6 +158,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
       board[y][x] = p;
 
       // switch back to original side
+      // @ts-expect-error
       side = -side;
     };
   }
@@ -214,9 +218,11 @@ export function makeRules(board: BoardType, side: SideType): Rules {
 
     // perform the jump
     board[y][x] = EMPTY;
+    // @ts-expect-error
     board[ny][nx] = crowned ? p << 1 : p;
 
     // switch sides
+    // @ts-expect-error
     side = -side;
 
     // reverse the move
@@ -226,6 +232,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
       board[y][x] = p;
 
       // switch back
+      // @ts-expect-error
       side = -side;
     };
   }
