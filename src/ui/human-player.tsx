@@ -1,11 +1,6 @@
 import { useCallback, useContext, useState } from 'react';
 
-import {
-  SideType,
-  PieceType,
-  isPieceOf,
-  _MutableMoveType,
-} from '../core/types';
+import { SideType, PieceType, _MutableMoveType } from '../core/types';
 import { copyBoard } from '../core/utils';
 
 import { Board } from './board';
@@ -13,7 +8,8 @@ import { GameContext } from './game-context';
 import { PlayerContext } from './player-context';
 import type { Coords } from './types';
 
-const { EMPTY } = PieceType;
+const { RED } = SideType;
+const { EMPTY, RED_PIECE, WHT_PIECE } = PieceType;
 
 export function HumanPlayer() {
   const { board, side, plays, handlePlay } = useContext(GameContext);
@@ -54,9 +50,11 @@ export function HumanPlayer() {
         const next2 = next[`${nx},${ny}`];
 
         if (next2) {
-          const p: PieceType = cboard[y][x];
-          const top = side === SideType.RED ? 7 : 0;
-          const crowned = isPieceOf(side, p) && ny === top;
+          const p = cboard[y][x];
+          const crowned =
+            side === RED
+              ? p === RED_PIECE && ny === 7
+              : p === WHT_PIECE && ny === 0;
 
           // move the piece
           // eslint-disable-next-line react-hooks/immutability

@@ -1,18 +1,14 @@
-import { copyBoard } from './utils';
-
 import {
   type BoardType,
   type MoveType,
+  type TreeType,
+  type _MutableMoveType,
   SideType,
   PieceType,
-  type TreeType,
-  isPieceOf,
-  isKingOf,
-  type _MutableMoveType,
 } from './types';
 
 const { RED } = SideType;
-const { EMPTY } = PieceType;
+const { EMPTY, RED_PIECE, RED_KING, WHT_PIECE, WHT_KING } = PieceType;
 
 export interface Rules {
   readonly getBoard: () => BoardType;
@@ -29,16 +25,15 @@ export interface Rules {
 // `board` will be mutated by the rules engine, so make a copy first
 export function makeRules(board: BoardType, side: SideType): Rules {
   function findJumps() {
-    const top = side === RED ? 7 : 0;
-    const out = top + side;
-    const bottom = top ^ 7;
+    const out = side === RED ? 8 : -1;
+    const bottom = side === RED ? 0 : 7;
     const jumps = [] as MoveType[];
 
     // loop through playable squares
     for (let y = bottom; y !== out; y += side) {
       for (let x = bottom; x !== out; x += side) {
         // see if it's our piece
-        const p: PieceType = board[y][x];
+        const p = board[y][x];
 
         if (side === RED ? p > 0 : p < 0) {
           // checking for jumps is inherently recursive - as long as you find them,
@@ -53,9 +48,9 @@ export function makeRules(board: BoardType, side: SideType): Rules {
 
   function nextJump(cur: _MutableMoveType, jumps: MoveType[]) {
     const [x, y] = cur[cur.length - 1];
-    const p: PieceType = board[y][x];
+    const p = board[y][x];
     const top = side === RED ? 7 : 0;
-    const king = isKingOf(side, p);
+    const king = p === (side === RED ? RED_KING : WHT_KING);
     let found = false;
 
     // loop over directions (dx, dy) from the current square
@@ -67,7 +62,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
         let ny: number;
 
         // calculate middle and landing coordinates
-        if (side === 1) {
+        if (side === RED) {
           mx = x + dx;
           my = y + dy;
           nx = mx + dx;
@@ -81,8 +76,8 @@ export function makeRules(board: BoardType, side: SideType): Rules {
 
         // see if jump is on the board
         if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
-          const m: PieceType = board[my][mx];
-          const n: PieceType = board[ny][nx];
+          const m = board[my][mx];
+          const n = board[ny][nx];
 
           // see if the middle piece is an opponent and the landing is open
           if (n === EMPTY && (side === RED ? m < 0 : m > 0)) {
@@ -119,10 +114,10 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     const len = jump.length;
     const [x, y] = jump[0];
     const [fx, fy] = jump[len - 1];
-    const p: PieceType = board[y][x];
-    const top = side === RED ? 7 : 0;
-    const crowned = isPieceOf(side, p) && fy === top;
-    const cap = new Array(len) as number[];
+    const p = board[y][x];
+    const crowned =
+      side === RED ? p === RED_PIECE && fy === 7 : p === WHT_PIECE && fy === 0;
+    const cap = new Array(len) as PieceType[];
 
     // remove the initial piece
     cap[0] = p;
@@ -165,16 +160,15 @@ export function makeRules(board: BoardType, side: SideType): Rules {
   }
 
   function findMoves() {
-    const top = side === RED ? 7 : 0;
-    const out = top + side;
-    const bottom = top ^ 7;
+    const out = side === RED ? 8 : -1;
+    const bottom = side === RED ? 0 : 7;
     const moves = [] as MoveType[];
 
     // loop through playable squares
     for (let y = bottom; y !== out; y += side) {
       for (let x = bottom; x !== out; x += side) {
-        const p: PieceType = board[y][x];
-        const king = isKingOf(side, p);
+        const p = board[y][x];
+        const king = p === (side === RED ? RED_KING : WHT_KING);
 
         // see if it's our piece
         if (side === RED ? p > 0 : p < 0) {
@@ -214,9 +208,9 @@ export function makeRules(board: BoardType, side: SideType): Rules {
 
   function doMove(move: MoveType) {
     const [[x, y], [nx, ny]] = move;
-    const p: PieceType = board[y][x];
-    const top = side === RED ? 7 : 0;
-    const crowned = isPieceOf(side, p) && ny === top;
+    const p = board[y][x];
+    const crowned =
+      side === RED ? p === RED_PIECE && ny === 7 : p === WHT_PIECE && ny === 0;
 
     // perform the jump
     board[y][x] = EMPTY;
@@ -258,7 +252,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
 
   function buildTree() {
     const plays = findPlays();
-    const tree: TreeType = {};
+    const tree = {} as TreeType;
 
     for (let i = 0; i < plays.length; ++i) {
       const play = plays[i];
