@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import process from 'process';
+import { hrtime } from 'process';
 
 import { SideType } from './types';
 import { makeRules } from './rules';
@@ -9,27 +9,28 @@ import { copyBoard, newBoard, reverseBoard } from './utils';
 const { RED, WHT } = SideType;
 
 function duration(action: () => void, times: number) {
-  const start = process.hrtime();
+  const start = hrtime.bigint();
   for (let i = 0; i < times; ++i) {
     action();
   }
-  return process.hrtime(start);
+  const end = hrtime.bigint();
+  return end - start;
 }
 
 describe('Performance', () => {
   describe('moves', () => {
     it('should find the moves from this position', () => {
       const { findMoves } = makeRules(newBoard(), RED);
-      const [sec, nsec] = duration(findMoves, 1000);
-      console.log('findMoves', sec + nsec / 1e9);
-      expect(sec * 1e9 + nsec).toBeGreaterThan(0);
+      const nsec = duration(findMoves, 1000);
+      console.log('findMoves', nsec);
+      expect(nsec).toBeGreaterThan(0);
     });
 
     it('should find the jumps from this position', () => {
       const { findJumps } = makeRules(newBoard(), RED);
-      const [sec, nsec] = duration(findJumps, 1000);
-      console.log('findJumps', sec + nsec / 1e9);
-      expect(sec * 1e9 + nsec).toBeGreaterThan(0);
+      const nsec = duration(findJumps, 1000);
+      console.log('findJumps', nsec);
+      expect(nsec).toBeGreaterThan(0);
     });
   });
 
@@ -48,9 +49,9 @@ describe('Performance', () => {
 
     it('should find the jumps from this position', () => {
       const { findJumps } = makeRules(copyBoard(initialData), RED);
-      const [sec, nsec] = duration(findJumps, 1000);
-      console.log('findJumps', sec + nsec / 1e9);
-      expect(sec * 1e9 + nsec).toBeGreaterThan(0);
+      const nsec = duration(findJumps, 1000);
+      console.log('findJumps', nsec);
+      expect(nsec).toBeGreaterThan(0);
     });
   });
 
@@ -68,10 +69,10 @@ describe('Performance', () => {
     ]);
 
     it('should return a move and score from this position', () => {
-      const start = process.hrtime();
+      const start = hrtime.bigint();
       const [move] = analyze(copyBoard(initialData), WHT);
-      const [sec, nsec] = process.hrtime(start);
-      console.log('analyze', sec + nsec / 1e9);
+      const end = hrtime.bigint();
+      console.log('analyze', end - start);
       expect(move).toEqual([
         [3, 7],
         [2, 6],
