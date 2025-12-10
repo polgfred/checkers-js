@@ -64,17 +64,15 @@ export function makeEvaluator(): Evaluator {
 
     for (let y = 0; y < 8; ++y) {
       for (let x = 0; x < 8; ++x) {
-        const r = scores[y][x];
+        const formations = scores[y][x];
 
-        if (r) {
-          for (let j = 0; j < r.length; ++j) {
-            const [formation, score] = r[j];
+        if (formations) {
+          for (const [formation, score] of formations) {
             let match: boolean;
 
             // try the pattern as red
             match = true;
-            for (let k = 0; k < formation.length; ++k) {
-              const [dx, dy, v] = formation[k];
+            for (const [dx, dy, v] of formation) {
               const p = board[y + dy][x + dx];
 
               // see if the formation matches for this square
@@ -98,8 +96,7 @@ export function makeEvaluator(): Evaluator {
 
             // try the pattern as white
             match = true;
-            for (let k = 0; k < formation.length; ++k) {
-              const [dx, dy, v] = formation[k];
+            for (const [dx, dy, v] of formation) {
               const p = board[(y ^ 7) - dy][(x ^ 7) - dx];
 
               // see if the pattern matches for this square
