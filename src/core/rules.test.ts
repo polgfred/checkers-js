@@ -1,30 +1,31 @@
 import { makeRules } from './rules';
-import { SideType } from './types';
+import { PieceType, SideType } from './types';
 import { copyBoard, newBoard, reverseBoard } from './utils';
 
 const { RED } = SideType;
+const { EMPTY, RED_PIECE } = PieceType;
 
 describe('Rules', () => {
   describe('moves', () => {
     it('should initialize the board', () => {
       const { getBoard } = makeRules(newBoard(), RED);
       const board = getBoard();
-      expect(board[0][0]).toBe(1);
+      expect(board[0][0]).toBe(RED_PIECE);
     });
 
     it('should initialize the side', () => {
       const { getSide } = makeRules(newBoard(), RED);
       const side = getSide();
-      expect(side).toBe(1);
+      expect(side).toBe(RED);
     });
 
     it('should find the moves from this position', () => {
       const { findMoves } = makeRules(newBoard(), RED);
-      const plays = findMoves();
+      const moves = findMoves();
 
-      expect(plays.length).toBe(7);
+      expect(moves.length).toBe(7);
       // prettier-ignore
-      expect(plays).toEqual([
+      expect(moves).toEqual([
         [[0, 2], [1, 3]],
         [[2, 2], [1, 3]],
         [[2, 2], [3, 3]],
@@ -59,21 +60,21 @@ describe('Rules', () => {
     it('should initialize the board', () => {
       const { getBoard } = makeRules(copyBoard(initialData), RED);
       const board = getBoard();
-      expect(board[0][0]).toBe(0);
+      expect(board[0][0]).toBe(EMPTY);
     });
 
     it('should initialize the side', () => {
       const { getSide } = makeRules(copyBoard(initialData), RED);
       const side = getSide();
-      expect(side).toBe(1);
+      expect(side).toBe(RED);
     });
 
     it('should find the jumps from this position', () => {
       const { findJumps } = makeRules(copyBoard(initialData), RED);
-      const plays = findJumps();
+      const jumps = findJumps();
 
-      expect(plays.length).toBe(3);
-      expect(plays).toEqual([
+      expect(jumps.length).toBe(3);
+      expect(jumps).toEqual([
         [
           [2, 0],
           [0, 2, 1, 1],
