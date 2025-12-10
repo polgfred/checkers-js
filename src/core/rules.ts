@@ -26,10 +26,8 @@ export interface Rules {
   readonly buildTree: () => TreeType;
 }
 
-export function makeRules(_board: BoardType, side: SideType): Rules {
-  // don't mutate the caller's board
-  const board = copyBoard(_board);
-
+// `board` will be mutated by the rules engine, so make a copy first
+export function makeRules(board: BoardType, side: SideType): Rules {
   function findJumps() {
     const top = side === RED ? 7 : 0;
     const out = top + side;

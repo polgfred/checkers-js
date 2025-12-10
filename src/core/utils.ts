@@ -29,7 +29,7 @@ export function reverseBoard(board: BoardType): BoardType {
 
 // set up the initial board position
 // prettier-ignore
-const initial = reverseBoard([
+const initialData = reverseBoard([
   [ 0, -1,  0, -1,  0, -1,  0, -1 ],
   [-1,  0, -1,  0, -1,  0, -1,  0 ],
   [ 0, -1,  0, -1,  0, -1,  0, -1 ],
@@ -42,7 +42,7 @@ const initial = reverseBoard([
 
 // make a copy of the initial board position
 export function newBoard(): BoardType {
-  return copyBoard(initial);
+  return copyBoard(initialData);
 }
 
 export function coordsToNumber(x: number, y: number): number {
