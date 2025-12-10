@@ -1,17 +1,16 @@
 import {
+  SideType,
+  PieceType,
   type BoardType,
   type MoveType,
   type SegmentType,
   type TreeType,
-  type _MutableMoveType,
-  SideType,
-  PieceType,
 } from './types';
 
 const { RED } = SideType;
 const { EMPTY, RED_KING, WHT_KING } = PieceType;
 
-type MoveGenerator = Generator<MoveType, boolean, void>;
+type MoveGenerator = Generator<MoveType, void, void>;
 
 export interface Rules {
   readonly getBoard: () => BoardType;
@@ -22,11 +21,16 @@ export interface Rules {
   readonly buildTree: () => TreeType;
 }
 
+// directions to scan while looking for moves
+const redBoth = [-1, 1];
+const whtBoth = [1, -1];
+const redForward = [1];
+const whtForward = [-1];
+
 // `board` will be mutated by the rules engine, so make a copy first
 export function makeRules(board: BoardType, side: SideType): Rules {
   function* findJumps(): MoveGenerator {
     const bottom = side === RED ? 0 : 7;
-    let found = false;
 
     // loop through playable squares
     for (let y = bottom; (y & ~7) === 0; y += side) {
@@ -37,41 +41,36 @@ export function makeRules(board: BoardType, side: SideType): Rules {
         if (side === RED ? p > 0 : p < 0) {
           // checking for jumps is inherently recursive - as long as you find them,
           // you have to keep looking, and only termimal positions are valid
-          const more = yield* nextJump([[x, y]]);
-          found ||= more;
+          yield* nextJumps([[x, y]]);
         }
       }
     }
-
-    return found;
   }
 
-  function* nextJump(cur: _MutableMoveType): MoveGenerator {
+  function* nextJumps(cur: SegmentType[]): MoveGenerator {
     const [x, y] = cur[cur.length - 1];
     const p = board[y][x];
     const top = side === RED ? 7 : 0;
     const king = p === (side === RED ? RED_KING : WHT_KING);
-    let found = false;
 
     // loop over directions (dx, dy) from the current square
-    for (let dy = king ? -1 : 1; dy <= 1; dy += 2) {
-      for (let dx = -1; dx <= 1; dx += 2) {
+    const xdirs = side === RED ? redBoth : whtBoth;
+    const ydirs =
+      side === RED
+        ? king
+          ? redBoth
+          : redForward
+        : king
+          ? whtBoth
+          : whtForward;
+
+    for (const dy of ydirs) {
+      for (const dx of xdirs) {
         // calculate middle and landing coordinates
-        let mx: number;
-        let my: number;
-        let nx: number;
-        let ny: number;
-        if (side === RED) {
-          mx = x + dx;
-          my = y + dy;
-          nx = mx + dx;
-          ny = my + dy;
-        } else {
-          mx = x - dx;
-          my = y - dy;
-          nx = mx - dx;
-          ny = my - dy;
-        }
+        const mx = x + dx;
+        const my = y + dy;
+        const nx = mx + dx;
+        const ny = my + dy;
 
         // see if jump is on the board
         if (((nx | ny) & ~7) === 0) {
@@ -81,17 +80,24 @@ export function makeRules(board: BoardType, side: SideType): Rules {
           // see if the middle piece is an opponent and the landing is open
           if (n === EMPTY && (side === RED ? m < 0 : m > 0)) {
             const crowned = !king && ny === top;
-            found = true;
+            let found = false;
 
             // keep track of the coordinates, and move the piece
+            cur.push([nx, ny, mx, my]);
             board[y][x] = EMPTY;
             board[my][mx] = EMPTY;
             board[ny][nx] = crowned ? ((p << 1) as PieceType) : p;
 
-            // if we're crowned, or there are no further jumps from here,
-            // we've reached a terminal position
-            cur.push([nx, ny, mx, my]);
-            if (crowned || !(yield* nextJump(cur))) {
+            // if we're crowned, don't look any further
+            if (!crowned) {
+              // see if there are any further jumps from here
+              for (const j of nextJumps(cur)) {
+                found = true;
+                yield j;
+              }
+            }
+            if (crowned || !found) {
+              // we're at a terminal position
               side = -side as SideType;
               yield [...cur];
               side = -side as SideType;
@@ -106,13 +112,10 @@ export function makeRules(board: BoardType, side: SideType): Rules {
         }
       }
     }
-
-    return found;
   }
 
   function* findMoves(): MoveGenerator {
     const bottom = side === RED ? 0 : 7;
-    let found = false;
 
     // loop through playable squares
     for (let y = bottom; (y & ~7) === 0; y += side) {
@@ -120,41 +123,44 @@ export function makeRules(board: BoardType, side: SideType): Rules {
         const p = board[y][x];
         const top = side === RED ? 7 : 0;
         const king = p === (side === RED ? RED_KING : WHT_KING);
-        const cur = [x, y] as SegmentType;
+        const cur = [x, y] as const;
 
         // see if it's our piece
         if (side === RED ? p > 0 : p < 0) {
           // loop over directions (dx, dy) from the current square
-          for (let dy = king ? -1 : 1; dy <= 1; dy += 2) {
-            for (let dx = -1; dx <= 1; dx += 2) {
+          const xdirs = side === RED ? redBoth : whtBoth;
+          const ydirs =
+            side === RED
+              ? king
+                ? redBoth
+                : redForward
+              : king
+                ? whtBoth
+                : whtForward;
+
+          for (const dy of ydirs) {
+            for (const dx of xdirs) {
               // calculate landing coordinates
-              let nx: number;
-              let ny: number;
-              if (side === RED) {
-                nx = x + dx;
-                ny = y + dy;
-              } else {
-                nx = x - dx;
-                ny = y - dy;
-              }
+              const nx = x + dx;
+              const ny = y + dy;
 
               // see if move is on the board
               if (((nx | ny) & ~7) === 0) {
                 // see if the landing is open
                 if (board[ny][nx] === EMPTY) {
                   const crowned = !king && ny === top;
-                  found = true;
 
                   // move the piece
                   board[y][x] = EMPTY;
                   board[ny][nx] = crowned ? ((p << 1) as PieceType) : p;
                   side = -side as SideType;
+
                   yield [cur, [nx, ny]];
 
                   // put things back where we found them
-                  side = -side as SideType;
                   board[y][x] = p;
                   board[ny][nx] = EMPTY;
+                  side = -side as SideType;
                 }
               }
             }
@@ -162,13 +168,20 @@ export function makeRules(board: BoardType, side: SideType): Rules {
         }
       }
     }
-
-    return found;
   }
 
   function* findPlays() {
     // you have to jump if you can
-    return (yield* findJumps()) || (yield* findMoves());
+    let found = false;
+    for (const jump of findJumps()) {
+      found = true;
+      yield jump;
+    }
+    if (!found) {
+      for (const move of findMoves()) {
+        yield move;
+      }
+    }
   }
 
   function buildTree() {

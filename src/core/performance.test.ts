@@ -21,14 +21,14 @@ describe('Performance', () => {
   describe('moves', () => {
     it('should find the moves from this position', () => {
       const { findMoves } = makeRules(newBoard(), RED);
-      const nsec = duration(findMoves, 1000);
+      const nsec = duration(findMoves, 1_000_000);
       console.log('findMoves', nsec);
       expect(nsec).toBeGreaterThan(0);
     });
 
     it('should find the jumps from this position', () => {
       const { findJumps } = makeRules(newBoard(), RED);
-      const nsec = duration(findJumps, 1000);
+      const nsec = duration(findJumps, 1_000_000);
       console.log('findJumps', nsec);
       expect(nsec).toBeGreaterThan(0);
     });
@@ -49,7 +49,7 @@ describe('Performance', () => {
 
     it('should find the jumps from this position', () => {
       const { findJumps } = makeRules(copyBoard(initialData), RED);
-      const nsec = duration(findJumps, 1000);
+      const nsec = duration(findJumps, 1_000_000);
       console.log('findJumps', nsec);
       expect(nsec).toBeGreaterThan(0);
     });
