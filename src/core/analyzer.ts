@@ -39,10 +39,7 @@ export function analyze(
         reverse();
 
         // keep track of the best move from this position
-        if (
-          (side === RED && current > bestScore) ||
-          (side === WHT && current < bestScore)
-        ) {
+        if (side === RED ? current > bestScore : current < bestScore) {
           bestPlay = jump;
           bestScore = current;
         }
@@ -60,10 +57,7 @@ export function analyze(
         reverse();
 
         // keep track of the best move from this position
-        if (
-          (side === RED && current > bestScore) ||
-          (side === WHT && current < bestScore)
-        ) {
+        if (side === RED ? current > bestScore : current < bestScore) {
           bestPlay = move;
           bestScore = current;
         }
