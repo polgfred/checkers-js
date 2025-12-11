@@ -12,55 +12,121 @@ export function analyze(
   board: BoardType,
   side: SideType,
   player: Evaluator = defaultEvaluator
-): readonly [MoveType, number] {
-  // make the rules for the current position
-  const { getBoard, getSide, findJumps, findMoves } = makeRules(board, side);
+): readonly [number, MoveType] {
+  const { findJumps, findMoves } = makeRules(board, side);
 
-  function loop(level: number) {
-    const board = getBoard();
-    const side = getSide();
-
-    let bestScore = side / -0;
-    let bestPlay: MoveType;
-    let current: number;
+  function loopmax(
+    level: number,
+    alpha: number,
+    beta: number
+  ): readonly [number, MoveType] {
+    let value = -Infinity;
+    let play: MoveType;
     let found = false;
 
-    // analyze jumps from this position
+    let prune = false;
     for (const jump of findJumps()) {
+      if (prune) {
+        continue;
+      }
       found = true;
-      [, current] = loop(level - 1);
-
-      // keep track of the best move from this position
-      if (side === RED ? current > bestScore : current < bestScore) {
-        bestPlay = jump;
-        bestScore = current;
+      const [current] = loopmin(level - 1, alpha, beta);
+      if (current > value) {
+        value = current;
+        play = jump;
+      }
+      if (value >= beta) {
+        prune = true;
+      }
+      if (value > alpha) {
+        alpha = value;
       }
     }
 
-    // no jumps found, so analyze regular moves
     if (!found) {
-      if (level > 0) {
-        // analyze moves from this position
+      if (level <= 0) {
+        value = player.evaluate(board);
+      } else {
+        prune = false;
         for (const move of findMoves()) {
-          [, current] = loop(level - 1);
-
-          // keep track of the best move from this position
-          if (side === RED ? current > bestScore : current < bestScore) {
-            bestPlay = move;
-            bestScore = current;
+          if (prune) {
+            continue;
+          }
+          const [current] = loopmin(level - 1, alpha, beta);
+          if (current > value) {
+            value = current;
+            play = move;
+          }
+          if (value >= beta) {
+            prune = true;
+          }
+          if (value > alpha) {
+            alpha = value;
           }
         }
-      } else {
-        // we've hit bottom and there are no jumps, so just return
-        // the score for this position
-        bestScore = player.evaluate(board);
       }
     }
 
-    // a pair representing the winning play and score for this turn
-    return [bestPlay, bestScore] as const;
+    return [value, play] as const;
+  }
+
+  function loopmin(
+    level: number,
+    alpha: number,
+    beta: number
+  ): readonly [number, MoveType] {
+    let value = +Infinity;
+    let play: MoveType;
+    let found = false;
+
+    let prune = false;
+    for (const jump of findJumps()) {
+      if (prune) {
+        continue;
+      }
+      found = true;
+      const [current] = loopmax(level - 1, alpha, beta);
+      if (current < value) {
+        value = current;
+        play = jump;
+      }
+      if (value <= alpha) {
+        prune = true;
+      }
+      if (value < beta) {
+        beta = value;
+      }
+    }
+
+    if (!found) {
+      if (level <= 0) {
+        value = player.evaluate(board);
+      } else {
+        prune = false;
+        for (const move of findMoves()) {
+          if (prune) {
+            continue;
+          }
+          const [current] = loopmax(level - 1, alpha, beta);
+          if (current < value) {
+            value = current;
+            play = move;
+          }
+          if (value <= alpha) {
+            prune = true;
+          }
+          if (value < beta) {
+            beta = value;
+          }
+        }
+      }
+    }
+
+    return [value, play] as const;
   }
 
   // start the descent
-  return loop(LEVEL);
+  return side === RED
+    ? loopmax(LEVEL, -Infinity, +Infinity)
+    : loopmin(LEVEL, -Infinity, +Infinity);
 }

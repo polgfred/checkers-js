@@ -21,7 +21,7 @@ describe('Analyzer', () => {
     ]);
 
     it('should find the best play from this position', () => {
-      const [move, score] = analyze(copyBoard(initialData), RED);
+      const [score, move] = analyze(copyBoard(initialData), RED);
       expect(move).toEqual([
         [2, 0],
         [4, 2, 3, 1],

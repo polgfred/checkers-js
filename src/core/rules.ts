@@ -10,7 +10,7 @@ import {
 const { RED, WHT } = SideType;
 const { EMPTY, RED_PIECE, RED_KING, WHT_PIECE, WHT_KING } = PieceType;
 
-type MoveGenerator = Generator<MoveType, void, void>;
+export type MoveGenerator = Generator<MoveType, void, void>;
 
 export interface Rules {
   readonly getBoard: () => BoardType;
