@@ -7,7 +7,7 @@ import {
   type TreeType,
 } from './types';
 
-const { RED } = SideType;
+const { RED, WHT } = SideType;
 const { EMPTY, RED_PIECE, RED_KING, WHT_PIECE, WHT_KING } = PieceType;
 
 type MoveGenerator = Generator<MoveType, void, void>;
@@ -32,6 +32,52 @@ const whtForward = [-1];
 
 // `board` will be mutated by the rules engine, so make a copy first
 export function makeRules(board: BoardType, side: SideType): Rules {
+  function switchSides() {
+    switch (side) {
+      case RED:
+        side = WHT;
+        break;
+      case WHT:
+        side = RED;
+        break;
+    }
+  }
+
+  function getYDirs(p: PieceType): number[] {
+    switch (p) {
+      case RED_KING:
+        return redBoth;
+      case RED_PIECE:
+        return redForward;
+      case WHT_KING:
+        return whtBoth;
+      case WHT_PIECE:
+        return whtForward;
+    }
+  }
+
+  function getXDirs(p: PieceType): number[] {
+    switch (p) {
+      case RED_KING:
+      case RED_PIECE:
+        return redBoth;
+      case WHT_KING:
+      case WHT_PIECE:
+        return whtBoth;
+    }
+  }
+
+  function crownPiece(p: PieceType): PieceType {
+    switch (p) {
+      case RED_PIECE:
+        return RED_KING;
+      case WHT_PIECE:
+        return WHT_KING;
+      default:
+        return p;
+    }
+  }
+
   function* findJumps(): MoveGenerator {
     const bottom = side === RED ? 0 : 7;
 
@@ -57,18 +103,8 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     const king = p === (side === RED ? RED_KING : WHT_KING);
 
     // loop over directions (dx, dy) from the current square
-    const xdirs = side === RED ? redBoth : whtBoth;
-    const ydirs =
-      side === RED
-        ? king
-          ? redBoth
-          : redForward
-        : king
-          ? whtBoth
-          : whtForward;
-
-    for (const dy of ydirs) {
-      for (const dx of xdirs) {
+    for (const dy of getYDirs(p)) {
+      for (const dx of getXDirs(p)) {
         // calculate middle and landing coordinates
         const mx = x + dx;
         const my = y + dy;
@@ -89,7 +125,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
             cur.push([nx, ny, mx, my]);
             board[y][x] = EMPTY;
             board[my][mx] = EMPTY;
-            board[ny][nx] = crowned ? ((p << 1) as PieceType) : p;
+            board[ny][nx] = crowned ? crownPiece(p) : p;
 
             // if we're crowned, don't look any further
             if (!crowned) {
@@ -99,11 +135,12 @@ export function makeRules(board: BoardType, side: SideType): Rules {
                 yield j;
               }
             }
-            if (crowned || !found) {
-              // we're at a terminal position
-              side = -side as SideType;
-              yield [...cur];
-              side = -side as SideType;
+
+            // we're at a terminal position
+            if (!found) {
+              switchSides();
+              yield cur.slice();
+              switchSides();
             }
 
             // put things back where we found them
@@ -131,18 +168,8 @@ export function makeRules(board: BoardType, side: SideType): Rules {
         // see if it's our piece
         if (side === RED ? p > 0 : p < 0) {
           // loop over directions (dx, dy) from the current square
-          const xdirs = side === RED ? redBoth : whtBoth;
-          const ydirs =
-            side === RED
-              ? king
-                ? redBoth
-                : redForward
-              : king
-                ? whtBoth
-                : whtForward;
-
-          for (const dy of ydirs) {
-            for (const dx of xdirs) {
+          for (const dy of getYDirs(p)) {
+            for (const dx of getXDirs(p)) {
               // calculate landing coordinates
               const nx = x + dx;
               const ny = y + dy;
@@ -155,15 +182,15 @@ export function makeRules(board: BoardType, side: SideType): Rules {
 
                   // move the piece
                   board[y][x] = EMPTY;
-                  board[ny][nx] = crowned ? ((p << 1) as PieceType) : p;
-                  side = -side as SideType;
+                  board[ny][nx] = crowned ? crownPiece(p) : p;
+                  switchSides();
 
                   yield [cur, [nx, ny]];
 
                   // put things back where we found them
+                  switchSides();
                   board[y][x] = p;
                   board[ny][nx] = EMPTY;
-                  side = -side as SideType;
                 }
               }
             }
