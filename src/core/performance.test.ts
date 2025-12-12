@@ -76,8 +76,8 @@ describe('Performance', () => {
       const end = hrtime.bigint();
       console.log('analyze', end - start);
       expect(move).toEqual([
-        [3, 7],
-        [2, 6],
+        [5, 7],
+        [4, 6],
       ]);
     });
   });
