@@ -18,22 +18,18 @@ export function analyze(
 
   function loop(alpha = -Infinity, beta = +Infinity) {
     const side = getSide();
-    let value = side === RED ? -Infinity : Infinity;
+    let value = side === RED ? -Infinity : +Infinity;
     let play: MoveType;
 
     function next(source: MoveGenerator) {
       let found = false;
-      let prune = false;
+
+      level--;
 
       for (const jump of source) {
-        if (prune) {
-          continue;
-        }
-
         found = true;
-        level--;
+
         const [current] = loop(alpha, beta);
-        level++;
 
         switch (side) {
           case RED:
@@ -42,7 +38,8 @@ export function analyze(
               play = jump;
             }
             if (value >= beta) {
-              prune = true;
+              source.return();
+              break;
             }
             if (value > alpha) {
               alpha = value;
@@ -54,7 +51,8 @@ export function analyze(
               play = jump;
             }
             if (value <= alpha) {
-              prune = true;
+              source.return();
+              break;
             }
             if (value < beta) {
               beta = value;
@@ -62,6 +60,8 @@ export function analyze(
             break;
         }
       }
+
+      level++;
 
       return found;
     }

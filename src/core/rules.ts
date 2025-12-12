@@ -122,32 +122,37 @@ export function makeRules(board: BoardType, side: SideType): Rules {
             let found = false;
 
             // keep track of the coordinates, and move the piece
-            cur.push([nx, ny, mx, my]);
-            board[y][x] = EMPTY;
-            board[my][mx] = EMPTY;
-            board[ny][nx] = crowned ? crownPiece(p) : p;
+            try {
+              cur.push([nx, ny, mx, my]);
+              board[y][x] = EMPTY;
+              board[my][mx] = EMPTY;
+              board[ny][nx] = crowned ? crownPiece(p) : p;
 
-            // if we're crowned, don't look any further
-            if (!crowned) {
-              // see if there are any further jumps from here
-              for (const j of nextJumps(cur)) {
-                found = true;
-                yield j;
+              // if we're crowned, don't look any further
+              if (!crowned) {
+                // see if there are any further jumps from here
+                for (const j of nextJumps(cur)) {
+                  found = true;
+                  yield j;
+                }
               }
-            }
 
-            // we're at a terminal position
-            if (!found) {
-              switchSides();
-              yield cur.slice();
-              switchSides();
+              // we're at a terminal position
+              if (!found) {
+                try {
+                  switchSides();
+                  yield cur.slice();
+                } finally {
+                  switchSides();
+                }
+              }
+            } finally {
+              // put things back where we found them
+              cur.pop();
+              board[y][x] = p;
+              board[my][mx] = m;
+              board[ny][nx] = EMPTY;
             }
-
-            // put things back where we found them
-            cur.pop();
-            board[y][x] = p;
-            board[my][mx] = m;
-            board[ny][nx] = EMPTY;
           }
         }
       }
@@ -180,17 +185,19 @@ export function makeRules(board: BoardType, side: SideType): Rules {
                 if (board[ny][nx] === EMPTY) {
                   const crowned = !king && ny === top;
 
-                  // move the piece
-                  board[y][x] = EMPTY;
-                  board[ny][nx] = crowned ? crownPiece(p) : p;
-                  switchSides();
+                  try {
+                    // move the piece
+                    board[y][x] = EMPTY;
+                    board[ny][nx] = crowned ? crownPiece(p) : p;
+                    switchSides();
 
-                  yield [cur, [nx, ny]];
-
-                  // put things back where we found them
-                  switchSides();
-                  board[y][x] = p;
-                  board[ny][nx] = EMPTY;
+                    yield [cur, [nx, ny]];
+                  } finally {
+                    // put things back where we found them
+                    switchSides();
+                    board[y][x] = p;
+                    board[ny][nx] = EMPTY;
+                  }
                 }
               }
             }
