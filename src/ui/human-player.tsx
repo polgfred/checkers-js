@@ -59,8 +59,7 @@ export function HumanPlayer() {
           // move the piece
           // eslint-disable-next-line react-hooks/immutability
           cboard[y][x] = EMPTY;
-          // @ts-expect-error
-          cboard[ny][nx] = crowned ? p << 1 : p;
+          cboard[ny][nx] = crowned ? ((p << 1) as PieceType) : p;
 
           // record the current leg
           if (current.length === 0) {

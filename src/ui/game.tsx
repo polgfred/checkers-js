@@ -48,7 +48,7 @@ export function Game() {
     return () => {
       worker.current.terminate();
     };
-  }, [worker]);
+  }, [handlePlay, worker]);
 
   // ask the worker to compute a move
   const handleComputerPlay = useCallback(() => {

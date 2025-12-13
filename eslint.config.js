@@ -5,7 +5,6 @@ import importPlugin from 'eslint-plugin-import';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import prettierPlugin from 'eslint-plugin-prettier';
-import jestPlugin from 'eslint-plugin-jest';
 import globals from 'globals';
 
 export default [
@@ -48,28 +47,15 @@ export default [
       ...tsPlugin.configs.recommended.rules,
       ...reactPlugin.configs.recommended.rules,
       ...reactHooksPlugin.configs.recommended.rules,
-      'prettier/prettier': 'error',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-redeclare': 'off',
+      'prettier/prettier': 'error',
       'react/jsx-no-undef': 'error',
       'react/jsx-no-target-blank': 'error',
       'react/react-in-jsx-scope': 'off',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       '@typescript-eslint/no-require-imports': 'off',
-    },
-  },
-  {
-    files: ['**/*.test.ts', '**/*.test.tsx'],
-    languageOptions: {
-      globals: {
-        ...globals.jest,
-      },
-    },
-    plugins: {
-      jest: jestPlugin,
-    },
-    rules: {
-      ...jestPlugin.configs.recommended.rules,
     },
   },
 ];
