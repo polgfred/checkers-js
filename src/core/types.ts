@@ -51,7 +51,6 @@ export type SegmentType =
   | readonly [number, number, number, number];
 
 export type MoveType = readonly SegmentType[];
-export type _MutableMoveType = SegmentType[]; // used internally to build up moves
 
 export interface TreeType {
   [key: string]: TreeType;

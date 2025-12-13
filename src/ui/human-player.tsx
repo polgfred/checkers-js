@@ -1,6 +1,6 @@
 import { useCallback, useContext, useState } from 'react';
 
-import { SideType, PieceType, _MutableMoveType } from '../core/types';
+import { SideType, PieceType, SegmentType } from '../core/types';
 import { copyBoard } from '../core/utils';
 
 import { Board } from './board';
@@ -18,7 +18,7 @@ export function HumanPlayer() {
   const [{ cboard, cplays, current }, setState] = useState(() => ({
     cboard: copyBoard(board),
     cplays: plays,
-    current: [] as _MutableMoveType,
+    current: [] as SegmentType[],
   }));
 
   const canMove = useCallback(
