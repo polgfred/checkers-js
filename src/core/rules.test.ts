@@ -99,9 +99,17 @@ describe('Rules', () => {
       const { buildTree } = makeRules(copyBoard(initialData), RED);
       const plays = buildTree();
 
-      expect(plays['2,0']['4,2']['6,4']['4,6']).toEqual({});
-      expect(plays['2,0']['4,2']['2,4']).toEqual({});
-      expect(plays['2,0']['0,2']).toEqual({});
+      expect(plays).toEqual({
+        '2,0': {
+          '4,2': {
+            '6,4': {
+              '4,6': {},
+            },
+            '2,4': {},
+          },
+          '0,2': {},
+        },
+      });
     });
   });
 });
