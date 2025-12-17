@@ -36,7 +36,7 @@ export function Game() {
   const worker = useRef<Worker | null>(null);
 
   useEffect(() => {
-    worker.current = new Worker('/worker.js');
+    worker.current = new Worker('./worker.js');
     worker.current.addEventListener(
       'message',
       (ev: { data: { move: MoveType } }) => {
