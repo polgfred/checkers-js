@@ -1,4 +1,4 @@
-import type { BoardType, MoveType } from './types';
+import type { BoardType, PlayType } from './types';
 
 export function copyBoard(board: BoardType): BoardType {
   return [
@@ -49,18 +49,16 @@ export function coordsToNumber(x: number, y: number): number {
   return ((y + 1) << 2) - (x >> 1);
 }
 
-export function moveToString(move: MoveType): string {
-  if (move) {
-    const [x, y] = move[0];
-    let str = String(coordsToNumber(x, y));
+export function moveToString(move: PlayType): string {
+  const [x, y] = move[0];
+  let str = String(coordsToNumber(x, y));
 
-    for (let i = 1; i < move.length; ++i) {
-      const [nx, ny] = move[i];
+  for (let i = 1; i < move.length; ++i) {
+    const [nx, ny] = move[i];
 
-      str += move[i].length > 2 ? ' x ' : ' - ';
-      str += coordsToNumber(nx, ny);
-    }
-
-    return str;
+    str += move[i].length > 2 ? ' x ' : ' - ';
+    str += coordsToNumber(nx, ny);
   }
+
+  return str;
 }

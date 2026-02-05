@@ -1,17 +1,19 @@
 import defaultEvaluator from './default-evaluator';
 import { makeRules, MoveGenerator } from './rules';
-import { type BoardType, type MoveType, SideType } from './types';
+import { type BoardType, type PlayType, SideType } from './types';
 
 const { RED, WHT } = SideType;
 
 // how many levels deep to search the tree
 const LEVEL = 12;
 
+type MaybePlay = PlayType | undefined;
+
 export function analyze(
   board: BoardType,
   side: SideType,
   player = defaultEvaluator
-): readonly [number, MoveType] {
+): readonly [number, MaybePlay] {
   const { getSide, findJumps, findMoves } = makeRules(board, side);
 
   let level = LEVEL;
@@ -19,7 +21,7 @@ export function analyze(
   function loop(alpha = -Infinity, beta = +Infinity) {
     const side = getSide();
     let value = side === RED ? -Infinity : +Infinity;
-    let play: MoveType;
+    let play: MaybePlay;
 
     function next(source: MoveGenerator) {
       let found = false;

@@ -2,15 +2,20 @@ import {
   SideType,
   PieceType,
   type BoardType,
+  type JumpStepType,
+  type JumpType,
   type MoveType,
-  type SegmentType,
+  type PlayType,
+  type StartType,
   type TreeType,
 } from './types';
 
 const { RED, WHT } = SideType;
 const { EMPTY, RED_PIECE, RED_KING, WHT_PIECE, WHT_KING } = PieceType;
 
-export type MoveGenerator = Generator<MoveType, void, void>;
+export type MoveGenerator = Generator<PlayType, void, void>;
+
+type JumpBuild = [StartType, ...JumpStepType[]];
 
 export interface Rules {
   readonly getBoard: () => BoardType;
@@ -18,9 +23,9 @@ export interface Rules {
   readonly findJumps: () => MoveGenerator;
   readonly findMoves: () => MoveGenerator;
   readonly findPlays: () => MoveGenerator;
-  readonly doJump: (jump: MoveType) => void;
+  readonly doJump: (jump: JumpType) => void;
   readonly doMove: (move: MoveType) => void;
-  readonly doPlay: (play: MoveType) => void;
+  readonly doPlay: (play: PlayType) => void;
   readonly buildTree: () => TreeType;
 }
 
@@ -53,6 +58,8 @@ export function makeRules(board: BoardType, side: SideType): Rules {
         return whtBoth;
       case WHT_PIECE:
         return whtForward;
+      default:
+        return [];
     }
   }
 
@@ -64,6 +71,8 @@ export function makeRules(board: BoardType, side: SideType): Rules {
       case WHT_KING:
       case WHT_PIECE:
         return whtBoth;
+      default:
+        return [];
     }
   }
 
@@ -96,7 +105,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     }
   }
 
-  function* nextJumps(cur: SegmentType[]): MoveGenerator {
+  function* nextJumps(cur: JumpBuild): MoveGenerator {
     const [x, y] = cur[cur.length - 1];
     const p = board[y][x];
     const top = side === RED ? 7 : 0;
@@ -141,6 +150,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
               if (!found) {
                 try {
                   switchSides();
+                  // @ts-expect-error slice loses tuple shape
                   yield cur.slice();
                 } finally {
                   switchSides();
@@ -221,7 +231,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     }
   }
 
-  function doJump(jump: MoveType) {
+  function doJump(jump: JumpType) {
     const len = jump.length;
     const [x, y] = jump[0];
     const [fx, fy] = jump[len - 1];
@@ -231,7 +241,7 @@ export function makeRules(board: BoardType, side: SideType): Rules {
 
     board[y][x] = EMPTY;
     for (let i = 1; i < len; ++i) {
-      const [, , mx, my] = jump[i];
+      const [, , mx, my] = jump[i] as JumpStepType;
       board[my][mx] = EMPTY;
     }
     board[fy][fx] = crowned ? ((p << 1) as PieceType) : p;
@@ -249,11 +259,11 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     side = -side as SideType;
   }
 
-  function doPlay(play: MoveType) {
-    if (play[1].length > 2) {
-      doJump(play);
+  function doPlay(play: PlayType) {
+    if (play[1].length === 4) {
+      doJump(play as JumpType);
     } else {
-      doMove(play);
+      doMove(play as MoveType);
     }
   }
 

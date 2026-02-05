@@ -1,4 +1,4 @@
-import { DragSourceMonitor, XYCoord, useDragLayer } from 'react-dnd';
+import { XYCoord, useDragLayer } from 'react-dnd';
 
 import { getPieceElement } from './piece';
 import type { PieceAtCoords } from './types';
@@ -7,8 +7,8 @@ export function DragLayer() {
   const { item, isDragging, sourceClientOffset } = useDragLayer<{
     item: PieceAtCoords;
     isDragging: boolean;
-    sourceClientOffset: XYCoord;
-  }>((monitor: DragSourceMonitor) => ({
+    sourceClientOffset: XYCoord | null;
+  }>((monitor) => ({
     item: monitor.getItem(),
     isDragging: monitor.isDragging(),
     sourceClientOffset: monitor.getSourceClientOffset(),

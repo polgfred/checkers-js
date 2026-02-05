@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { type MoveType, SideType } from '../core/types';
+import { type PlayType, SideType } from '../core/types';
 import { makeRules } from '../core/rules';
 import { newBoard } from '../core/utils';
 
@@ -19,12 +19,12 @@ export function Game() {
   const board = getBoard();
   const side = getSide();
   const plays = buildTree();
-  const [hist] = useState([] as MoveType[]);
+  const [hist] = useState([] as PlayType[]);
   const [, setClock] = useState(0);
 
   // make this play, update the history, and force a re-render
   const handlePlay = useCallback(
-    (move: MoveType) => {
+    (move: PlayType) => {
       doPlay(move);
       hist.push(move);
       setClock(Date.now());
@@ -39,20 +39,22 @@ export function Game() {
     worker.current = new Worker('./worker.js');
     worker.current.addEventListener(
       'message',
-      (ev: { data: { move: MoveType } }) => {
+      (ev: { data: { move: PlayType | undefined } }) => {
         const { move } = ev.data;
-        handlePlay(move);
+        if (move) {
+          handlePlay(move);
+        }
       }
     );
 
     return () => {
-      worker.current.terminate();
+      worker.current?.terminate();
     };
   }, [handlePlay, worker]);
 
   // ask the worker to compute a move
   const handleComputerPlay = useCallback(() => {
-    worker.current.postMessage({ board, side });
+    worker.current?.postMessage({ board, side });
   }, [worker, board, side]);
 
   return (

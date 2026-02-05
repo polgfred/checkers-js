@@ -1,10 +1,10 @@
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useState } from 'react';
 
-import { SideType, PieceType, SegmentType } from '../core/types';
+import { SideType, PieceType, SegmentType, type PlayType } from '../core/types';
 import { copyBoard } from '../core/utils';
 
 import { Board } from './board';
-import { GameContext } from './game-context';
+import { useGameContext } from './game-context';
 import { PlayerContext } from './player-context';
 import type { Coords } from './types';
 
@@ -12,7 +12,7 @@ const { RED } = SideType;
 const { EMPTY, RED_PIECE, WHT_PIECE } = PieceType;
 
 export function HumanPlayer() {
-  const { board, side, plays, handlePlay } = useContext(GameContext);
+  const { board, side, plays, handlePlay } = useGameContext();
 
   // make a copy of the board and plays tree in local state
   const [{ cboard, cplays, current }, setState] = useState(() => ({
@@ -22,22 +22,13 @@ export function HumanPlayer() {
   }));
 
   const canMove = useCallback(
-    ({ x, y }: Coords) => {
-      // see if this position is in the tree
-      if (cplays[`${x},${y}`]) {
-        return true;
-      }
-    },
+    ({ x, y }: Coords) => !!cplays[`${x},${y}`],
     [cplays]
   );
 
   const canMoveTo = useCallback(
-    ({ x, y }: Coords, { x: nx, y: ny }: Coords) => {
-      // see if this move is in the tree
-      if (cplays[`${x},${y}`]?.[`${nx},${ny}`]) {
-        return true;
-      }
-    },
+    ({ x, y }: Coords, { x: nx, y: ny }: Coords) =>
+      !!cplays[`${x},${y}`]?.[`${nx},${ny}`],
     [cplays]
   );
 
@@ -79,7 +70,7 @@ export function HumanPlayer() {
 
           if (Object.keys(next2).length === 0) {
             // move is done, switch sides
-            handlePlay(current);
+            handlePlay(current as unknown as PlayType);
           } else {
             // move to this position in the local state
             setState({ cboard, cplays: next, current });

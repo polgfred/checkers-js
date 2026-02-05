@@ -46,11 +46,15 @@ export type BoardType = readonly [
   RowType,
 ];
 
-export type SegmentType =
-  | readonly [number, number]
-  | readonly [number, number, number, number];
+export type StartType = readonly [number, number];
+export type StepType = readonly [number, number];
+export type JumpStepType = readonly [number, number, number, number];
 
-export type MoveType = readonly SegmentType[];
+export type SegmentType = StartType | JumpStepType;
+
+export type MoveType = readonly [StartType, StepType];
+export type JumpType = readonly [StartType, JumpStepType, ...JumpStepType[]];
+export type PlayType = MoveType | JumpType;
 
 export interface TreeType {
   [key: string]: TreeType;

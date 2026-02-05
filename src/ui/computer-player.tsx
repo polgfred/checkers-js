@@ -1,10 +1,10 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { Board } from './board';
-import { GameContext } from './game-context';
+import { useGameContext } from './game-context';
 
 export function ComputerPlayer() {
-  const { board, handleComputerPlay } = useContext(GameContext);
+  const { board, handleComputerPlay } = useGameContext();
 
   useEffect(() => {
     handleComputerPlay();

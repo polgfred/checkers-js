@@ -1,30 +1,28 @@
-import React, {
-  createRef,
-  useCallback,
-  useContext,
-  useLayoutEffect,
-} from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 
+import { type PlayType } from '../core/types';
 import { moveToString } from '../core/utils';
 
 import ThinkingSpinner from '../images/thinking.svg';
 
-import { GameContext } from './game-context';
+import { useGameContext } from './game-context';
 
 export function History() {
-  const { hist } = useContext(GameContext);
+  const { hist } = useGameContext();
 
-  const ref = createRef<HTMLDivElement>();
+  const ref = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    ref.current.scrollTop = ref.current.scrollHeight;
+    if (ref.current) {
+      ref.current.scrollTop = ref.current.scrollHeight;
+    }
   }, [ref]);
 
   // pad the row if there's only one move
   const getRow = useCallback(
     (i: number) => {
-      const row = hist.slice(i * 2, i * 2 + 2);
-      if (row.length == 1) {
+      const row = hist.slice(i * 2, i * 2 + 2) as (PlayType | null)[];
+      if (row.length === 1) {
         row.push(null);
       }
       return row;
