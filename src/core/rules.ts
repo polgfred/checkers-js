@@ -283,40 +283,26 @@ export function makeRules(board: BoardType, side: SideType): Rules {
   function buildTree() {
     const tree = {} as TreeType;
 
-    for (const play of findPlays()) {
-      let root = tree;
-
-      switch (play.kind) {
-        case 'move': {
-          {
-            const [x, y] = play.start;
-            const k = `${x},${y}`;
-            root[k] = root[k] || {};
-            root = root[k];
-          }
-          {
-            const [x, y] = play.end;
-            const k = `${x},${y}`;
-            root[k] = root[k] || {};
-            root = root[k];
-          }
-          break;
-        }
-        case 'jump': {
-          {
-            const [x, y] = play.start;
-            const k = `${x},${y}`;
-            root[k] = root[k] || {};
-            root = root[k];
-          }
-          for (const [x, y] of play.steps) {
-            const k = `${x},${y}`;
-            root[k] = root[k] || {};
-            root = root[k];
-          }
-          break;
-        }
+    function addPath(coords: readonly StartType[]) {
+      let node = tree;
+      for (const [x, y] of coords) {
+        const key = `${x},${y}`;
+        node[key] ??= {};
+        node = node[key];
       }
+    }
+
+    function playToCoords(play: PlayType): StartType[] {
+      switch (play.kind) {
+        case 'move':
+          return [play.start, play.end];
+        case 'jump':
+          return [play.start, ...play.steps.map(([x, y]) => [x, y] as const)];
+      }
+    }
+
+    for (const play of findPlays()) {
+      addPath(playToCoords(play));
     }
 
     return tree;
