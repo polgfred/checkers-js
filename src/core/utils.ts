@@ -50,15 +50,22 @@ export function coordsToNumber(x: number, y: number): number {
 }
 
 export function moveToString(move: PlayType): string {
-  const [x, y] = move[0];
-  let str = String(coordsToNumber(x, y));
+  switch (move.kind) {
+    case 'move': {
+      const [x, y] = move.start;
+      const [nx, ny] = move.end;
+      return `${coordsToNumber(x, y)} - ${coordsToNumber(nx, ny)}`;
+    }
+    case 'jump': {
+      const [x, y] = move.start;
+      let str = String(coordsToNumber(x, y));
 
-  for (let i = 1; i < move.length; ++i) {
-    const [nx, ny] = move[i];
+      for (const [nx, ny] of move.steps) {
+        str += ' x ';
+        str += coordsToNumber(nx, ny);
+      }
 
-    str += move[i].length > 2 ? ' x ' : ' - ';
-    str += coordsToNumber(nx, ny);
+      return str;
+    }
   }
-
-  return str;
 }

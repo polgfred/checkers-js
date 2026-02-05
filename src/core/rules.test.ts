@@ -28,13 +28,13 @@ describe('Rules', () => {
       expect(moves.length).toBe(7);
       // prettier-ignore
       expect(moves).toEqual([
-        [[0, 2], [1, 3]],
-        [[2, 2], [1, 3]],
-        [[2, 2], [3, 3]],
-        [[4, 2], [3, 3]],
-        [[4, 2], [5, 3]],
-        [[6, 2], [5, 3]],
-        [[6, 2], [7, 3]],
+        { kind: 'move', start: [0, 2], end: [1, 3] },
+        { kind: 'move', start: [2, 2], end: [1, 3] },
+        { kind: 'move', start: [2, 2], end: [3, 3] },
+        { kind: 'move', start: [4, 2], end: [3, 3] },
+        { kind: 'move', start: [4, 2], end: [5, 3] },
+        { kind: 'move', start: [6, 2], end: [5, 3] },
+        { kind: 'move', start: [6, 2], end: [7, 3] },
       ]);
     });
 
@@ -77,21 +77,24 @@ describe('Rules', () => {
 
       expect(jumps.length).toBe(3);
       expect(jumps).toEqual([
-        [
-          [2, 0],
-          [0, 2, 1, 1],
-        ],
-        [
-          [2, 0],
-          [4, 2, 3, 1],
-          [2, 4, 3, 3],
-        ],
-        [
-          [2, 0],
-          [4, 2, 3, 1],
-          [6, 4, 5, 3],
-          [4, 6, 5, 5],
-        ],
+        { kind: 'jump', start: [2, 0], steps: [[0, 2, 1, 1]] },
+        {
+          kind: 'jump',
+          start: [2, 0],
+          steps: [
+            [4, 2, 3, 1],
+            [2, 4, 3, 3],
+          ],
+        },
+        {
+          kind: 'jump',
+          start: [2, 0],
+          steps: [
+            [4, 2, 3, 1],
+            [6, 4, 5, 3],
+            [4, 6, 5, 5],
+          ],
+        },
       ]);
     });
 

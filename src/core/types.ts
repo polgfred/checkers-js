@@ -50,10 +50,18 @@ export type StartType = readonly [number, number];
 export type StepType = readonly [number, number];
 export type JumpStepType = readonly [number, number, number, number];
 
-export type SegmentType = StartType | JumpStepType;
+export type MoveType = {
+  readonly kind: 'move';
+  readonly start: StartType;
+  readonly end: StepType;
+};
 
-export type MoveType = readonly [StartType, StepType];
-export type JumpType = readonly [StartType, JumpStepType, ...JumpStepType[]];
+export type JumpType = {
+  readonly kind: 'jump';
+  readonly start: StartType;
+  readonly steps: readonly [JumpStepType, ...JumpStepType[]];
+};
+
 export type PlayType = MoveType | JumpType;
 
 export interface TreeType {

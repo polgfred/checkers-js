@@ -87,10 +87,11 @@ describe('Performance', () => {
       const [, move] = analyze(copyBoard(initialData), WHT);
       const end = hrtime.bigint();
       console.log('analyze', end - start);
-      expect(move).toEqual([
-        [5, 7],
-        [4, 6],
-      ]);
+      expect(move).toEqual({
+        kind: 'move',
+        start: [5, 7],
+        end: [4, 6],
+      });
     });
   });
 });

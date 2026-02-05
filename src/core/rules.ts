@@ -99,7 +99,8 @@ export function makeRules(board: BoardType, side: SideType): Rules {
         if (side === RED ? p > 0 : p < 0) {
           // checking for jumps is inherently recursive - as long as you find them,
           // you have to keep looking, and only termimal positions are valid
-          yield* nextJumps([[x, y]]);
+          const start = [x, y] as const;
+          yield* nextJumps([start]);
         }
       }
     }
@@ -150,8 +151,13 @@ export function makeRules(board: BoardType, side: SideType): Rules {
               if (!found) {
                 try {
                   switchSides();
-                  // @ts-expect-error slice loses tuple shape
-                  yield cur.slice();
+                  const snapshot = cur.slice() as JumpBuild;
+                  const [start, first, ...rest] = snapshot;
+                  yield {
+                    kind: 'jump',
+                    start,
+                    steps: [first, ...rest],
+                  };
                 } finally {
                   switchSides();
                 }
@@ -201,7 +207,12 @@ export function makeRules(board: BoardType, side: SideType): Rules {
                     board[ny][nx] = crowned ? crownPiece(p) : p;
                     switchSides();
 
-                    yield [cur, [nx, ny]];
+                    const next = [nx, ny] as const;
+                    yield {
+                      kind: 'move',
+                      start: cur,
+                      end: next,
+                    };
                   } finally {
                     // put things back where we found them
                     switchSides();
@@ -232,16 +243,14 @@ export function makeRules(board: BoardType, side: SideType): Rules {
   }
 
   function doJump(jump: JumpType) {
-    const len = jump.length;
-    const [x, y] = jump[0];
-    const [fx, fy] = jump[len - 1];
+    const [x, y] = jump.start;
+    const [fx, fy] = jump.steps[jump.steps.length - 1];
     const p = board[y][x];
     const crowned =
       side === RED ? p === RED_PIECE && fy === 7 : p === WHT_PIECE && fy === 0;
 
     board[y][x] = EMPTY;
-    for (let i = 1; i < len; ++i) {
-      const [, , mx, my] = jump[i] as JumpStepType;
+    for (const [, , mx, my] of jump.steps) {
       board[my][mx] = EMPTY;
     }
     board[fy][fx] = crowned ? ((p << 1) as PieceType) : p;
@@ -249,7 +258,8 @@ export function makeRules(board: BoardType, side: SideType): Rules {
   }
 
   function doMove(move: MoveType) {
-    const [[x, y], [nx, ny]] = move;
+    const [x, y] = move.start;
+    const [nx, ny] = move.end;
     const p = board[y][x];
     const crowned =
       side === RED ? p === RED_PIECE && ny === 7 : p === WHT_PIECE && ny === 0;
@@ -260,10 +270,13 @@ export function makeRules(board: BoardType, side: SideType): Rules {
   }
 
   function doPlay(play: PlayType) {
-    if (play[1].length === 4) {
-      doJump(play as JumpType);
-    } else {
-      doMove(play as MoveType);
+    switch (play.kind) {
+      case 'jump':
+        doJump(play);
+        break;
+      case 'move':
+        doMove(play);
+        break;
     }
   }
 
@@ -273,12 +286,36 @@ export function makeRules(board: BoardType, side: SideType): Rules {
     for (const play of findPlays()) {
       let root = tree;
 
-      for (let j = 0; j < play.length; ++j) {
-        const [x, y] = play[j];
-        const k = `${x},${y}`;
-
-        root[k] = root[k] || {};
-        root = root[k];
+      switch (play.kind) {
+        case 'move': {
+          {
+            const [x, y] = play.start;
+            const k = `${x},${y}`;
+            root[k] = root[k] || {};
+            root = root[k];
+          }
+          {
+            const [x, y] = play.end;
+            const k = `${x},${y}`;
+            root[k] = root[k] || {};
+            root = root[k];
+          }
+          break;
+        }
+        case 'jump': {
+          {
+            const [x, y] = play.start;
+            const k = `${x},${y}`;
+            root[k] = root[k] || {};
+            root = root[k];
+          }
+          for (const [x, y] of play.steps) {
+            const k = `${x},${y}`;
+            root[k] = root[k] || {};
+            root = root[k];
+          }
+          break;
+        }
       }
     }
 

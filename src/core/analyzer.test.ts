@@ -22,12 +22,15 @@ describe('Analyzer', () => {
 
     it('should find the best play from this position', () => {
       const [score, move] = analyze(copyBoard(initialData), RED);
-      expect(move).toEqual([
-        [2, 0],
-        [4, 2, 3, 1],
-        [6, 4, 5, 3],
-        [4, 6, 5, 5],
-      ]);
+      expect(move).toEqual({
+        kind: 'jump',
+        start: [2, 0],
+        steps: [
+          [4, 2, 3, 1],
+          [6, 4, 5, 3],
+          [4, 6, 5, 5],
+        ],
+      });
       expect(score).toBeLessThan(0);
     });
   });
