@@ -3,7 +3,9 @@ export const SideType = {
   WHT: -1,
 } as const;
 
-export type SideType = typeof SideType.RED | typeof SideType.WHT;
+type ValueOf<T> = T[keyof T];
+
+export type SideType = ValueOf<typeof SideType>;
 
 export const PieceType = {
   EMPTY: 0,
@@ -15,14 +17,7 @@ export const PieceType = {
   WHT_EITHER: -3,
 } as const;
 
-export type PieceType =
-  | typeof PieceType.EMPTY
-  | typeof PieceType.RED_PIECE
-  | typeof PieceType.RED_KING
-  | typeof PieceType.RED_EITHER
-  | typeof PieceType.WHT_PIECE
-  | typeof PieceType.WHT_KING
-  | typeof PieceType.WHT_EITHER;
+export type PieceType = ValueOf<typeof PieceType>;
 
 type RowType = [
   PieceType,
