@@ -53,28 +53,48 @@ export function HumanPlayer() {
         const next2 = next[`${nx},${ny}`];
 
         if (next2) {
-          let nextJump = currentJump;
           const p = cboard[y][x];
           const crowned =
             side === RED
               ? p === RED_PIECE && ny === 7
               : p === WHT_PIECE && ny === 0;
 
-          // move the piece
-          // eslint-disable-next-line react-hooks/immutability
-          cboard[y][x] = EMPTY;
-          cboard[ny][nx] = crowned ? ((p << 1) as PieceType) : p;
-
           // it's a jump, so remove the jumped piece too
           if (Math.abs(nx - x) === 2) {
             const mx = (x + nx) >> 1;
             const my = (y + ny) >> 1;
+            const step: JumpStepType = [nx, ny, mx, my];
 
-            cboard[my][mx] = EMPTY;
-            if (!nextJump) {
-              nextJump = { start: [x, y] as const, steps: [] };
+            const nextJump = currentJump
+              ? {
+                  start: currentJump.start,
+                  steps: [...currentJump.steps, step],
+                }
+              : { start: [x, y] as const, steps: [step] };
+
+            if (Object.keys(next2).length === 0) {
+              // move is done, switch sides
+              const [first, ...rest] = nextJump.steps;
+              if (first) {
+                const play: JumpType = {
+                  kind: 'jump',
+                  start: nextJump.start,
+                  steps: [first, ...rest],
+                };
+                handlePlay(play);
+              }
+            } else {
+              // move to this position in the local state
+              const nextBoard = copyBoard(cboard);
+              nextBoard[y][x] = EMPTY;
+              nextBoard[ny][nx] = crowned ? ((p << 1) as PieceType) : p;
+              nextBoard[my][mx] = EMPTY;
+              setState({
+                cboard: nextBoard,
+                cplays: next,
+                currentJump: nextJump,
+              });
             }
-            nextJump.steps.push([nx, ny, mx, my]);
           } else {
             const play: MoveType = {
               kind: 'move',
@@ -83,22 +103,6 @@ export function HumanPlayer() {
             };
             handlePlay(play);
             return;
-          }
-
-          if (Object.keys(next2).length === 0) {
-            // move is done, switch sides
-            const [first, ...rest] = nextJump.steps;
-            if (first) {
-              const play: JumpType = {
-                kind: 'jump',
-                start: nextJump.start,
-                steps: [first, ...rest],
-              };
-              handlePlay(play);
-            }
-          } else {
-            // move to this position in the local state
-            setState({ cboard, cplays: next, currentJump: nextJump });
           }
         }
       }

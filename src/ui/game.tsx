@@ -19,17 +19,15 @@ export function Game() {
   const board = getBoard();
   const side = getSide();
   const plays = buildTree();
-  const [hist] = useState([] as PlayType[]);
-  const [, setClock] = useState(0);
+  const [hist, setHist] = useState([] as PlayType[]);
 
   // make this play, update the history, and force a re-render
   const handlePlay = useCallback(
     (move: PlayType) => {
       doPlay(move);
-      hist.push(move);
-      setClock(Date.now());
+      setHist((prev) => [...prev, move]);
     },
-    [doPlay, hist]
+    [doPlay]
   );
 
   // set up the web worker for computer moves
