@@ -5,7 +5,7 @@ export interface GameContextType {
   board: BoardType;
   side: SideType;
   plays: TreeType;
-  hist: readonly PlayType[];
+  hist: readonly (readonly [PlayType | null, PlayType | null])[];
   handlePlay(move: PlayType): void;
   handleComputerPlay(): void;
 }

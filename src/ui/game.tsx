@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { castDraft, produce } from 'immer';
 
 import { type PlayType, SideType } from '../core/types';
 import { makeRules } from '../core/rules';
@@ -19,15 +20,28 @@ export function Game() {
   const board = getBoard();
   const side = getSide();
   const plays = buildTree();
-  const [hist, setHist] = useState([] as PlayType[]);
+  const [hist, setHist] = useState([] as [PlayType | null, PlayType | null][]);
 
   // make this play, update the history, and force a re-render
   const handlePlay = useCallback(
     (move: PlayType) => {
+      const moveSide = getSide();
       doPlay(move);
-      setHist((prev) => [...prev, move]);
+      setHist((prev) =>
+        produce(prev, (draft) => {
+          if (moveSide === RED) {
+            draft.push([castDraft(move), null]);
+            return;
+          }
+          const last = draft[draft.length - 1];
+          if (!last || last[1] !== null) {
+            return;
+          }
+          last[1] = castDraft(move);
+        })
+      );
     },
-    [doPlay]
+    [doPlay, getSide]
   );
 
   // set up the web worker for computer moves
