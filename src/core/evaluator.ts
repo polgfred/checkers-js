@@ -1,19 +1,4 @@
-import {
-  type BoardType,
-  type FormationType,
-  type ScoresType,
-  PieceType,
-} from './types';
-
-const {
-  EMPTY,
-  WHT_PIECE,
-  WHT_KING,
-  WHT_EITHER,
-  RED_PIECE,
-  RED_KING,
-  RED_EITHER,
-} = PieceType;
+import { type BoardType, type FormationType, type ScoresType } from './types';
 
 export interface Evaluator {
   getScores: () => ScoresType;
@@ -23,14 +8,14 @@ export interface Evaluator {
 
 export function makeEvaluator(): Evaluator {
   // scores are represented as a 2D array of [pattern, score] pairs, where:
-  //  - `pattern` is an array of [dx, dy, value] triples, and
+  //  - `pattern` is an array of { dx, dy, value } entries, and
   //  - `score` is what will be awarded if the pattern matches
   const scores = [[], [], [], [], [], [], [], []] as ScoresType;
 
   function addFormation(formation: FormationType, values: readonly number[][]) {
-    // `formation` takes the form [[dx, dy, v], [dx, dy, v], ...], where:
+    // `formation` takes the form [{ dx, dy, value }, ...], where:
     //  - (dx, dy) is the offset from the origin of the formation, and
-    //  - v is the value to match against:
+    //  - value is the value to match against:
     //    -  0: an empty square
     //    - +1: a regular piece on my side
     //    - +2: a king on my side
@@ -44,11 +29,11 @@ export function makeEvaluator(): Evaluator {
     // push on the pattern and score for each non-zero slot
     for (let y = 0; y < 8; ++y) {
       for (let x = 0; x < 8; ++x) {
-        const value = values[y][x];
+        const score = values[y][x];
 
-        if (value !== 0) {
+        if (score !== 0) {
           scores[y][x] = scores[y][x] || [];
-          scores[y][x].push([formation, value]);
+          scores[y][x].push({ formation, score });
         }
       }
     }
@@ -67,22 +52,22 @@ export function makeEvaluator(): Evaluator {
         const formations = scores[y][x];
 
         if (formations) {
-          for (const [formation, score] of formations) {
+          for (const { formation, score } of formations) {
             let match: boolean;
 
             // try the pattern as red
             match = true;
-            for (const [dx, dy, v] of formation) {
+            for (const { dx, dy, value: v } of formation) {
               const p = board[y + dy][x + dx];
 
               // see if the formation matches for this square
               if (
                 !(
-                  (v === EMPTY && p === EMPTY) ||
-                  ((v === RED_PIECE || v === RED_EITHER) && p === RED_PIECE) ||
-                  ((v === RED_KING || v === RED_EITHER) && p === RED_KING) ||
-                  ((v === WHT_PIECE || v === WHT_EITHER) && p === WHT_PIECE) ||
-                  ((v === WHT_KING || v === WHT_EITHER) && p === WHT_KING)
+                  (v === 0 && p === 0) ||
+                  ((v === 1 || v === 3) && p === 1) ||
+                  ((v === 2 || v === 3) && p === 2) ||
+                  ((v === -1 || v === -3) && p === -1) ||
+                  ((v === -2 || v === -3) && p === -2)
                 )
               ) {
                 // bail out and flag as failed
@@ -96,17 +81,17 @@ export function makeEvaluator(): Evaluator {
 
             // try the pattern as white
             match = true;
-            for (const [dx, dy, v] of formation) {
+            for (const { dx, dy, value: v } of formation) {
               const p = board[(y ^ 7) - dy][(x ^ 7) - dx];
 
               // see if the pattern matches for this square
               if (
                 !(
-                  (v === EMPTY && p === EMPTY) ||
-                  ((v === RED_PIECE || v === RED_EITHER) && p === WHT_PIECE) ||
-                  ((v === RED_KING || v === RED_EITHER) && p === WHT_KING) ||
-                  ((v === WHT_PIECE || v === WHT_EITHER) && p === RED_PIECE) ||
-                  ((v === WHT_KING || v === WHT_EITHER) && p === RED_KING)
+                  (v === 0 && p === 0) ||
+                  ((v === 1 || v === 3) && p === -1) ||
+                  ((v === 2 || v === 3) && p === -2) ||
+                  ((v === -1 || v === -3) && p === 1) ||
+                  ((v === -2 || v === -3) && p === 2)
                 )
               ) {
                 // bail out and flag as failed

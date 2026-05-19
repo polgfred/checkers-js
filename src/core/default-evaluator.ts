@@ -4,7 +4,7 @@ const defaultEvaluator = makeEvaluator();
 
 // basic piece values
 defaultEvaluator.addFormation(
-  [[0, 0, 1]],
+  [{ dx: 0, dy: 0, value: 1 }],
   // prettier-ignore
   [ 
     [  0,  0,  0,  0,  0,  0,  0,  0 ],
@@ -20,7 +20,7 @@ defaultEvaluator.addFormation(
 
 // basic king values
 defaultEvaluator.addFormation(
-  [[0, 0, 2]],
+  [{ dx: 0, dy: 0, value: 2 }],
   // prettier-ignore
   [ 
     [  0, 60,  0, 60,  0, 60,  0, 60 ],
@@ -37,8 +37,8 @@ defaultEvaluator.addFormation(
 // offensive lines
 defaultEvaluator.addFormation(
   [
-    [0, 0, 3],
-    [1, -1, 3],
+    { dx: 0, dy: 0, value: 3 },
+    { dx: 1, dy: -1, value: 3 },
   ],
   // prettier-ignore
   [ 
@@ -56,9 +56,9 @@ defaultEvaluator.addFormation(
 // offensive 3-lines
 defaultEvaluator.addFormation(
   [
-    [0, 0, 3],
-    [1, -1, 3],
-    [2, -2, 3],
+    { dx: 0, dy: 0, value: 3 },
+    { dx: 1, dy: -1, value: 3 },
+    { dx: 2, dy: -2, value: 3 },
   ],
   // prettier-ignore
   [ 
@@ -76,9 +76,9 @@ defaultEvaluator.addFormation(
 // triangle bases
 defaultEvaluator.addFormation(
   [
-    [0, 0, 3],
-    [1, -1, 3],
-    [-1, -1, 3],
+    { dx: 0, dy: 0, value: 3 },
+    { dx: 1, dy: -1, value: 3 },
+    { dx: -1, dy: -1, value: 3 },
   ],
   // prettier-ignore
   [ 
@@ -96,8 +96,8 @@ defaultEvaluator.addFormation(
 // defensive lines
 defaultEvaluator.addFormation(
   [
-    [0, 0, 3],
-    [-1, -1, 3],
+    { dx: 0, dy: 0, value: 3 },
+    { dx: -1, dy: -1, value: 3 },
   ],
   // prettier-ignore
   [ 
@@ -115,9 +115,9 @@ defaultEvaluator.addFormation(
 // defensive 3-lines
 defaultEvaluator.addFormation(
   [
-    [0, 0, 3],
-    [-1, -1, 3],
-    [-2, -2, 3],
+    { dx: 0, dy: 0, value: 3 },
+    { dx: -1, dy: -1, value: 3 },
+    { dx: -2, dy: -2, value: 3 },
   ],
   // prettier-ignore
   [ 

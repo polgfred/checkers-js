@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { describe, expect, it } from 'bun:test';
 
 import { hrtime } from 'process';

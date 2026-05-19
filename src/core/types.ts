@@ -11,10 +11,8 @@ export const PieceType = {
   EMPTY: 0,
   RED_PIECE: 1,
   RED_KING: 2,
-  RED_EITHER: 3,
   WHT_PIECE: -1,
   WHT_KING: -2,
-  WHT_EITHER: -3,
 } as const;
 
 export type PieceType = ValueOf<typeof PieceType>;
@@ -63,5 +61,17 @@ export interface TreeType {
   [key: string]: TreeType;
 }
 
-export type FormationType = readonly [number, number, PieceType][];
-export type ScoresType = readonly [FormationType, number][][][];
+export type FormationEntry = {
+  readonly dx: number;
+  readonly dy: number;
+  readonly value: 0 | 1 | 2 | 3 | -1 | -2 | -3;
+};
+
+export type FormationType = readonly FormationEntry[];
+
+export type ScoreEntry = {
+  readonly formation: FormationType;
+  readonly score: number;
+};
+
+export type ScoresType = readonly ScoreEntry[][][];
