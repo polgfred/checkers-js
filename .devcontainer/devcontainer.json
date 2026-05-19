@@ -1,15 +1,15 @@
 {
-	"name": "Checkers-JS",
-	"image": "mcr.microsoft.com/devcontainers/base:jammy",
-	"features": {
-		"./features/bun": {}
-	},
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"dbaeumer.vscode-eslint",
-				"dbaeumer.vscode-typescript-javascript"
-			]
-		}
-	}
+  "name": "Checkers-JS",
+  "image": "mcr.microsoft.com/devcontainers/base:trixie",
+  "features": {
+    "./features/bun": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "dbaeumer.vscode-typescript-javascript"
+      ]
+    }
+  }
 }
