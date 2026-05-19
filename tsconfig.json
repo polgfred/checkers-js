@@ -9,7 +9,8 @@
     "module": "preserve",
     "moduleResolution": "bundler",
     "sourceMap": true,
-    "lib": ["es2020", "dom"]
+    "lib": ["es2020", "dom"],
+    "types": ["bun"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules/**/*"]

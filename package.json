@@ -20,11 +20,12 @@
   "devDependencies": {
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
-    "@types/bun": "^1.3.4",
+    "@types/bun": "^1.3.14",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.50.0",
     "@typescript-eslint/parser": "^8.50.0",
+    "@typescript/native-preview": "^7.0.0-dev.20260519.1",
     "classnames": "^2.5.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
