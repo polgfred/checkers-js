@@ -58,7 +58,15 @@ export function makeEvaluator(): Evaluator {
             // try the pattern as red
             match = true;
             for (const { dx, dy, value: v } of formation) {
-              const p = board[y + dy][x + dx];
+              const px = x + dx;
+              const py = y + dy;
+
+              if (px < 0 || px >= 8 || py < 0 || py >= 8) {
+                match = false;
+                break;
+              }
+
+              const p = board[py][px];
 
               // see if the formation matches for this square
               if (
@@ -82,7 +90,15 @@ export function makeEvaluator(): Evaluator {
             // try the pattern as white
             match = true;
             for (const { dx, dy, value: v } of formation) {
-              const p = board[(y ^ 7) - dy][(x ^ 7) - dx];
+              const px = (x ^ 7) - dx;
+              const py = (y ^ 7) - dy;
+
+              if (px < 0 || px >= 8 || py < 0 || py >= 8) {
+                match = false;
+                break;
+              }
+
+              const p = board[py][px];
 
               // see if the pattern matches for this square
               if (
