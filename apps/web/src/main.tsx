@@ -6,27 +6,20 @@ import { DEFAULT_THEME, Game, ThemeRoot } from '@checkers/ui';
 import './app.css';
 
 type WorkerResponse = {
-  id: number;
   move: PlayType | null;
 };
 
 const worker = new Worker(new URL('./analyze-worker.ts', import.meta.url), {
   type: 'module',
 });
-let nextJobId = 0;
-const pending = new Map<number, (move: PlayType | null) => void>();
-
-worker.addEventListener('message', (ev: MessageEvent<WorkerResponse>) => {
-  const { id, move } = ev.data;
-  pending.get(id)?.(move);
-  pending.delete(id);
-});
 
 function getMove(board: BoardType, side: SideType) {
   return new Promise<PlayType | null>((resolve) => {
-    const id = nextJobId++;
-    pending.set(id, resolve);
-    worker.postMessage({ id, board, side });
+    worker.onmessage = (ev: MessageEvent<WorkerResponse>) => {
+      resolve(ev.data.move);
+      worker.onmessage = null;
+    };
+    worker.postMessage({ board, side });
   });
 }
 
