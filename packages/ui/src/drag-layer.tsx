@@ -1,4 +1,5 @@
 import { XYCoord, useDragLayer } from 'react-dnd';
+import { createPortal } from 'react-dom';
 
 import { getPieceElement } from './piece';
 import type { PieceAtCoords } from './types';
@@ -22,7 +23,7 @@ export function DragLayer() {
   const { p } = item;
   const { x, y } = sourceClientOffset;
 
-  return (
+  return createPortal(
     <div className={styles.dragLayer}>
       <div
         className={styles.dragPreview}
@@ -32,6 +33,7 @@ export function DragLayer() {
       >
         {getPieceElement(p)}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
