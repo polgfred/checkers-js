@@ -6,7 +6,7 @@ import { PieceType } from '@checkers/core';
 
 import { PlayerContext } from './player-context';
 import type { PieceAtCoords, Coords } from './types';
-import styles from './styles.module.css';
+import styles from './board.module.css';
 
 import redPieceUrl from './images/red-piece.svg';
 import redKingUrl from './images/red-king.svg';

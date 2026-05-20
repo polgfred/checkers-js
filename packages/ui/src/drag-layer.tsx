@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 
 import { getPieceElement } from './piece';
 import type { PieceAtCoords } from './types';
-import styles from './styles.module.css';
+import styles from './board.module.css';
 
 export function DragLayer() {
   const { item, isDragging, sourceClientOffset } = useDragLayer<{

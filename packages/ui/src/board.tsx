@@ -6,6 +6,7 @@ import { BoardType, PieceType, coordsToNumber } from '@checkers/core';
 import { DragLayer } from './drag-layer';
 import { Square } from './square';
 import { Piece } from './piece';
+import boardStyles from './board.module.css';
 import styles from './styles.module.css';
 
 const COORDS = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -14,8 +15,8 @@ const REV_COORDS = COORDS.slice().reverse();
 export function Board({ board }: { board: BoardType }) {
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className={`${styles.panelSurface} ${styles.boardContainer}`}>
-        <table className={styles.boardTable}>
+      <div className={`${styles.panelSurface} ${boardStyles.boardContainer}`}>
+        <table className={boardStyles.boardTable}>
           <tbody>
             {REV_COORDS.map((y) => (
               <tr key={y}>
