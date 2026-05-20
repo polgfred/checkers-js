@@ -1,15 +1,22 @@
 {
-  "name": "checkers",
+  "name": "checkers-workspace",
   "version": "2.0.0",
+  "private": true,
   "type": "module",
   "description": "Checkers in JavaScript",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "clean": "rm -rf dist",
-    "build": "bun build.ts",
-    "start": "bun server.ts",
-    "start:dev": "bun dev.ts",
-    "format": "prettier --write ./src/**/*.{ts,tsx}",
-    "lint": "eslint ./src/**/*.{ts,tsx}"
+    "dev": "npm run dev -w @checkers/web",
+    "dev:web": "npm run dev -w @checkers/web",
+    "dev:electron": "npm run start -w @checkers/electron",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -18,15 +25,25 @@
   "author": "Frederick Polgardy <fred@polgardy.com>",
   "license": "ISC",
   "devDependencies": {
-    "@svgr/core": "^8.1.0",
-    "@svgr/plugin-jsx": "^8.1.0",
-    "@types/bun": "^1.3.14",
+    "@electron-forge/cli": "^7.11.1",
+    "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-rpm": "^7.11.1",
+    "@electron-forge/maker-squirrel": "^7.11.1",
+    "@electron-forge/maker-zip": "^7.11.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.11.1",
+    "@electron-forge/plugin-fuses": "^7.11.1",
+    "@electron-forge/plugin-vite": "^7.11.1",
+    "@electron-forge/shared-types": "^7.11.1",
+    "@electron/fuses": "^1.8.0",
+    "@eslint/js": "^9.39.2",
+    "@types/electron-squirrel-startup": "^1.0.2",
+    "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
     "@typescript-eslint/eslint-plugin": "^8.50.0",
     "@typescript-eslint/parser": "^8.50.0",
-    "@typescript/native-preview": "^7.0.0-dev.20260519.1",
-    "classnames": "^2.5.1",
+    "electron": "^40.4.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
@@ -34,15 +51,10 @@
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
-    "immer": "^11.1.3",
+    "globals": "^16.4.0",
     "prettier": "^3.7.4",
-    "react": "^19.2.3",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
-    "react-dom": "^19.2.3",
-    "svgo": "^4.0.0"
-  },
-  "dependencies": {
-    "serve-static-bun": "^0.5.3"
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21",
+    "vitest": "^4.0.14"
   }
 }

@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": [
+    "src/**/*",
+    "forge.env.d.ts",
+    "*.mts",
+    "../../packages/ui/src/**/*.d.ts"
+  ]
+}

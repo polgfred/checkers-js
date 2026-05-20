@@ -9,7 +9,15 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['**/node_modules/', '.git/', 'dist/', 'lib/', 'static/'],
+    ignores: [
+      '**/node_modules/',
+      '.git/',
+      '**/.vite/',
+      '**/dist/',
+      '**/lib/',
+      '**/out/',
+      'static/',
+    ],
   },
   {
     files: ['**/*.{ts,tsx}'],
@@ -48,6 +56,7 @@ export default [
       ...reactPlugin.configs.recommended.rules,
       ...reactHooksPlugin.configs.recommended.rules,
       'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-undef': 'off',
       'no-redeclare': 'off',
       'prettier/prettier': 'error',
       'react/jsx-no-undef': 'error',

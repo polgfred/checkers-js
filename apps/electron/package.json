@@ -1,0 +1,25 @@
+{
+  "name": "@checkers/electron",
+  "productName": "Checkers",
+  "version": "0.0.0",
+  "description": "Checkers desktop app",
+  "main": ".vite/build/main.js",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@checkers/core": "0.0.0",
+    "@checkers/ui": "0.0.0",
+    "electron-squirrel-startup": "^1.0.1",
+    "electron-store": "^11.0.2",
+    "piscina": "^5.1.4",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  }
+}

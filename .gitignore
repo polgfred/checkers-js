@@ -1,4 +1,6 @@
 lib
 dist
 node_modules
+.vite
+out
 static/*bundle*

@@ -1,2 +1,0 @@
-[serve.static]
-plugins = ["./plugin-react-svg.ts"]

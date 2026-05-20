@@ -1,0 +1,432 @@
+.themeRoot {
+  --danger: #9e2d2d;
+  background: var(--app-background);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+.themeRoot[data-theme='theme-wood'] {
+  --app-background: radial-gradient(
+    circle at 20% 20%,
+    #f7efe2 0%,
+    #f2e5d2 40%,
+    #ead8c0 100%
+  );
+  --board-light: #ead9bd;
+  --board-accent: #bf8a5b;
+  --board-frame-start: #9b724f;
+  --board-frame-end: #7d5639;
+  --board-playable-start: #7a5236;
+  --board-playable-end: #6f4b33;
+  --panel-border: #3a2e24;
+  --panel-surface: #f5efe4;
+  --panel-surface-muted: #ebdfce;
+  --header-start: #7c573c;
+  --header-end: #5f412c;
+  --row-hover: #e2d2bb;
+  --move-origin-dot: rgb(255 244 209 / 44%);
+  --move-target-dot: rgb(255 246 210 / 88%);
+  --legal-over-start: #8a6142;
+  --legal-over-end: #6f4b33;
+  --legal-outline: rgb(255 245 211 / 90%);
+  --text-primary: #211912;
+  --text-on-dark: #fdf7ee;
+}
+
+.themeRoot[data-theme='theme-slate'] {
+  --app-background: radial-gradient(
+    circle at 18% 18%,
+    #edf3fb 0%,
+    #dce6f6 45%,
+    #c8d4eb 100%
+  );
+  --board-light: #dce7f7;
+  --board-accent: #6081b5;
+  --board-frame-start: #6f90bf;
+  --board-frame-end: #4b678e;
+  --board-playable-start: #3c5680;
+  --board-playable-end: #2e4366;
+  --panel-border: #324966;
+  --panel-surface: #f4f8ff;
+  --panel-surface-muted: #e8eef8;
+  --header-start: #42608e;
+  --header-end: #2f4669;
+  --row-hover: #d6e1f3;
+  --move-origin-dot: rgb(221 238 255 / 55%);
+  --move-target-dot: rgb(240 248 255 / 92%);
+  --legal-over-start: #4b6387;
+  --legal-over-end: #2e4366;
+  --legal-outline: rgb(241 248 255 / 92%);
+  --text-primary: #132030;
+  --text-on-dark: #f5f9ff;
+}
+
+.themeRoot[data-theme='theme-emerald'] {
+  --app-background: radial-gradient(
+    circle at 22% 20%,
+    #e7f6f1 0%,
+    #d7efe7 45%,
+    #c0e1d7 100%
+  );
+  --board-light: #dcefe8;
+  --board-accent: #39a184;
+  --board-frame-start: #3da083;
+  --board-frame-end: #266958;
+  --board-playable-start: #297662;
+  --board-playable-end: #1f5a4d;
+  --panel-border: #1f5a4d;
+  --panel-surface: #f0faf6;
+  --panel-surface-muted: #dff1ea;
+  --header-start: #2e866f;
+  --header-end: #206150;
+  --row-hover: #cae8dd;
+  --move-origin-dot: rgb(222 250 241 / 56%);
+  --move-target-dot: rgb(235 255 248 / 92%);
+  --legal-over-start: #327b68;
+  --legal-over-end: #1f5a4d;
+  --legal-outline: rgb(236 255 248 / 92%);
+  --text-primary: #0f2a23;
+  --text-on-dark: #effff9;
+}
+
+.themeRoot[data-theme='theme-sunset'] {
+  --app-background: radial-gradient(
+    circle at 20% 18%,
+    #fff3e8 0%,
+    #f8dcc6 45%,
+    #f0c3a8 100%
+  );
+  --board-light: #efe7fb;
+  --board-accent: #9d79c2;
+  --board-frame-start: #a887cb;
+  --board-frame-end: #71588f;
+  --board-playable-start: #624f88;
+  --board-playable-end: #4b3f72;
+  --panel-border: #5a4778;
+  --panel-surface: #fff6ef;
+  --panel-surface-muted: #fbe7d8;
+  --header-start: #7a5ca4;
+  --header-end: #5a457b;
+  --row-hover: #f2dac7;
+  --move-origin-dot: rgb(255 235 210 / 58%);
+  --move-target-dot: rgb(255 246 228 / 92%);
+  --legal-over-start: #6f5a93;
+  --legal-over-end: #4b3f72;
+  --legal-outline: rgb(255 248 234 / 92%);
+  --text-primary: #2a1d3b;
+  --text-on-dark: #fff8f0;
+}
+
+.panelSurface {
+  border: 2px solid var(--panel-border);
+  border-radius: 12px;
+  box-shadow:
+    0 8px 28px rgb(20 10 4 / 20%),
+    0 2px 4px rgb(20 10 4 / 12%);
+  font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+  font-size: 14px;
+  margin: 0;
+  overflow: hidden;
+}
+
+.gameContainer {
+  align-items: flex-start;
+  animation: game-panel-in 260ms ease-out both;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 1100px;
+  padding: 20px;
+}
+
+.boardStage {
+  isolation: isolate;
+  position: relative;
+}
+
+.gameOverOverlay {
+  align-items: center;
+  background: rgb(10 15 28 / 48%);
+  border-radius: 14px;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  position: absolute;
+  z-index: 20;
+}
+
+.gameOverPanel {
+  background: rgb(255 255 255 / 92%);
+  border: 1px solid rgb(0 0 0 / 10%);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 22%);
+  font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.gameOverTitle {
+  color: var(--text-primary);
+  font-size: 22px;
+  margin: 0 0 12px;
+}
+
+.playAgainButton {
+  background: linear-gradient(135deg, var(--header-start), var(--header-end));
+  border: 0;
+  border-radius: 8px;
+  color: var(--text-on-dark);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 14px;
+}
+
+.playAgainButton:hover {
+  filter: brightness(1.05);
+}
+
+.boardContainer {
+  background: linear-gradient(
+    145deg,
+    var(--board-frame-start) 0%,
+    var(--board-frame-end) 100%
+  );
+  border: 2px solid var(--board-accent);
+  padding: 10px;
+}
+
+.boardTable {
+  border-collapse: separate;
+  border-spacing: 0;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 20%);
+}
+
+.boardTable td {
+  background-color: var(--board-light);
+  height: 64px;
+  padding: 0;
+  position: relative;
+  transition:
+    background-color 180ms ease,
+    filter 180ms ease,
+    transform 180ms ease;
+  width: 64px;
+}
+
+.dragLayer {
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+.dragPreview {
+  filter: drop-shadow(0 8px 6px rgb(0 0 0 / 30%));
+  height: 60px;
+  opacity: 0.92;
+  width: 60px;
+}
+
+.historyContainer {
+  background: linear-gradient(
+    160deg,
+    var(--panel-surface) 0%,
+    var(--panel-surface-muted) 100%
+  );
+  max-height: 532px;
+  overflow-y: auto;
+  width: min(400px, 100%);
+}
+
+.historyTable {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.historyTable th,
+.historyTable td {
+  padding: 11px 10px;
+  text-align: center;
+  width: 50%;
+}
+
+.historyTable td {
+  background-color: var(--panel-surface);
+}
+
+.historyTable td.thinking {
+  padding: 0;
+}
+
+.historyTable td.thinking span {
+  display: inline-block;
+  height: 20px;
+  vertical-align: middle;
+  width: 20px;
+}
+
+.historyTable thead th {
+  background: linear-gradient(
+    140deg,
+    var(--header-start) 0%,
+    var(--header-end) 100%
+  );
+  color: var(--text-on-dark);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.historyTable tbody tr:nth-child(even) td {
+  background-color: var(--panel-surface-muted);
+}
+
+.historyTable tbody tr:hover td {
+  background-color: var(--row-hover);
+}
+
+.thinkingSpinner {
+  display: block;
+  height: 20px;
+  margin: 0 auto;
+  width: 20px;
+}
+
+.pieceContainer {
+  filter: drop-shadow(0 4px 3px rgb(0 0 0 / 24%));
+  height: 60px;
+  left: 2px;
+  position: absolute;
+  top: 4px;
+  transition: transform 160ms ease;
+  width: 60px;
+  z-index: 1;
+}
+
+.pieceContainer[data-can-move]:hover {
+  transform: translateY(-2px);
+}
+
+.pieceContainer[data-is-dragging] {
+  visibility: hidden;
+}
+
+.pieceImage {
+  display: block;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  width: 100%;
+}
+
+.squareCell {
+  background: linear-gradient(
+    130deg,
+    var(--board-playable-start) 0%,
+    var(--board-playable-end) 100%
+  );
+}
+
+.squareCell:hover {
+  filter: brightness(108%);
+}
+
+.squareCell[data-can-move]::before {
+  background: var(--move-origin-dot);
+  border-radius: 50%;
+  content: '';
+  height: 10px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  z-index: 0;
+}
+
+.squareCell[data-can-move]:hover::before {
+  filter: brightness(112%);
+}
+
+.squareCell[data-can-drop]::after {
+  animation: square-pulse-drop 1.1s ease-in-out infinite;
+  background: var(--move-target-dot);
+  border-radius: 50%;
+  content: '';
+  height: 14px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+}
+
+.squareCell[data-is-over] {
+  background: linear-gradient(130deg, #c45757 0%, var(--danger) 100%);
+}
+
+.squareCell[data-can-drop][data-is-over] {
+  background: linear-gradient(
+    130deg,
+    var(--legal-over-start) 0%,
+    var(--legal-over-end) 100%
+  );
+  filter: brightness(122%);
+  outline: 3px solid var(--legal-outline);
+  outline-offset: -3px;
+}
+
+.squareCell span {
+  color: rgb(255 251 244 / 92%);
+  font-size: 10px;
+  font-weight: 700;
+  left: 4px;
+  letter-spacing: 0.02em;
+  position: absolute;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 35%);
+  top: 3px;
+}
+
+@keyframes game-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes square-pulse-drop {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+@media (max-width: 980px) {
+  .gameContainer {
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .historyContainer {
+    max-height: 300px;
+  }
+}

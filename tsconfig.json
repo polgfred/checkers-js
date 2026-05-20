@@ -1,17 +1,22 @@
 {
   "compilerOptions": {
-    "outDir": "./lib/",
-    "strict": true,
-    "jsx": "react-jsx",
-    "target": "esnext",
     "allowJs": true,
     "esModuleInterop": true,
-    "module": "preserve",
-    "moduleResolution": "bundler",
-    "sourceMap": true,
+    "jsx": "react-jsx",
     "lib": ["es2020", "dom"],
-    "types": ["bun"]
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "esnext",
+    "paths": {
+      "@checkers/core": ["./packages/core/src/index.ts"],
+      "@checkers/ui": ["./packages/ui/src/index.ts"]
+    }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules/**/*"]
+  "include": ["packages/**/*", "apps/**/*"],
+  "exclude": ["node_modules", "dist", "out", ".vite"]
 }
