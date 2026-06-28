@@ -3,6 +3,7 @@
     "allowJs": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "lib": ["es2020", "dom"],
     "module": "esnext",
     "moduleResolution": "bundler",

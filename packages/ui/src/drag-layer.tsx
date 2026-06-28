@@ -1,5 +1,5 @@
+import { createPortal } from 'preact/compat';
 import { XYCoord, useDragLayer } from 'react-dnd';
-import { createPortal } from 'react-dom';
 
 import { getPieceElement } from './piece';
 import type { PieceAtCoords } from './types';

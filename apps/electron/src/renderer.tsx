@@ -1,5 +1,5 @@
-import { createRoot } from 'react-dom/client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'preact/compat';
+import { createRoot } from 'preact/compat/client';
 
 import { Game, ThemeRoot } from '@checkers/ui';
 import { DEFAULT_THEME } from './theme';

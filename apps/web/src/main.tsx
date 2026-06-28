@@ -1,9 +1,11 @@
-import { createRoot, type Root } from 'react-dom/client';
+import { createRoot } from 'preact/compat/client';
 
 import { BoardType, PlayType, SideType } from '@checkers/core';
 import { DEFAULT_THEME, Game, ThemeRoot } from '@checkers/ui';
 
 import './app.css';
+
+type Root = ReturnType<typeof createRoot>;
 
 type WorkerResponse = {
   move: PlayType | null;

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState } from 'preact/compat';
 import { castDraft, produce } from 'immer';
 
 import {

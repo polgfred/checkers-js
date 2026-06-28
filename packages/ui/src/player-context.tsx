@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { createContext } from 'preact/compat';
 
 import type { Coords } from './types';
 

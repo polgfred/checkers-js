@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext } from 'preact/compat';
 import { BoardType, PlayType, SideType, TreeType } from '@checkers/core';
 
 import type { GetMove } from './game';

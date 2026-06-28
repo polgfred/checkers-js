@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from 'preact/compat';
 
 import { Board } from './board';
 import { useGameContext } from './game-context';

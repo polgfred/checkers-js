@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect } from 'preact/compat';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
@@ -84,7 +84,7 @@ export function Piece({ x, y, p }: PieceAtCoords) {
   );
 
   const setDragRef = useCallback(
-    (node: HTMLDivElement) => {
+    (node: HTMLDivElement | null) => {
       connectDragSource(node);
     },
     [connectDragSource]

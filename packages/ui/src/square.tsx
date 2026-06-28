@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useContext } from 'react';
+import { ReactNode, useCallback, useContext } from 'preact/compat';
 import { useDrop } from 'react-dnd';
 
 import { PlayerContext } from './player-context';

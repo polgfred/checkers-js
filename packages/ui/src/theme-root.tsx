@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'preact/compat';
 
 import type { ThemeClass } from './theme';
 import styles from './styles.module.css';
