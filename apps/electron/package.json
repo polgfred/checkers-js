@@ -18,8 +18,6 @@
     "@checkers/ui": "0.0.0",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^11.0.2",
-    "piscina": "^5.1.4",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "piscina": "^5.1.4"
   }
 }

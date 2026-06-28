@@ -11,11 +11,10 @@
   "dependencies": {
     "@checkers/core": "0.0.0",
     "@checkers/ui": "0.0.0",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "preact": "^10.29.3"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^5.1.4",
+    "@preact/preset-vite": "^2.10.5",
     "vite": "^5.4.21"
   }
 }
