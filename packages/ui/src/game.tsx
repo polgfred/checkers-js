@@ -1,20 +1,13 @@
-import { useCallback, useState } from 'preact/compat';
-import { castDraft, produce } from 'immer';
+import { useCallback } from 'preact/compat';
 
-import {
-  BoardType,
-  PlayType,
-  SideType,
-  makeRules,
-  newBoard,
-} from '@checkers/core';
+import { BoardType, PlayType, SideType } from '@checkers/core';
 
-import { GameContext } from './game-context';
-import { HumanPlayer } from './human-player';
-import { ComputerPlayer } from './computer-player';
-import { History } from './history';
 import { Board } from './board';
+import { GameContext } from './game-context';
+import { History } from './history';
+import { Player } from './player-context';
 import styles from './styles.module.css';
+import { useGameStore } from './store';
 
 const { RED } = SideType;
 
@@ -27,40 +20,46 @@ export interface GameProps {
   getMove: GetMove;
 }
 
-export function Game({ getMove }: GameProps) {
-  const [rules, setRules] = useState(() => makeRules(newBoard(), RED));
-  const { getBoard, getSide, doPlay, buildTree } = rules;
-
-  const board = getBoard();
-  const side = getSide();
-  const plays = buildTree();
-  const gameOver = Object.keys(plays).length === 0;
+function GameOver({
+  board,
+  side,
+  handlePlayAgain,
+}: {
+  board: BoardType;
+  side: SideType;
+  handlePlayAgain: () => void;
+}) {
   const winner = side === RED ? 'White' : 'Red';
-  const [hist, setHist] = useState([] as [PlayType | null, PlayType | null][]);
-
-  // make this play, update the history, and force a re-render
-  const handlePlay = useCallback(
-    (move: PlayType) => {
-      const moveSide = getSide();
-      doPlay(move);
-      setHist((prev) =>
-        produce(prev, (draft) => {
-          if (moveSide === RED) {
-            draft.push([castDraft(move), null]);
-          } else if (draft.length > 0) {
-            const last = draft[draft.length - 1];
-            last[1] = castDraft(move);
-          }
-        })
-      );
-    },
-    [doPlay, getSide]
+  return (
+    <>
+      <Board board={board} />
+      <div className={styles.gameOverOverlay}>
+        <div className={styles.gameOverPanel}>
+          <h2 className={styles.gameOverTitle}>{winner} wins!</h2>
+          <button className={styles.playAgainButton} onClick={handlePlayAgain}>
+            Play Again
+          </button>
+        </div>
+      </div>
+    </>
   );
+}
+
+export function Game({ getMove }: GameProps) {
+  const { board, side, plays, hist, handlePlay } = useGameStore();
+
+  const gameOver = Object.keys(plays).length === 0;
 
   const handlePlayAgain = useCallback(() => {
-    setRules(makeRules(newBoard(), RED));
-    setHist([]);
+    // setRules(makeRules(newBoard(), RED));
+    // setHist([]);
   }, []);
+
+  if (gameOver) {
+    return (
+      <GameOver board={board} side={side} handlePlayAgain={handlePlayAgain} />
+    );
+  }
 
   return (
     <GameContext.Provider
@@ -69,33 +68,12 @@ export function Game({ getMove }: GameProps) {
         side,
         plays,
         hist,
-        getMove,
         handlePlay,
+        getMove,
       }}
     >
       <div className={styles.gameContainer}>
-        <div className={styles.boardStage}>
-          {gameOver ? (
-            <>
-              <Board board={board} />
-              <div className={styles.gameOverOverlay}>
-                <div className={styles.gameOverPanel}>
-                  <h2 className={styles.gameOverTitle}>{winner} wins!</h2>
-                  <button
-                    className={styles.playAgainButton}
-                    onClick={handlePlayAgain}
-                  >
-                    Play Again
-                  </button>
-                </div>
-              </div>
-            </>
-          ) : side === RED ? (
-            <HumanPlayer />
-          ) : (
-            <ComputerPlayer />
-          )}
-        </div>
+        <Player />
         <History />
       </div>
     </GameContext.Provider>

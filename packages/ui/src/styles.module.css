@@ -141,10 +141,6 @@
   padding: 20px;
 }
 
-.boardStage {
-  isolation: isolate;
-  position: relative;
-}
 
 .gameOverOverlay {
   align-items: center;

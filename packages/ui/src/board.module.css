@@ -1,3 +1,8 @@
+.boardStage {
+  isolation: isolate;
+  position: relative;
+}
+
 .boardContainer {
   background: linear-gradient(
     145deg,

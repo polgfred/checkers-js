@@ -1,4 +1,4 @@
-import type { BoardType, PlayType } from './types';
+import { PieceType, type BoardType, type PlayType } from './types';
 
 export function copyBoard(board: BoardType): BoardType {
   return [
@@ -68,4 +68,28 @@ export function moveToString(move: PlayType): string {
       return str;
     }
   }
+}
+
+export function dumpBoard(board: BoardType) {
+  return board
+    .map((row, y) =>
+      row
+        .map((p, x) => {
+          switch (p) {
+            case PieceType.RED_PIECE:
+              return 'r';
+            case PieceType.RED_KING:
+              return 'R';
+            case PieceType.WHT_PIECE:
+              return 'w';
+            case PieceType.WHT_KING:
+              return 'W';
+            default:
+              return (x + y) % 2 === 0 ? '.' : ' ';
+          }
+        })
+        .join('')
+    )
+    .reverse()
+    .join('\n');
 }
