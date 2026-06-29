@@ -1,13 +1,13 @@
-import { ReactNode, useContext } from 'preact/compat';
+import { ReactNode } from 'preact/compat';
 import { useDroppable, useDragOperation } from '@dnd-kit/react';
 
-import { PlayerContext } from './player-context';
 import type { Coords } from './types';
 import styles from './board.module.css';
+import { useGameContext } from './game-context';
 
 export function Square({ x, y, children }: Coords & { children: ReactNode }) {
   const { source } = useDragOperation<Coords>();
-  const { canMove, canMoveTo } = useContext(PlayerContext);
+  const { canMove, canMoveTo } = useGameContext();
   const canMoveFromSquare = canMove({ x, y });
   const { ref, isDropTarget } = useDroppable<Coords>({
     id: `square-${x}-${y}`,

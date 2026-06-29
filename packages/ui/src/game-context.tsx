@@ -1,15 +1,16 @@
 import { createContext, useContext } from 'preact/compat';
-import { BoardType, PlayType, SideType, TreeType } from '@checkers/core';
+import { BoardType, SideType, TreeType } from '@checkers/core';
 
-import type { GetMove } from './game';
+import type { Coords } from './types';
+import type { History } from './store';
 
 export interface GameContextType {
   board: BoardType;
   side: SideType;
   plays: TreeType;
-  hist: readonly (readonly [PlayType | null, PlayType | null])[];
-  getMove: GetMove;
-  handlePlay(move: PlayType): void;
+  hist: History;
+  canMove: (xy: Coords) => boolean;
+  canMoveTo: (xy: Coords, nxny: Coords) => boolean;
 }
 
 export const GameContext = createContext<GameContextType | null>(null);

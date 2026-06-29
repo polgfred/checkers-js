@@ -1,9 +1,7 @@
-import { useContext } from 'preact/compat';
 import { DragOverlay, useDraggable, useDragOperation } from '@dnd-kit/react';
 
 import { PieceType } from '@checkers/core';
 
-import { PlayerContext } from './player-context';
 import type { PieceAtCoords } from './types';
 import styles from './board.module.css';
 
@@ -11,6 +9,7 @@ import redPieceUrl from './images/red-piece.svg';
 import redKingUrl from './images/red-king.svg';
 import whitePieceUrl from './images/white-piece.svg';
 import whiteKingUrl from './images/white-king.svg';
+import { useGameContext } from './game-context';
 
 const { WHT_PIECE, WHT_KING, RED_PIECE, RED_KING } = PieceType;
 
@@ -48,7 +47,7 @@ export function PieceImage({
 }
 
 export function Piece({ x, y, p }: PieceAtCoords) {
-  const { canMove } = useContext(PlayerContext);
+  const { canMove } = useGameContext();
   const canMovePiece = canMove({ x, y });
   const { ref, isDragging } = useDraggable<PieceAtCoords>({
     id: `piece-${x}-${y}`,

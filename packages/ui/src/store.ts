@@ -1,16 +1,44 @@
-import { makeRules, newBoard, PlayType, SideType } from '@checkers/core';
 import { useState, useSyncExternalStore } from 'preact/compat';
+
+import {
+  type BoardType,
+  makeRules,
+  newBoard,
+  type PlayType,
+  type Rules,
+  SideType,
+  type TreeType,
+} from '@checkers/core';
 
 const { RED } = SideType;
 
 type HistEntry = PlayType | null;
 
-function createGameStore() {
-  const events = new EventTarget();
-  const rules = makeRules(newBoard(), RED);
-  const hist = [] as [HistEntry, HistEntry][];
+export type History = [HistEntry, HistEntry][];
 
-  let snapshot = readSnapshot();
+export type GameSnapshot = {
+  board: BoardType;
+  side: SideType;
+  plays: TreeType;
+  hist: History;
+};
+
+type GameSubscriber = (listener: () => void) => () => void;
+
+export type GameStore = {
+  snapshot: () => GameSnapshot;
+  subscribe: GameSubscriber;
+  publish: () => void;
+  handlePlay: (play: PlayType) => void;
+  startGame: () => void;
+};
+
+function createGameStore() {
+  let rules: Rules;
+  let hist: History;
+  let snapshot: GameSnapshot;
+
+  const events = new EventTarget();
 
   function readSnapshot() {
     return {
@@ -18,20 +46,7 @@ function createGameStore() {
       side: rules.getSide(),
       plays: rules.buildTree(),
       hist: [...hist],
-      handlePlay,
     };
-  }
-
-  function handlePlay(play: PlayType) {
-    const moveSide = rules.getSide();
-    rules.doPlay(play);
-    if (moveSide === RED) {
-      hist.push([play, null]);
-    } else if (hist.length > 0) {
-      const last = hist[hist.length - 1];
-      last[1] = play;
-    }
-    publish();
   }
 
   function subscribe(listener: () => void) {
@@ -46,13 +61,41 @@ function createGameStore() {
     events.dispatchEvent(new CustomEvent('change'));
   }
 
+  function handlePlay(play: PlayType) {
+    const moveSide = rules.getSide();
+    rules.doPlay(play);
+    if (moveSide === RED) {
+      hist.push([play, null]);
+    } else if (hist.length > 0) {
+      const last = hist[hist.length - 1];
+      last[1] = play;
+    }
+    publish();
+  }
+
+  function startGame() {
+    rules = makeRules(newBoard(), RED);
+    hist = [];
+    publish();
+  }
+
+  startGame();
+
   return {
     snapshot: () => snapshot,
     subscribe,
+    publish,
+    handlePlay,
+    startGame,
   };
 }
 
 export function useGameStore() {
-  const [store, setStore] = useState(() => createGameStore());
-  return useSyncExternalStore(store.subscribe, store.snapshot);
+  const [store] = useState(() => createGameStore());
+  const snapshot = useSyncExternalStore(store.subscribe, store.snapshot);
+  return {
+    snapshot,
+    handlePlay: store.handlePlay,
+    startGame: store.startGame,
+  };
 }
