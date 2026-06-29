@@ -69,12 +69,10 @@ export function Piece({ x, y, p }: PieceAtCoords) {
 }
 
 export function PieceOverlay() {
-  const { canMoveTo } = useContext(PlayerContext);
-  const { source, target } = useDragOperation<PieceAtCoords>();
+  const { source } = useDragOperation<PieceAtCoords>();
   if (!source) return null;
-  const validDrop = target && canMoveTo(source.data, target.data);
   return (
-    <DragOverlay dropAnimation={validDrop ? null : undefined}>
+    <DragOverlay>
       <PieceImage p={source.data.p} isPreview />
     </DragOverlay>
   );

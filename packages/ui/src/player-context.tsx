@@ -142,6 +142,10 @@ export function Player() {
         } = event;
         if (!source || !target) return;
         if (!canMoveTo(source.data, target.data)) return;
+        // set the draggable's id to match its new location,
+        // to ensure that it animates into place correctly
+        const { x, y } = target.data;
+        source.id = `piece-${x}-${y}`;
         moveTo(source.data, target.data);
       }}
     >
