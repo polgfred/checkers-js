@@ -1,9 +1,5 @@
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-
 import { BoardType, PieceType, coordsToNumber } from '@checkers/core';
 
-import { DragLayer } from './drag-layer';
 import { Square } from './square';
 import { Piece } from './piece';
 import boardStyles from './board.module.css';
@@ -14,30 +10,27 @@ const REV_COORDS = COORDS.slice().reverse();
 
 export function Board({ board }: { board: BoardType }) {
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div className={`${styles.panelSurface} ${boardStyles.boardContainer}`}>
-        <table className={boardStyles.boardTable}>
-          <tbody>
-            {REV_COORDS.map((y) => (
-              <tr key={y}>
-                {COORDS.map((x) =>
-                  (x + y) % 2 === 0 ? (
-                    <Square key={x} x={x} y={y}>
-                      <span>{coordsToNumber(x, y)}</span>
-                      {board[y][x] === PieceType.EMPTY ? null : (
-                        <Piece x={x} y={y} p={board[y][x]} />
-                      )}
-                    </Square>
-                  ) : (
-                    <td key={x} />
-                  )
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <DragLayer />
-    </DndProvider>
+    <div className={`${styles.panelSurface} ${boardStyles.boardContainer}`}>
+      <table className={boardStyles.boardTable}>
+        <tbody>
+          {REV_COORDS.map((y) => (
+            <tr key={y}>
+              {COORDS.map((x) =>
+                (x + y) % 2 === 0 ? (
+                  <Square key={x} x={x} y={y}>
+                    <span>{coordsToNumber(x, y)}</span>
+                    {board[y][x] === PieceType.EMPTY ? null : (
+                      <Piece x={x} y={y} p={board[y][x]} />
+                    )}
+                  </Square>
+                ) : (
+                  <td key={x} />
+                )
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

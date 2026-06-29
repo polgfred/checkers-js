@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'preact/compat';
+import { DragDropProvider } from '@dnd-kit/react';
 
 import {
   SideType,
@@ -12,6 +13,7 @@ import {
 
 import { Board } from './board';
 import { useGameContext } from './game-context';
+import { PieceOverlay } from './piece';
 import { PlayerContext } from './player-context';
 import type { Coords } from './types';
 
@@ -111,14 +113,26 @@ export function HumanPlayer() {
   );
 
   return (
-    <PlayerContext.Provider
-      value={{
-        canMove,
-        canMoveTo,
-        moveTo,
+    <DragDropProvider<Coords>
+      onDragEnd={(event) => {
+        const {
+          operation: { source, target },
+        } = event;
+        if (!source || !target) return;
+        if (!canMoveTo(source.data, target.data)) return;
+        moveTo(source.data, target.data);
       }}
     >
-      <Board board={cboard} />
-    </PlayerContext.Provider>
+      <PlayerContext.Provider
+        value={{
+          canMove,
+          canMoveTo,
+          moveTo,
+        }}
+      >
+        <Board board={cboard} />
+        <PieceOverlay />
+      </PlayerContext.Provider>
+    </DragDropProvider>
   );
 }

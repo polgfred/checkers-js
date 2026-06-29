@@ -1,44 +1,28 @@
-import { ReactNode, useCallback, useContext } from 'preact/compat';
-import { useDrop } from 'react-dnd';
+import { ReactNode, useContext } from 'preact/compat';
+import { useDroppable, useDragOperation } from '@dnd-kit/react';
 
 import { PlayerContext } from './player-context';
-import type { PieceAtCoords, Coords } from './types';
+import type { Coords } from './types';
 import styles from './board.module.css';
 
 export function Square({ x, y, children }: Coords & { children: ReactNode }) {
+  const { source } = useDragOperation<Coords>();
   const { canMove, canMoveTo } = useContext(PlayerContext);
   const canMoveFromSquare = canMove({ x, y });
-  const [{ canDrop, isOver }, connectDropTarget] = useDrop<
-    PieceAtCoords,
-    Coords,
-    { canDrop: boolean; isOver: boolean }
-  >(
-    () => ({
-      accept: 'piece',
-      canDrop: (source) => canMoveTo(source, { x, y }),
-      drop: () => ({ x, y }),
-      collect: (monitor) => ({
-        canDrop: monitor.canDrop(),
-        isOver: monitor.isOver(),
-      }),
-    }),
-    [x, y, canMoveTo]
-  );
+  const { ref, isDropTarget } = useDroppable<Coords>({
+    id: `square-${x}-${y}`,
+    data: { x, y },
+  });
 
-  const setDropRef = useCallback(
-    (node: HTMLTableCellElement | null) => {
-      connectDropTarget(node);
-    },
-    [connectDropTarget]
-  );
+  const canDrop = source && canMoveTo(source.data, { x, y });
 
   return (
     <td
-      ref={setDropRef}
+      ref={ref}
       className={styles.squareCell}
       data-can-move={canMoveFromSquare ? 'true' : undefined}
       data-can-drop={canDrop ? 'true' : undefined}
-      data-is-over={isOver ? 'true' : undefined}
+      data-is-over={isDropTarget ? 'true' : undefined}
     >
       {children}
     </td>

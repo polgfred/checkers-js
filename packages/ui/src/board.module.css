@@ -120,22 +120,10 @@
   padding: 0;
   user-select: none;
   width: 100%;
-}
 
-.dragLayer {
-  height: 100%;
-  left: 0;
-  pointer-events: none;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 9999;
-
-  & .dragPreview {
+  &.dragPreview {
     filter: drop-shadow(0 8px 6px rgb(0 0 0 / 30%));
-    height: 60px;
-    opacity: 0.92;
-    width: 60px;
+    opacity: 0.85;
   }
 }
 
