@@ -69,15 +69,13 @@ export function makeEvaluator(): Evaluator {
               const p = board[py][px];
 
               // see if the formation matches for this square
-              if (
-                !(
-                  (v === 0 && p === 0) ||
-                  ((v === 1 || v === 3) && p === 1) ||
-                  ((v === 2 || v === 3) && p === 2) ||
-                  ((v === -1 || v === -3) && p === -1) ||
-                  ((v === -2 || v === -3) && p === -2)
-                )
-              ) {
+              if (!(
+                (v === 0 && p === 0) ||
+                ((v === 1 || v === 3) && p === 1) ||
+                ((v === 2 || v === 3) && p === 2) ||
+                ((v === -1 || v === -3) && p === -1) ||
+                ((v === -2 || v === -3) && p === -2)
+              )) {
                 // bail out and flag as failed
                 match = false;
                 break;
@@ -101,15 +99,13 @@ export function makeEvaluator(): Evaluator {
               const p = board[py][px];
 
               // see if the pattern matches for this square
-              if (
-                !(
-                  (v === 0 && p === 0) ||
-                  ((v === 1 || v === 3) && p === -1) ||
-                  ((v === 2 || v === 3) && p === -2) ||
-                  ((v === -1 || v === -3) && p === 1) ||
-                  ((v === -2 || v === -3) && p === 2)
-                )
-              ) {
+              if (!(
+                (v === 0 && p === 0) ||
+                ((v === 1 || v === 3) && p === -1) ||
+                ((v === 2 || v === 3) && p === -2) ||
+                ((v === -1 || v === -3) && p === 1) ||
+                ((v === -2 || v === -3) && p === 2)
+              )) {
                 // bail out and flag as failed
                 match = false;
                 break;
