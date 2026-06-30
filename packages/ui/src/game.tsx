@@ -59,40 +59,33 @@ export function Game({ getMove }: GameProps) {
     }
   }, [board, getMove, handlePlay, side]);
 
-  const handlePlayAgain = useCallback(() => {
-    startGame();
-  }, [startGame]);
-
-  const onBeforeDragStart: DragDropEventHandlers<Coords>['onBeforeDragStart'] =
-    useCallback(
+  const handlers: Partial<DragDropEventHandlers<Coords>> = {
+    onBeforeDragStart: useCallback(
       (event) => {
         if (gameOver) event.preventDefault();
       },
       [gameOver]
-    );
-
-  const onDragEnd: DragDropEventHandlers<Coords>['onDragEnd'] = useCallback(
-    (event) => {
-      const {
-        operation: { source, target },
-      } = event;
-      if (!source || !target) return;
-      if (!canMoveTo(source.data, target.data)) return;
-      // set the draggable's id to match its new location,
-      // to ensure that it animates into place correctly
-      const { x, y } = target.data;
-      source.id = `piece-${x}-${y}`;
-      const play = moveTo(source.data, target.data);
-      if (play) handlePlay(play);
-    },
-    [canMoveTo, handlePlay, moveTo]
-  );
+    ),
+    onDragEnd: useCallback(
+      (event) => {
+        const {
+          operation: { source, target },
+        } = event;
+        if (!source || !target) return;
+        if (!canMoveTo(source.data, target.data)) return;
+        // set the draggable's id to match its new location,
+        // to ensure that it animates into place correctly
+        const { x, y } = target.data;
+        source.id = `piece-${x}-${y}`;
+        const play = moveTo(source.data, target.data);
+        if (play) handlePlay(play);
+      },
+      [canMoveTo, handlePlay, moveTo]
+    ),
+  };
 
   return (
-    <DragDropProvider<Coords>
-      onBeforeDragStart={onBeforeDragStart}
-      onDragEnd={onDragEnd}
-    >
+    <DragDropProvider {...handlers}>
       <GameContext.Provider
         value={{
           board,
@@ -107,7 +100,7 @@ export function Game({ getMove }: GameProps) {
           <Board board={currentBoard} />
           <History />
           {gameOver && (
-            <GameOverOverlay side={side} handlePlayAgain={handlePlayAgain} />
+            <GameOverOverlay side={side} handlePlayAgain={startGame} />
           )}
         </div>
         <PieceOverlay />
