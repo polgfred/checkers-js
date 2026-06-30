@@ -41,7 +41,6 @@ export function History() {
                       <img
                         className={styles.thinkingSpinner}
                         src={thinkingSpinnerUrl}
-                        alt=""
                       />
                     </span>
                   </td>
