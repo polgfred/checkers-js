@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { hrtime } from 'process';
+import { hrtime } from 'node:process';
 
 import { describe, expect, it } from 'vitest';
 

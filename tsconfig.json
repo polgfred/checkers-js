@@ -1,23 +1,9 @@
 {
-  "compilerOptions": {
-    "allowJs": true,
-    "esModuleInterop": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "preact",
-    "lib": ["es2020", "dom"],
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "noImplicitAny": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "strict": true,
-    "target": "esnext",
-    "paths": {
-      "@checkers/core": ["./packages/core/src/index.ts"],
-      "@checkers/ui": ["./packages/ui/src/index.ts"]
-    }
-  },
-  "include": ["packages/**/*", "apps/**/*"],
-  "exclude": ["**/node_modules", "**/dist", "**/out", "**/.vite"]
+  "files": [],
+  "references": [
+    { "path": "./apps/electron/tsconfig.json" },
+    { "path": "./apps/web/tsconfig.json" },
+    { "path": "./packages/core/tsconfig.json" },
+    { "path": "./packages/ui/tsconfig.json" }
+  ]
 }

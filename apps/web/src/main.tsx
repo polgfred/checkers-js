@@ -3,8 +3,6 @@ import { createRoot } from 'preact/compat/client';
 import type { BoardType, PlayType, SideType } from '@checkers/core';
 import { DEFAULT_THEME, Game, ThemeRoot } from '@checkers/ui';
 
-import './app.css';
-
 type Root = ReturnType<typeof createRoot>;
 
 type WorkerResponse = {

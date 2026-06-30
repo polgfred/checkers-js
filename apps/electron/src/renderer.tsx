@@ -5,8 +5,6 @@ import { Game, ThemeRoot } from '@checkers/ui';
 
 import { DEFAULT_THEME } from './theme';
 
-import './renderer.css';
-
 function App() {
   const [theme, setTheme] = useState(DEFAULT_THEME);
   const [isThemeReady, setThemeReady] = useState(false);
