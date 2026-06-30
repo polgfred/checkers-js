@@ -1,5 +1,5 @@
 import defaultEvaluator from './default-evaluator';
-import { makeRules, MoveGenerator } from './rules';
+import { makeRules, type MoveGenerator } from './rules';
 import { type BoardType, type PlayType, SideType } from './types';
 
 const { RED, WHT } = SideType;

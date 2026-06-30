@@ -1,6 +1,7 @@
 /// <reference types="@electron-forge/plugin-vite/forge-vite-env" />
 
 import type { BoardType, SideType, PlayType } from '@checkers/core';
+
 import type { ThemeClass } from './src/theme';
 
 interface CheckersObject {

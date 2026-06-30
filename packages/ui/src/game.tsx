@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from 'preact/compat';
 import { type DragDropEventHandlers, DragDropProvider } from '@dnd-kit/react';
+import { useCallback, useEffect } from 'preact/compat';
 
 import { type BoardType, type PlayType, SideType } from '@checkers/core';
 
@@ -7,8 +7,8 @@ import { Board } from './board';
 import { GameContext } from './game-context';
 import { History } from './history';
 import { PieceOverlay } from './piece';
-import styles from './styles.module.css';
 import { useGameStore } from './store';
+import styles from './styles.module.css';
 import type { Coords } from './types';
 import { usePlayer } from './use-player';
 

@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'preact/compat';
 
-import type { ThemeClass } from './theme';
 import styles from './styles.module.css';
+import type { ThemeClass } from './theme';
 
 export interface ThemeRootProps extends PropsWithChildren {
   theme: ThemeClass;

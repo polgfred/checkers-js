@@ -2,6 +2,7 @@ import { useEffect, useState } from 'preact/compat';
 import { createRoot } from 'preact/compat/client';
 
 import { Game, ThemeRoot } from '@checkers/ui';
+
 import { DEFAULT_THEME } from './theme';
 
 import './renderer.css';

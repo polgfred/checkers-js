@@ -2,14 +2,13 @@ import { DragOverlay, useDraggable, useDragOperation } from '@dnd-kit/react';
 
 import { PieceType } from '@checkers/core';
 
-import type { PieceAtCoords } from './types';
 import styles from './board.module.css';
-
-import redPieceUrl from './images/red-piece.svg';
-import redKingUrl from './images/red-king.svg';
-import whitePieceUrl from './images/white-piece.svg';
-import whiteKingUrl from './images/white-king.svg';
 import { useGameContext } from './game-context';
+import redKingUrl from './images/red-king.svg';
+import redPieceUrl from './images/red-piece.svg';
+import whiteKingUrl from './images/white-king.svg';
+import whitePieceUrl from './images/white-piece.svg';
+import type { PieceAtCoords } from './types';
 
 const { WHT_PIECE, WHT_KING, RED_PIECE, RED_KING } = PieceType;
 

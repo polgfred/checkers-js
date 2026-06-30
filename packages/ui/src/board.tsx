@@ -1,8 +1,8 @@
-import { BoardType, PieceType, coordsToNumber } from '@checkers/core';
+import { type BoardType, PieceType, coordsToNumber } from '@checkers/core';
 
-import { Square } from './square';
-import { Piece } from './piece';
 import boardStyles from './board.module.css';
+import { Piece } from './piece';
+import { Square } from './square';
 import styles from './styles.module.css';
 
 const COORDS = [0, 1, 2, 3, 4, 5, 6, 7];

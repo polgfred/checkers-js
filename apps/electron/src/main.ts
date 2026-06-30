@@ -6,6 +6,7 @@ import started from 'electron-squirrel-startup';
 import Piscina from 'piscina';
 
 import type { BoardType, SideType } from '@checkers/core';
+
 import { DIFFICULTIES, DIFFICULTY_DEPTH, type Difficulty } from './difficulty';
 import {
   getDifficultySetting,

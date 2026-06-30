@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { describe, expect, it } from 'vitest';
-
 import { hrtime } from 'process';
 
-import { SideType } from './types';
-import { makeRules } from './rules';
+import { describe, expect, it } from 'vitest';
+
 import { analyze } from './analyzer';
+import { makeRules } from './rules';
+import { SideType } from './types';
 import { copyBoard, newBoard, reverseBoard } from './utils';
 
 const { RED, WHT } = SideType;

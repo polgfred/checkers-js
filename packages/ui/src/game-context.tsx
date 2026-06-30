@@ -1,8 +1,9 @@
 import { createContext, useContext } from 'preact/compat';
-import { BoardType, SideType, TreeType } from '@checkers/core';
 
-import type { Coords } from './types';
+import type { BoardType, SideType, TreeType } from '@checkers/core';
+
 import type { History } from './store';
+import type { Coords } from './types';
 
 export interface GameContextType {
   board: BoardType;

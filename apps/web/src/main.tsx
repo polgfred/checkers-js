@@ -1,6 +1,6 @@
 import { createRoot } from 'preact/compat/client';
 
-import { BoardType, PlayType, SideType } from '@checkers/core';
+import type { BoardType, PlayType, SideType } from '@checkers/core';
 import { DEFAULT_THEME, Game, ThemeRoot } from '@checkers/ui';
 
 import './app.css';

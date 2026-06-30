@@ -6,11 +6,11 @@ import {
   type JumpStepType,
   type StartType,
   copyBoard,
-  PlayType,
+  type PlayType,
 } from '@checkers/core';
 
-import type { Coords } from './types';
 import type { GameSnapshot } from './store';
+import type { Coords } from './types';
 
 const { RED } = SideType;
 const { EMPTY, RED_PIECE, WHT_PIECE } = PieceType;

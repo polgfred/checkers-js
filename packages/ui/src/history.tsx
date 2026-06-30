@@ -3,9 +3,8 @@ import { useLayoutEffect, useRef } from 'preact/compat';
 import { moveToString } from '@checkers/core';
 
 import { useGameContext } from './game-context';
-import styles from './styles.module.css';
-
 import thinkingSpinnerUrl from './images/thinking.svg';
+import styles from './styles.module.css';
 
 export function History() {
   const { hist } = useGameContext();
