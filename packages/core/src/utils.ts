@@ -1,30 +1,14 @@
 import { PieceType, type BoardType, type PlayType } from './types';
 
 export function copyBoard(board: BoardType): BoardType {
-  return [
-    [...board[0]],
-    [...board[1]],
-    [...board[2]],
-    [...board[3]],
-    [...board[4]],
-    [...board[5]],
-    [...board[6]],
-    [...board[7]],
-  ];
+  // @ts-expect-error arrays are the same size
+  return board.map((row) => row.map((p) => p));
 }
 
 // utility to reverse the board rows (for easier visualization)
 export function reverseBoard(board: BoardType): BoardType {
-  return [
-    [...board[7]],
-    [...board[6]],
-    [...board[5]],
-    [...board[4]],
-    [...board[3]],
-    [...board[2]],
-    [...board[1]],
-    [...board[0]],
-  ];
+  // @ts-expect-error we just copied it
+  return copyBoard(board).reverse();
 }
 
 // set up the initial board position
