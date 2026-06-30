@@ -20,6 +20,11 @@ type JumpBuild = {
   steps: [JumpStepType, ...JumpStepType[]];
 };
 
+// defaults for when it's the computer's move
+const defaultCanMove = () => false;
+const defaultCanMoveTo = () => false;
+const defaultMoveTo = () => null;
+
 export function usePlayer(store: GameSnapshot) {
   const { board, side, plays } = store;
 
@@ -106,10 +111,21 @@ export function usePlayer(store: GameSnapshot) {
     [currentBoard, currentPlays, currentJump, side]
   );
 
-  return {
-    currentBoard,
-    canMove,
-    canMoveTo,
-    moveTo,
-  };
+  switch (side) {
+    case SideType.RED:
+      return {
+        currentBoard,
+        canMove,
+        canMoveTo,
+        moveTo,
+      };
+    case SideType.WHT:
+      // computer's move
+      return {
+        currentBoard: board,
+        canMove: defaultCanMove,
+        canMoveTo: defaultCanMoveTo,
+        moveTo: defaultMoveTo,
+      };
+  }
 }
