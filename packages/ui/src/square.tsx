@@ -14,7 +14,8 @@ export function Square({ x, y, children }: Coords & { children: ReactNode }) {
   const canDrop = !!source && canMoveTo(source, { x, y });
 
   const onDragEnter = (event: DragEvent) => {
-    if (!event.dataTransfer) return;
+    event.preventDefault();
+    if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
     setOver(true);
   };
 
@@ -26,9 +27,8 @@ export function Square({ x, y, children }: Coords & { children: ReactNode }) {
   };
 
   const onDragOver = (event: DragEvent) => {
-    if (!source || (x === source.x && y === source.y)) return;
-    console.log('over');
     event.preventDefault();
+    console.log('over');
   };
 
   const onDrop = () => {
