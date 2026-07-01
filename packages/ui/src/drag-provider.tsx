@@ -51,24 +51,46 @@ export function DragProvider({
       setOver(null);
       setOrigin({ x: event.clientX, y: event.clientY });
 
-      const onMove = (e: PointerEvent) => {
-        const sq = squareAt(e.clientX, e.clientY);
-        // return the same ref when unchanged so Preact skips the re-render
-        setOver((prev) => (prev?.x === sq?.x && prev?.y === sq?.y ? prev : sq));
-      };
+      // one controller tears down every listener at once, however the drag ends
+      const controller = new AbortController();
+      const { signal } = controller;
 
-      const onUp = (e: PointerEvent) => {
-        window.removeEventListener('pointermove', onMove);
-        window.removeEventListener('pointerup', onUp);
-        const target = squareAt(e.clientX, e.clientY);
-        if (target) onDrop(next, target);
+      const end = () => {
+        controller.abort();
         setSource(null);
         setOver(null);
         setOrigin(null);
       };
 
-      window.addEventListener('pointermove', onMove);
-      window.addEventListener('pointerup', onUp);
+      window.addEventListener(
+        'pointermove',
+        (e: PointerEvent) => {
+          const sq = squareAt(e.clientX, e.clientY);
+          // return the same ref when unchanged so Preact skips the re-render
+          setOver((prev) =>
+            prev?.x === sq?.x && prev?.y === sq?.y ? prev : sq
+          );
+        },
+        { signal }
+      );
+
+      window.addEventListener(
+        'pointerup',
+        (e: PointerEvent) => {
+          const target = squareAt(e.clientX, e.clientY);
+          if (target) onDrop(next, target);
+          end();
+        },
+        { signal }
+      );
+
+      // interrupted drag (context menu, browser gesture) — abort cleanly
+      window.addEventListener('pointercancel', end, { signal });
+
+      // keep a stationary hold from popping the context menu mid-drag
+      window.addEventListener('contextmenu', (e: Event) => e.preventDefault(), {
+        signal,
+      });
     },
     [onDrop]
   );

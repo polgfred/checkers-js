@@ -51,13 +51,13 @@ export function Piece({ x, y, p }: PieceAtCoords) {
   const { source, startDrag } = useDrag();
   const { canMove } = useGameContext();
   const canMovePiece = canMove({ x, y });
+  const isDragging = !!source && x === source.x && y === source.y;
 
   const onPointerDown = (event: PointerEvent) => {
+    if (!event.isPrimary || event.button !== 0) return;
     if (!canMovePiece) return;
     startDrag({ x, y, p }, event);
   };
-
-  const isDragging = !!source && x === source.x && y === source.y;
 
   return (
     <div
@@ -74,22 +74,26 @@ export function Piece({ x, y, p }: PieceAtCoords) {
 // a floating copy of the dragged piece that follows the pointer
 export function PieceOverlay() {
   const { source, origin } = useDrag();
-  const [pos, setPos] = useState<Coords | null>(origin);
+  const [pos, setPos] = useState<Coords | null>(null);
 
   useEffect(() => {
     if (!source) return;
-    setPos(origin);
     const onMove = (e: PointerEvent) => setPos({ x: e.clientX, y: e.clientY });
     window.addEventListener('pointermove', onMove);
-    return () => window.removeEventListener('pointermove', onMove);
-  }, [source, origin]);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      setPos(null);
+    };
+  }, [source]);
 
-  if (!source || !pos) return null;
+  if (!source || !origin) return null;
+
+  const { x, y } = pos ?? origin;
 
   return (
     <div
       className={styles.dragOverlay}
-      style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
+      style={{ transform: `translate(${x}px, ${y}px)` }}
     >
       <PieceImage p={source.p} isPreview />
     </div>

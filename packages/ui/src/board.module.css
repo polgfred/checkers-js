@@ -100,12 +100,14 @@
 }
 
 .pieceContainer {
+  -webkit-touch-callout: none;
   filter: drop-shadow(0 4px 3px rgb(0 0 0 / 24%));
   height: 60px;
   left: 2px;
   position: absolute;
   top: 4px;
   transition: transform 160ms ease;
+  user-select: none;
   width: 60px;
   z-index: 1;
 
@@ -114,8 +116,11 @@
     touch-action: none;
   }
 
-  &[data-can-move]:hover {
-    transform: translateY(-2px);
+  /* only lift on real hover devices */
+  @media (hover: hover) {
+    &[data-can-move]:hover {
+      transform: translateY(-2px);
+    }
   }
 
   &[data-is-dragging] {
