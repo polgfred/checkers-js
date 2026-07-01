@@ -42,11 +42,5 @@
     "typescript": "^6.0.3",
     "vite": "^8.1.2",
     "vitest": "^4.1.9"
-  },
-  "overrides": {
-    "@dnd-kit/react": {
-      "react": "npm:@preact/compat@^18.3.2",
-      "react-dom": "npm:@preact/compat@^18.3.2"
-    }
   }
 }
