@@ -6,5 +6,5 @@ export interface Coords {
 }
 
 export interface PieceAtCoords extends Coords {
-  p: PieceType;
+  p: Exclude<PieceType, 0>;
 }

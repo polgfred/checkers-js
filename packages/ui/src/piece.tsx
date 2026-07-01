@@ -13,7 +13,7 @@ import type { Coords, PieceAtCoords } from './types';
 
 const { WHT_PIECE, WHT_KING, RED_PIECE, RED_KING } = PieceType;
 
-function pieceUrl(p: PieceType) {
+function pieceUrl(p: Exclude<PieceType, 0>) {
   switch (p) {
     case RED_PIECE:
       return redPieceUrl;
@@ -23,8 +23,6 @@ function pieceUrl(p: PieceType) {
       return whitePieceUrl;
     case WHT_KING:
       return whiteKingUrl;
-    default:
-      return null;
   }
 }
 
@@ -32,18 +30,15 @@ export function PieceImage({
   p,
   isPreview = false,
 }: {
-  p: PieceType;
+  p: Exclude<PieceType, 0>;
   isPreview?: boolean;
 }) {
-  const url = pieceUrl(p);
   return (
-    url && (
-      <img
-        className={`${styles.pieceImage} ${isPreview && styles.dragPreview}`}
-        src={url}
-        draggable={false}
-      />
-    )
+    <img
+      className={`${styles.pieceImage} ${isPreview && styles.dragPreview}`}
+      src={pieceUrl(p)}
+      draggable={false}
+    />
   );
 }
 
@@ -88,12 +83,11 @@ export function PieceOverlay() {
 
   if (!source || !origin) return null;
 
-  const { x, y } = pos ?? origin;
-
+  const anchor = pos ?? origin;
   return (
     <div
       className={styles.dragOverlay}
-      style={{ transform: `translate(${x}px, ${y}px)` }}
+      style={{ transform: `translate(${anchor.x}px, ${anchor.y}px)` }}
     >
       <PieceImage p={source.p} isPreview />
     </div>
