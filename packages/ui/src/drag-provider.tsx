@@ -1,27 +1,23 @@
 import {
   createContext,
   type ReactNode,
+  useCallback,
   useContext,
   useState,
 } from 'preact/compat';
 
-import type { PieceType } from '@checkers/core';
+import type { Coords, PieceAtCoords } from './types';
 
-type DragState = { x: number; y: number; p: PieceType } | null;
+type Source = PieceAtCoords;
 
-type DragContext = {
-  source: DragState;
-  setDrag: (x: number, y: number, p: PieceType) => void;
-  clearDrag: () => void;
+type DragContextValue = {
+  source: PieceAtCoords | null;
+  target: Coords | null;
+  origin: Coords | null;
+  startDrag: (source: Source, event: PointerEvent) => void;
 };
 
-const defaultContext: DragContext = {
-  source: null,
-  setDrag: () => {},
-  clearDrag: () => {},
-};
-
-const DragContext = createContext<DragContext>(defaultContext);
+const DragContext = createContext<DragContextValue | null>(null);
 
 export function useDrag() {
   const context = useContext(DragContext);
@@ -29,16 +25,57 @@ export function useDrag() {
   return context;
 }
 
-export function DragProvider({ children }: { children: ReactNode }) {
-  const [source, setSource] = useState<DragState>(null);
+// find the playable board square under the pointer, if any
+function squareAt(clientX: number, clientY: number): Coords | null {
+  const el = document.elementFromPoint(clientX, clientY);
+  const cell = el?.closest<HTMLElement>('[data-square]');
+  if (!cell) return null;
+  return { x: Number(cell.dataset.x), y: Number(cell.dataset.y) };
+}
 
-  const context: DragContext = {
-    source: source,
-    setDrag: (x, y, p) => setSource({ x, y, p }),
-    clearDrag: () => setSource(null),
-  };
+export function DragProvider({
+  onDrop,
+  children,
+}: {
+  onDrop: (source: Coords, target: Coords) => void;
+  children: ReactNode;
+}) {
+  const [source, setSource] = useState<Source | null>(null);
+  const [over, setOver] = useState<Coords | null>(null);
+  const [origin, setOrigin] = useState<Coords | null>(null);
+
+  const startDrag = useCallback(
+    (next: Source, event: PointerEvent) => {
+      event.preventDefault();
+      setSource(next);
+      setOver(null);
+      setOrigin({ x: event.clientX, y: event.clientY });
+
+      const onMove = (e: PointerEvent) => {
+        const sq = squareAt(e.clientX, e.clientY);
+        // return the same ref when unchanged so Preact skips the re-render
+        setOver((prev) => (prev?.x === sq?.x && prev?.y === sq?.y ? prev : sq));
+      };
+
+      const onUp = (e: PointerEvent) => {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        const target = squareAt(e.clientX, e.clientY);
+        if (target) onDrop(next, target);
+        setSource(null);
+        setOver(null);
+        setOrigin(null);
+      };
+
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+    },
+    [onDrop]
+  );
 
   return (
-    <DragContext.Provider value={context}>{children}</DragContext.Provider>
+    <DragContext.Provider value={{ source, target: over, origin, startDrag }}>
+      {children}
+    </DragContext.Provider>
   );
 }

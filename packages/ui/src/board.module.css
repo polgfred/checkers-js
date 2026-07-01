@@ -109,6 +109,11 @@
   width: 60px;
   z-index: 1;
 
+  &[data-can-move] {
+    cursor: grab;
+    touch-action: none;
+  }
+
   &[data-can-move]:hover {
     transform: translateY(-2px);
   }
@@ -116,6 +121,19 @@
   &[data-is-dragging] {
     visibility: hidden;
   }
+}
+
+/* floating copy of the dragged piece; positioned via transform on the pointer */
+.dragOverlay {
+  height: 60px;
+  left: 0;
+  margin-left: -30px;
+  margin-top: -30px;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  width: 60px;
+  z-index: 100;
 }
 
 .pieceImage {

@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'preact/compat';
+
 import { PieceType } from '@checkers/core';
 
 import styles from './board.module.css';
@@ -7,7 +9,7 @@ import redKingUrl from './images/red-king.svg';
 import redPieceUrl from './images/red-piece.svg';
 import whiteKingUrl from './images/white-king.svg';
 import whitePieceUrl from './images/white-piece.svg';
-import type { PieceAtCoords } from './types';
+import type { Coords, PieceAtCoords } from './types';
 
 const { WHT_PIECE, WHT_KING, RED_PIECE, RED_KING } = PieceType;
 
@@ -46,37 +48,50 @@ export function PieceImage({
 }
 
 export function Piece({ x, y, p }: PieceAtCoords) {
-  const { source, setDrag, clearDrag } = useDrag();
+  const { source, startDrag } = useDrag();
   const { canMove } = useGameContext();
   const canMovePiece = canMove({ x, y });
 
-  const onDragStart = (event: DragEvent) => {
-    if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
-    requestAnimationFrame(() => {
-      setDrag(x, y, p);
-    });
-  };
-
-  const onDragEnd = () => {
-    clearDrag();
+  const onPointerDown = (event: PointerEvent) => {
+    if (!canMovePiece) return;
+    startDrag({ x, y, p }, event);
   };
 
   const isDragging = !!source && x === source.x && y === source.y;
 
   return (
     <div
-      draggable={canMovePiece}
       className={styles.pieceContainer}
       data-can-move={canMovePiece ? 'true' : undefined}
       data-is-dragging={isDragging ? 'true' : undefined}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
+      onPointerDown={onPointerDown}
     >
       <PieceImage p={p} />
     </div>
   );
 }
 
+// a floating copy of the dragged piece that follows the pointer
 export function PieceOverlay() {
-  return null;
+  const { source, origin } = useDrag();
+  const [pos, setPos] = useState<Coords | null>(origin);
+
+  useEffect(() => {
+    if (!source) return;
+    setPos(origin);
+    const onMove = (e: PointerEvent) => setPos({ x: e.clientX, y: e.clientY });
+    window.addEventListener('pointermove', onMove);
+    return () => window.removeEventListener('pointermove', onMove);
+  }, [source, origin]);
+
+  if (!source || !pos) return null;
+
+  return (
+    <div
+      className={styles.dragOverlay}
+      style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
+    >
+      <PieceImage p={source.p} isPreview />
+    </div>
+  );
 }

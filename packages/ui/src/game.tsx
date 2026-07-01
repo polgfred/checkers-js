@@ -59,33 +59,18 @@ export function Game({ getMove }: GameProps) {
     }
   }, [board, getMove, handlePlay, side]);
 
-  const handlers = {
-    onBeforeDragStart: useCallback(
-      (event) => {
-        if (gameOver) event.preventDefault();
-      },
-      [gameOver]
-    ),
-    onDragEnd: useCallback(
-      (event) => {
-        const {
-          operation: { source, target },
-        } = event;
-        if (!source || !target) return;
-        if (!canMoveTo(source.data, target.data)) return;
-        // set the draggable's id to match its new location,
-        // to ensure that it animates into place correctly
-        const { x, y } = target.data;
-        source.id = `piece-${x}-${y}`;
-        const play = moveTo(source.data, target.data);
+  const handleDrop = useCallback(
+    (source: Coords, target: Coords) => {
+      if (canMoveTo(source, target)) {
+        const play = moveTo(source, target);
         if (play) handlePlay(play);
-      },
-      [canMoveTo, handlePlay, moveTo]
-    ),
-  };
+      }
+    },
+    [canMoveTo, handlePlay, moveTo]
+  );
 
   return (
-    <DragProvider>
+    <DragProvider onDrop={handleDrop}>
       <GameContext.Provider
         value={{
           board,
