@@ -41,14 +41,14 @@ export function DragProvider({
   children: ReactNode;
 }) {
   const [source, setSource] = useState<Source | null>(null);
-  const [over, setOver] = useState<Coords | null>(null);
+  const [target, setTarget] = useState<Coords | null>(null);
   const [origin, setOrigin] = useState<Coords | null>(null);
 
   const startDrag = useCallback(
     (next: Source, event: PointerEvent) => {
       event.preventDefault();
       setSource(next);
-      setOver(null);
+      setTarget(null);
       setOrigin({ x: event.clientX, y: event.clientY });
 
       // one controller tears down every listener at once, however the drag ends
@@ -58,7 +58,7 @@ export function DragProvider({
       const end = () => {
         controller.abort();
         setSource(null);
-        setOver(null);
+        setTarget(null);
         setOrigin(null);
       };
 
@@ -67,7 +67,7 @@ export function DragProvider({
         (e: PointerEvent) => {
           const sq = squareAt(e.clientX, e.clientY);
           // return the same ref when unchanged so Preact skips the re-render
-          setOver((prev) =>
+          setTarget((prev) =>
             prev?.x === sq?.x && prev?.y === sq?.y ? prev : sq
           );
         },
@@ -96,7 +96,7 @@ export function DragProvider({
   );
 
   return (
-    <DragContext.Provider value={{ source, target: over, origin, startDrag }}>
+    <DragContext.Provider value={{ source, target, origin, startDrag }}>
       {children}
     </DragContext.Provider>
   );
