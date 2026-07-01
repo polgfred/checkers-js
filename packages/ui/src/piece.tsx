@@ -1,8 +1,7 @@
-import { DragOverlay, useDraggable, useDragOperation } from '@dnd-kit/react';
-
 import { PieceType } from '@checkers/core';
 
 import styles from './board.module.css';
+import { useDrag } from './drag-provider';
 import { useGameContext } from './game-context';
 import redKingUrl from './images/red-king.svg';
 import redPieceUrl from './images/red-piece.svg';
@@ -12,6 +11,21 @@ import type { PieceAtCoords } from './types';
 
 const { WHT_PIECE, WHT_KING, RED_PIECE, RED_KING } = PieceType;
 
+function pieceUrl(p: PieceType) {
+  switch (p) {
+    case RED_PIECE:
+      return redPieceUrl;
+    case RED_KING:
+      return redKingUrl;
+    case WHT_PIECE:
+      return whitePieceUrl;
+    case WHT_KING:
+      return whiteKingUrl;
+    default:
+      return null;
+  }
+}
+
 export function PieceImage({
   p,
   isPreview = false,
@@ -19,47 +33,44 @@ export function PieceImage({
   p: PieceType;
   isPreview?: boolean;
 }) {
-  let pieceUrl;
-  switch (p) {
-    case RED_PIECE:
-      pieceUrl = redPieceUrl;
-      break;
-    case RED_KING:
-      pieceUrl = redKingUrl;
-      break;
-    case WHT_PIECE:
-      pieceUrl = whitePieceUrl;
-      break;
-    case WHT_KING:
-      pieceUrl = whiteKingUrl;
-      break;
-    default:
-      return null;
-  }
+  const url = pieceUrl(p);
   return (
-    <img
-      className={`${styles.pieceImage} ${isPreview && styles.dragPreview}`}
-      src={pieceUrl}
-      draggable={false}
-    />
+    url && (
+      <img
+        className={`${styles.pieceImage} ${isPreview && styles.dragPreview}`}
+        src={url}
+        draggable={false}
+      />
+    )
   );
 }
 
 export function Piece({ x, y, p }: PieceAtCoords) {
+  const { source, setDrag, clearDrag } = useDrag();
   const { canMove } = useGameContext();
   const canMovePiece = canMove({ x, y });
-  const { ref, isDragging } = useDraggable<PieceAtCoords>({
-    id: `piece-${x}-${y}`,
-    disabled: !canMovePiece,
-    data: { x, y, p },
-  });
+
+  const onDragStart = (event: DragEvent) => {
+    if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
+    requestAnimationFrame(() => {
+      setDrag(x, y, p);
+    });
+  };
+
+  const onDragEnd = () => {
+    clearDrag();
+  };
+
+  const isDragging = !!source && x === source.x && y === source.y;
 
   return (
     <div
-      ref={ref}
+      draggable={canMovePiece}
       className={styles.pieceContainer}
       data-can-move={canMovePiece ? 'true' : undefined}
       data-is-dragging={isDragging ? 'true' : undefined}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
     >
       <PieceImage p={p} />
     </div>
@@ -67,11 +78,5 @@ export function Piece({ x, y, p }: PieceAtCoords) {
 }
 
 export function PieceOverlay() {
-  const { source } = useDragOperation<PieceAtCoords>();
-  if (!source) return null;
-  return (
-    <DragOverlay>
-      <PieceImage p={source.data.p} isPreview />
-    </DragOverlay>
-  );
+  return null;
 }

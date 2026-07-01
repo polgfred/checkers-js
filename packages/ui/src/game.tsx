@@ -1,9 +1,9 @@
-import { type DragDropEventHandlers, DragDropProvider } from '@dnd-kit/react';
 import { useCallback, useEffect } from 'preact/compat';
 
 import { type BoardType, type PlayType, SideType } from '@checkers/core';
 
 import { Board } from './board';
+import { DragProvider } from './drag-provider';
 import { GameContext } from './game-context';
 import { History } from './history';
 import { PieceOverlay } from './piece';
@@ -59,7 +59,7 @@ export function Game({ getMove }: GameProps) {
     }
   }, [board, getMove, handlePlay, side]);
 
-  const handlers: Partial<DragDropEventHandlers<Coords>> = {
+  const handlers = {
     onBeforeDragStart: useCallback(
       (event) => {
         if (gameOver) event.preventDefault();
@@ -85,7 +85,7 @@ export function Game({ getMove }: GameProps) {
   };
 
   return (
-    <DragDropProvider {...handlers}>
+    <DragProvider>
       <GameContext.Provider
         value={{
           board,
@@ -105,6 +105,6 @@ export function Game({ getMove }: GameProps) {
         </div>
         <PieceOverlay />
       </GameContext.Provider>
-    </DragDropProvider>
+    </DragProvider>
   );
 }
