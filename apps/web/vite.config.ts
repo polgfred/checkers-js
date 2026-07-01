@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url';
 
-import preact from '@vitejs/plugin-react';
+import preact from '@preact/preset-vite';
 import { defineConfig } from 'vite';
 
 const coreSrc = fileURLToPath(
