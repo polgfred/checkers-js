@@ -1,16 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { analyze } from './analyzer';
-import { PieceType, SideType, type BoardType } from './types';
+import { analyze, mateInfo } from './analyzer';
+import { SideType, type BoardType } from './types';
 import { copyBoard, reverseBoard } from './utils';
 
 const { RED, WHT } = SideType;
-const { EMPTY } = PieceType;
 
 describe('Analyzer', () => {
   describe('with a contrived multi-jump position', () => {
     // prettier-ignore
-    const initialData = reverseBoard([
+    const redToJump = reverseBoard([
       [ 0,  0,  0,  0,  0,  0,  0,  0 ],
       [ 0,  0,  0,  0,  0,  0,  0,  0 ],
       [ 0,  0,  0,  0,  0, -1,  0,  0 ],
@@ -22,7 +21,7 @@ describe('Analyzer', () => {
     ]);
 
     it('should find the best play from this position', () => {
-      const [score, move] = analyze(copyBoard(initialData), RED);
+      const [score, move] = analyze(copyBoard(redToJump), RED);
       expect(move).toEqual({
         kind: 'jump',
         start: [2, 0],
@@ -36,20 +35,68 @@ describe('Analyzer', () => {
     });
   });
 
+  describe('with an easy endgame position', () => {
+    // prettier-ignore
+    const lostForRed = reverseBoard([
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0, -2,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  2,  0,  0,  0 ],
+    ]);
+
+    it('should find the best play from this position', () => {
+      const [score, move] = analyze(copyBoard(lostForRed), WHT);
+      // both (4,2) and (6,2) are forced wins at this depth; (4,2) mates sooner,
+      // so mate-distance scoring must prefer it
+      expect(move).toEqual({
+        kind: 'move',
+        start: [5, 3],
+        end: [4, 2],
+      });
+      expect(mateInfo(score)?.winner).toBe(WHT);
+    });
+  });
+
   it('should score a side with no legal plays as a loss at the depth boundary', () => {
     // prettier-ignore
     const emptyBoard: BoardType = [
-      [ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY ],
-      [ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY ],
-      [ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY ],
-      [ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY ],
-      [ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY ],
-      [ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY ],
-      [ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY ],
-      [ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
     ];
 
-    expect(analyze(copyBoard(emptyBoard), RED, 0)[0]).toBe(-Infinity);
-    expect(analyze(copyBoard(emptyBoard), WHT, 0)[0]).toBe(Infinity);
+    // no plays => the side to move is mated; the other side is the winner
+    const redMate = mateInfo(analyze(copyBoard(emptyBoard), RED, 0)[0]);
+    const whiteMate = mateInfo(analyze(copyBoard(emptyBoard), WHT, 0)[0]);
+    expect(redMate?.winner).toBe(WHT);
+    expect(whiteMate?.winner).toBe(RED);
+  });
+
+  it('returns a legal move for a losing-but-playable side', () => {
+    // white king (6,2) has red king (4,0) in a lost endgame; red must still
+    // report one of its legal moves rather than undefined (no false stalemate)
+    // prettier-ignore
+    const lostForRed = reverseBoard([
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0, -2,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  2,  0,  0,  0 ],
+    ]);
+
+    const [, move] = analyze(copyBoard(lostForRed), RED);
+    expect(move).toBeDefined();
   });
 });
