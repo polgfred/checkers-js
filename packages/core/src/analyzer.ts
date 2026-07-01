@@ -1,4 +1,4 @@
-import defaultEvaluator from './default-evaluator';
+import { makeDefaultEvaluator } from './default-evaluator';
 import { makeRules, type MoveGenerator } from './rules';
 import { type BoardType, type PlayType, SideType } from './types';
 
@@ -13,7 +13,7 @@ export function analyze(
   board: BoardType,
   side: SideType,
   maxDepth = LEVEL,
-  player = defaultEvaluator
+  player = makeDefaultEvaluator()
 ): readonly [number, MaybePlay] {
   const { getSide, findJumps, findMoves } = makeRules(board, side);
 
