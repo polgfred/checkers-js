@@ -24,9 +24,9 @@ function duration(action: () => void, times: number) {
 describe('Performance', () => {
   describe('moves', () => {
     it('should find the moves from this position', () => {
-      const { findMoves } = makeRules(newBoard(), RED);
+      const { findMoves } = makeRules(newBoard());
       const nsec = duration(() => {
-        for (const _ of findMoves()) {
+        for (const _ of findMoves(RED)) {
           // consume generator to measure actual move generation cost
         }
       }, 1_000_000);
@@ -35,9 +35,9 @@ describe('Performance', () => {
     });
 
     it('should find the jumps from this position', () => {
-      const { findJumps } = makeRules(newBoard(), RED);
+      const { findJumps } = makeRules(newBoard());
       const nsec = duration(() => {
-        for (const _ of findJumps()) {
+        for (const _ of findJumps(RED)) {
           // consume generator to measure actual jump generation cost
         }
       }, 1_000_000);
@@ -60,9 +60,9 @@ describe('Performance', () => {
     ]);
 
     it('should find the jumps from this position', () => {
-      const { findJumps } = makeRules(copyBoard(initialData), RED);
+      const { findJumps } = makeRules(copyBoard(initialData));
       const nsec = duration(() => {
-        for (const _ of findJumps()) {
+        for (const _ of findJumps(RED)) {
           // consume generator to measure actual jump generation cost
         }
       }, 1_000_000);

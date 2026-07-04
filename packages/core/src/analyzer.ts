@@ -31,81 +31,63 @@ export function analyze(
   maxDepth = LEVEL,
   player = makeDefaultEvaluator()
 ): readonly [number, MaybePlay] {
-  const { getSide, findJumps, findMoves } = makeRules(board, side);
+  const { findJumps, findMoves } = makeRules(board);
 
-  let level = maxDepth;
+  return loop(maxDepth, side);
 
-  function loop(alpha = -Infinity, beta = +Infinity) {
-    const side = getSide();
-    let value = side === RED ? -Infinity : +Infinity;
+  function loop(
+    level: number,
+    side: SideType,
+    alpha = -Infinity,
+    beta = +Infinity
+  ) {
+    // @ts-expect-error side flip
+    const opp: SideType = -side;
+    let value = -Infinity;
     let play: MaybePlay;
 
     function hasAny(source: MoveGenerator) {
-      const first = source.next();
+      const { done } = source.next();
       source.return();
-      return !first.done;
+      return !done;
     }
 
     function next(source: MoveGenerator) {
       let found = false;
 
-      level--;
-
       for (const jump of source) {
         found = true;
 
-        const [current] = loop(alpha, beta);
+        const current = -loop(level - 1, opp, -beta, -alpha)[0];
 
-        switch (side) {
-          case RED:
-            if (current > value || play === undefined) {
-              value = current;
-              play = jump;
-            }
-            if (value >= beta) {
-              source.return();
-              break;
-            }
-            if (value > alpha) {
-              alpha = value;
-            }
-            break;
-          case WHT:
-            if (current < value || play === undefined) {
-              value = current;
-              play = jump;
-            }
-            if (value <= alpha) {
-              source.return();
-              break;
-            }
-            if (value < beta) {
-              beta = value;
-            }
-            break;
+        if (current > value || play === undefined) {
+          value = current;
+          play = jump;
+        }
+        if (value >= beta) {
+          source.return();
+          break;
+        }
+        if (value > alpha) {
+          alpha = value;
         }
       }
-
-      level++;
 
       return found;
     }
 
-    const found = next(findJumps());
+    const found = next(findJumps(side));
     if (!found) {
       // encode the ply distance so shorter wins / longer losses score better
       const plies = maxDepth - level;
-      const mated = side === RED ? -MATE + plies : +MATE - plies;
+      const mated = side * (-MATE + plies);
       if (level <= 0) {
-        value = hasAny(findMoves()) ? player.evaluate(board) : mated;
-      } else if (!next(findMoves())) {
+        value = hasAny(findMoves(side)) ? side * player.evaluate(board) : mated;
+      } else if (!next(findMoves(side))) {
         value = mated;
       }
     }
 
     return [value, play] as const;
   }
-
-  // start the descent
-  return loop();
 }

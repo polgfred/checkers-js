@@ -10,20 +10,13 @@ const { EMPTY, RED_PIECE } = PieceType;
 describe('Rules', () => {
   describe('moves', () => {
     it('should initialize the board', () => {
-      const { getBoard } = makeRules(newBoard(), RED);
-      const board = getBoard();
+      const { board } = makeRules(newBoard());
       expect(board[0][0]).toBe(RED_PIECE);
     });
 
-    it('should initialize the side', () => {
-      const { getSide } = makeRules(newBoard(), RED);
-      const side = getSide();
-      expect(side).toBe(RED);
-    });
-
     it('should find the moves from this position', () => {
-      const { findMoves } = makeRules(newBoard(), RED);
-      const moves = [...findMoves()];
+      const { findMoves } = makeRules(newBoard());
+      const moves = [...findMoves(RED)];
 
       expect(moves.length).toBe(7);
       // prettier-ignore
@@ -39,8 +32,8 @@ describe('Rules', () => {
     });
 
     it('should find the jumps from this position', () => {
-      const { findJumps } = makeRules(newBoard(), RED);
-      const jumps = [...findJumps()];
+      const { findJumps } = makeRules(newBoard());
+      const jumps = [...findJumps(RED)];
 
       expect(jumps.length).toBe(0);
     });
@@ -60,20 +53,13 @@ describe('Rules', () => {
     ]);
 
     it('should initialize the board', () => {
-      const { getBoard } = makeRules(copyBoard(initialData), RED);
-      const board = getBoard();
+      const { board } = makeRules(copyBoard(initialData));
       expect(board[0][0]).toBe(EMPTY);
     });
 
-    it('should initialize the side', () => {
-      const { getSide } = makeRules(copyBoard(initialData), RED);
-      const side = getSide();
-      expect(side).toBe(RED);
-    });
-
     it('should find the jumps from this position', () => {
-      const { findJumps } = makeRules(copyBoard(initialData), RED);
-      const jumps = [...findJumps()];
+      const { findJumps } = makeRules(copyBoard(initialData));
+      const jumps = [...findJumps(RED)];
 
       expect(jumps.length).toBe(3);
       expect(jumps).toEqual([
@@ -99,8 +85,8 @@ describe('Rules', () => {
     });
 
     it('should build a jump tree from this position', () => {
-      const { buildTree } = makeRules(copyBoard(initialData), RED);
-      const plays = buildTree();
+      const { buildTree } = makeRules(copyBoard(initialData));
+      const plays = buildTree(RED);
 
       expect(plays).toEqual({
         '2,0': {
