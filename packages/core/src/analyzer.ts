@@ -27,24 +27,22 @@ export function mateInfo(
   };
 }
 
-type MaybePlay = PlayType | undefined;
-
 export function analyze(
   board: BoardType,
   side: SideType,
   maxDepth = LEVEL,
   player = makeDefaultEvaluator()
-): readonly [number, MaybePlay] {
+): readonly [number, PlayType | null] {
   const { findJumps, findMoves } = makeRules(board);
+  let play: Buffer | null = null;
 
-  const [value, play] = loop(0, side);
-  return [value, play ? convertBuffer(play) : undefined];
+  const score = loop(0, side);
+  return [score, play ? convertBuffer(play) : null];
 
   function loop(level: number, side: SideType, alpha = -MATE, beta = +MATE) {
     // @ts-expect-error side flip
     const opp: SideType = -side;
-    let value = -Infinity;
-    let play: Buffer;
+    let value = -MATE - 1;
 
     function hasAny(source: MoveGenerator) {
       const { done } = source.next();
@@ -58,11 +56,10 @@ export function analyze(
       for (const jump of source) {
         found = true;
 
-        const current = -loop(level + 1, opp, -beta, -alpha)[0];
-
-        if (current > value || play === undefined) {
+        const current = -loop(level + 1, opp, -beta, -alpha);
+        if (current > value) {
           value = current;
-          play = [...jump];
+          if (level === 0) play = [...jump];
         }
         if (value >= beta) {
           source.return();
@@ -91,6 +88,6 @@ export function analyze(
       }
     }
 
-    return [value, play] as const;
+    return value;
   }
 }
