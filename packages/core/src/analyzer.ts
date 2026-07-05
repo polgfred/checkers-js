@@ -37,7 +37,7 @@ export function analyze(
 ): readonly [number, MaybePlay] {
   const { findJumps, findMoves } = makeRules(board);
 
-  const [value, play] = loop(maxDepth, side);
+  const [value, play] = loop(0, side);
   return [value, play ? convertBuffer(play) : undefined];
 
   function loop(level: number, side: SideType, alpha = -MATE, beta = +MATE) {
@@ -58,7 +58,7 @@ export function analyze(
       for (const jump of source) {
         found = true;
 
-        const current = -loop(level - 1, opp, -beta, -alpha)[0];
+        const current = -loop(level + 1, opp, -beta, -alpha)[0];
 
         if (current > value || play === undefined) {
           value = current;
@@ -81,9 +81,8 @@ export function analyze(
     if (!found) {
       // no plays => the side to move is mated. in negamax that's always a loss
       // for the mover; encode ply distance so shorter losses score better.
-      const plies = maxDepth - level;
-      const mated = -MATE + plies;
-      if (level <= 0) {
+      const mated = -MATE + level;
+      if (level >= maxDepth) {
         value = hasAny(findMoves(side, buf))
           ? side * player.evaluate(board)
           : mated;
