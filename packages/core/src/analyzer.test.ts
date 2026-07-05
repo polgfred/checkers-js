@@ -57,7 +57,28 @@ describe('Analyzer', () => {
         start: [5, 3],
         end: [4, 2],
       });
-      expect(mateInfo(score)?.winner).toBe(WHT);
+      expect(mateInfo(score)).toMatchObject({ result: 'win', plies: 3 });
+    });
+  });
+
+  describe('with a forced win for the side to move', () => {
+    // prettier-ignore
+    const lostForWhite = reverseBoard([
+      [ 0,  0,  0,  0, -2,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  2,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+      [ 0,  0,  0,  0,  0,  0,  0,  0 ],
+    ]);
+
+    it('sees the win for red, whose mate lands deep in the tree', () => {
+      // mirror of the endgame above (colors swapped, board flipped)
+      const [score, move] = analyze(copyBoard(lostForWhite), RED);
+      expect(move).toBeDefined();
+      expect(mateInfo(score)).toMatchObject({ result: 'win', plies: 3 });
     });
   });
 
@@ -74,11 +95,11 @@ describe('Analyzer', () => {
       [ 0,  0,  0,  0,  0,  0,  0,  0 ],
     ];
 
-    // no plays => the side to move is mated; the other side is the winner
+    // no plays => the side to move is mated, i.e. a loss from its own perspective
     const redMate = mateInfo(analyze(copyBoard(emptyBoard), RED, 0)[0]);
     const whiteMate = mateInfo(analyze(copyBoard(emptyBoard), WHT, 0)[0]);
-    expect(redMate?.winner).toBe(WHT);
-    expect(whiteMate?.winner).toBe(RED);
+    expect(redMate?.result).toBe('loss');
+    expect(whiteMate?.result).toBe('loss');
   });
 
   it('returns a legal move for a losing-but-playable side', () => {

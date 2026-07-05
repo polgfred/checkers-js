@@ -1,8 +1,6 @@
 import { makeDefaultEvaluator } from './default-evaluator';
 import { makeRules, type MoveGenerator } from './rules';
-import { type BoardType, type PlayType, SideType } from './types';
-
-const { RED, WHT } = SideType;
+import type { BoardType, PlayType, SideType } from './types';
 
 // how many levels deep to search the tree
 const LEVEL = 12;
@@ -12,13 +10,14 @@ const LEVEL = 12;
 const MATE = 1 << 20;
 
 // decode a raw score into the mate it encodes, or null if it's a heuristic eval.
-// `winner` is the side delivering the mate; `plies` is how far off it is.
+// scores are negamax (relative to the side to move), so the mate is simply a win
+// or loss for that side; `plies` is how far off it is.
 export function mateInfo(
   score: number
-): { winner: SideType; plies: number } | null {
+): { result: 'win' | 'loss'; plies: number } | null {
   if (Math.abs(score) <= MATE >> 1) return null;
   return {
-    winner: score > 0 ? RED : WHT,
+    result: score > 0 ? 'win' : 'loss',
     plies: MATE - Math.abs(score),
   };
 }
@@ -78,9 +77,10 @@ export function analyze(
 
     const found = next(findJumps(side));
     if (!found) {
-      // encode the ply distance so shorter wins / longer losses score better
+      // no plays => the side to move is mated. in negamax that's always a loss
+      // for the mover; encode ply distance so shorter losses score better.
       const plies = maxDepth - level;
-      const mated = side * (-MATE + plies);
+      const mated = -MATE + plies;
       if (level <= 0) {
         value = hasAny(findMoves(side)) ? side * player.evaluate(board) : mated;
       } else if (!next(findMoves(side))) {
