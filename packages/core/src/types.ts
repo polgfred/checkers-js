@@ -52,7 +52,7 @@ export type MoveType = {
 export type JumpType = {
   readonly kind: 'jump';
   readonly start: StartType;
-  readonly steps: readonly [JumpStepType, ...JumpStepType[]];
+  readonly steps: readonly JumpStepType[];
 };
 
 export type PlayType = MoveType | JumpType;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeRules } from './rules';
+import { convertBuffer, makeRules } from './rules';
 import { PieceType, SideType } from './types';
 import { copyBoard, newBoard, reverseBoard } from './utils';
 
@@ -16,7 +16,7 @@ describe('Rules', () => {
 
     it('should find the moves from this position', () => {
       const { findMoves } = makeRules(newBoard());
-      const moves = [...findMoves(RED)];
+      const moves = [...findMoves(RED).map(convertBuffer)];
 
       expect(moves.length).toBe(7);
       // prettier-ignore
@@ -33,7 +33,7 @@ describe('Rules', () => {
 
     it('should find the jumps from this position', () => {
       const { findJumps } = makeRules(newBoard());
-      const jumps = [...findJumps(RED)];
+      const jumps = [...findJumps(RED).map(convertBuffer)];
 
       expect(jumps.length).toBe(0);
     });
@@ -59,7 +59,7 @@ describe('Rules', () => {
 
     it('should find the jumps from this position', () => {
       const { findJumps } = makeRules(copyBoard(initialData));
-      const jumps = [...findJumps(RED)];
+      const jumps = [...findJumps(RED).map(convertBuffer)];
 
       expect(jumps.length).toBe(3);
       expect(jumps).toEqual([

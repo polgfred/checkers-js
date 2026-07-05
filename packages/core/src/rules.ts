@@ -2,30 +2,26 @@ import {
   SideType,
   PieceType,
   type BoardType,
-  type JumpStepType,
   type JumpType,
   type MoveType,
   type PlayType,
-  type StartType,
   type TreeType,
 } from './types';
 
 const { RED } = SideType;
 const { EMPTY, RED_PIECE, RED_KING, WHT_PIECE, WHT_KING } = PieceType;
 
-export type MoveGenerator = Generator<PlayType, void, void>;
-
-type JumpBuild = [StartType, ...JumpStepType[]];
+export type Buffer = number[];
+export type MoveGenerator = Generator<Buffer, void, void>;
 
 export interface Rules {
   board: BoardType;
-  readonly findJumps: (side: SideType) => MoveGenerator;
-  readonly findMoves: (side: SideType) => MoveGenerator;
-  readonly findPlays: (side: SideType) => MoveGenerator;
+  readonly findJumps: (side: SideType, buf?: Buffer) => MoveGenerator;
+  readonly findMoves: (side: SideType, buf?: Buffer) => MoveGenerator;
   readonly doJump: (side: SideType, jump: JumpType) => void;
   readonly doMove: (side: SideType, move: MoveType) => void;
   readonly doPlay: (side: SideType, play: PlayType) => void;
-  readonly buildTree: (side: SideType) => TreeType;
+  readonly buildTree: (side: SideType, buf?: Buffer) => TreeType;
 }
 
 // search directions (dx, dy) for each piece type
@@ -104,7 +100,11 @@ function isCrowned(p: PieceType, ny: number): boolean {
   }
 }
 
-function* findJumps(board: BoardType, side: SideType): MoveGenerator {
+function* findJumps(
+  board: BoardType,
+  side: SideType,
+  buf: Buffer
+): MoveGenerator {
   const bottom = side === RED ? 0 : 7;
 
   // loop through playable squares
@@ -116,14 +116,17 @@ function* findJumps(board: BoardType, side: SideType): MoveGenerator {
       if (isFriendly(side, p)) {
         // checking for jumps is inherently recursive - as long as you find them,
         // you have to keep looking, and only termimal positions are valid
-        const start = [x, y] as const;
-        yield* nextJumps([start]);
+        buf[0] = 0; // score
+        buf[1] = 0; // jump
+        buf[2] = 0; // legs
+        buf[3] = x;
+        buf[4] = y;
+        yield* nextJumps(x, y);
       }
     }
   }
 
-  function* nextJumps(cur: JumpBuild): MoveGenerator {
-    const [x, y] = cur[cur.length - 1];
+  function* nextJumps(x: number, y: number): MoveGenerator {
     const p = board[y][x];
 
     // loop over directions (dx, dy) from the current square
@@ -146,33 +149,28 @@ function* findJumps(board: BoardType, side: SideType): MoveGenerator {
 
           // keep track of the coordinates, and move the piece
           try {
-            cur.push([nx, ny, mx, my]);
             board[y][x] = EMPTY;
             board[my][mx] = EMPTY;
             board[ny][nx] = crowned ? crownPiece(p) : p;
+            const legs = ++buf[2];
+            const pos = 2 * legs + 3;
+            buf[pos] = nx;
+            buf[pos + 1] = ny;
 
             // if we're crowned, don't look any further
             if (!crowned) {
               // see if there are any further jumps from here
-              for (const j of nextJumps(cur)) {
+              for (const j of nextJumps(nx, ny)) {
                 found = true;
                 yield j;
               }
             }
 
             // we're at a terminal position
-            if (!found) {
-              const snapshot = cur.slice() as JumpBuild;
-              const [start, first, ...rest] = snapshot;
-              yield {
-                kind: 'jump',
-                start,
-                steps: [first, ...rest],
-              };
-            }
+            if (!found) yield buf;
           } finally {
             // put things back where we found them
-            cur.pop();
+            --buf[2];
             board[y][x] = p;
             board[my][mx] = m;
             board[ny][nx] = EMPTY;
@@ -183,14 +181,22 @@ function* findJumps(board: BoardType, side: SideType): MoveGenerator {
   }
 }
 
-function* findMoves(board: BoardType, side: SideType): MoveGenerator {
+function* findMoves(
+  board: BoardType,
+  side: SideType,
+  buf: Buffer
+): MoveGenerator {
   const bottom = side === RED ? 0 : 7;
 
   // loop through playable squares
   for (let y = bottom; inBounds(y); y += side) {
     for (let x = bottom; inBounds(x); x += side) {
       const p = board[y][x];
-      const cur = [x, y] as const;
+      buf[0] = 0; // score
+      buf[1] = 1; // move
+      buf[2] = 0; // legs
+      buf[3] = x;
+      buf[4] = y;
 
       // see if it's our piece
       if (isFriendly(side, p)) {
@@ -210,13 +216,10 @@ function* findMoves(board: BoardType, side: SideType): MoveGenerator {
                 // move the piece
                 board[y][x] = EMPTY;
                 board[ny][nx] = crowned ? crownPiece(p) : p;
-
-                const next = [nx, ny] as const;
-                yield {
-                  kind: 'move',
-                  start: cur,
-                  end: next,
-                };
+                buf[2] = 1;
+                buf[5] = nx;
+                buf[6] = ny;
+                yield buf;
               } finally {
                 // put things back where we found them
                 board[y][x] = p;
@@ -230,18 +233,14 @@ function* findMoves(board: BoardType, side: SideType): MoveGenerator {
   }
 }
 
-function* findPlays(board: BoardType, side: SideType) {
+function* findPlays(board: BoardType, side: SideType, buf: Buffer) {
   // you have to jump if you can
   let found = false;
-  for (const jump of findJumps(board, side)) {
+  for (const jump of findJumps(board, side, buf)) {
     found = true;
     yield jump;
   }
-  if (!found) {
-    for (const move of findMoves(board, side)) {
-      yield move;
-    }
-  }
+  if (!found) yield* findMoves(board, side, buf);
 }
 
 function doJump(board: BoardType, side: SideType, jump: JumpType) {
@@ -278,44 +277,65 @@ function doPlay(board: BoardType, side: SideType, play: PlayType) {
   }
 }
 
-function buildTree(board: BoardType, side: SideType) {
+function buildTree(board: BoardType, side: SideType, buf: Buffer) {
   const tree = {} as TreeType;
 
-  function addPath(coords: readonly StartType[]) {
+  const addPath = (coords: [number, number][]) => {
     let node = tree;
     for (const [x, y] of coords) {
       const key = `${x},${y}`;
       node[key] ??= {};
       node = node[key];
     }
-  }
+  };
 
-  function playToCoords(play: PlayType): StartType[] {
-    switch (play.kind) {
-      case 'move':
-        return [play.start, play.end];
-      case 'jump':
-        return [play.start, ...play.steps.map(([x, y]) => [x, y] as const)];
-    }
-  }
-
-  for (const play of findPlays(board, side)) {
-    addPath(playToCoords(play));
-  }
+  findPlays(board, side, buf).forEach(() =>
+    addPath(
+      Array.from({ length: buf[2] + 1 }).map((_, i) => [
+        buf[2 * i + 3],
+        buf[2 * i + 4],
+      ])
+    )
+  );
 
   return tree;
+}
+
+export function convertBuffer(buf: Buffer): PlayType {
+  let [, kind, legs, x, y, nx, ny, ...rest] = buf;
+  switch (kind) {
+    case 0:
+      return {
+        kind: 'jump',
+        start: [x, y],
+        steps: Array.from({ length: legs }).map((_, i) => {
+          const [mx, my] = [(x + nx) >> 1, (y + ny) >> 1];
+          const step = [nx, ny, mx, my] as const;
+          [x, y] = [nx, ny];
+          [nx, ny] = rest.slice(2 * i);
+          return step;
+        }),
+      };
+    case 1:
+      return {
+        kind: 'move',
+        start: [x, y],
+        end: [nx, ny],
+      };
+    default:
+      throw new Error(`malformed play buffer: ${buf}`);
+  }
 }
 
 // `board` will be mutated by the rules engine, so make a copy first
 export function makeRules(board: BoardType): Rules {
   return {
     board,
-    findJumps: (side: SideType) => findJumps(board, side),
-    findMoves: (side: SideType) => findMoves(board, side),
-    findPlays: (side: SideType) => findPlays(board, side),
-    doJump: (side: SideType, jump: JumpType) => doJump(board, side, jump),
-    doMove: (side: SideType, move: MoveType) => doMove(board, side, move),
-    doPlay: (side: SideType, play: PlayType) => doPlay(board, side, play),
-    buildTree: (side: SideType) => buildTree(board, side),
+    findJumps: (side, buf = []) => findJumps(board, side, buf),
+    findMoves: (side, buf = []) => findMoves(board, side, buf),
+    doJump: (side, jump) => doJump(board, side, jump),
+    doMove: (side, move) => doMove(board, side, move),
+    doPlay: (side, play) => doPlay(board, side, play),
+    buildTree: (side, buf = []) => buildTree(board, side, buf),
   };
 }
