@@ -1,5 +1,10 @@
 import { makeDefaultEvaluator } from './default-evaluator';
-import { makeRules, type MoveGenerator } from './rules';
+import {
+  convertBuffer,
+  makeRules,
+  type Buffer,
+  type MoveGenerator,
+} from './rules';
 import type { BoardType, PlayType, SideType } from './types';
 
 // how many levels deep to search the tree
@@ -32,18 +37,14 @@ export function analyze(
 ): readonly [number, MaybePlay] {
   const { findJumps, findMoves } = makeRules(board);
 
-  return loop(maxDepth, side);
+  const [value, play] = loop(maxDepth, side);
+  return [value, play ? convertBuffer(play) : undefined];
 
-  function loop(
-    level: number,
-    side: SideType,
-    alpha = -Infinity,
-    beta = +Infinity
-  ) {
+  function loop(level: number, side: SideType, alpha = -MATE, beta = +MATE) {
     // @ts-expect-error side flip
     const opp: SideType = -side;
     let value = -Infinity;
-    let play: MaybePlay;
+    let play: Buffer;
 
     function hasAny(source: MoveGenerator) {
       const { done } = source.next();
@@ -61,7 +62,7 @@ export function analyze(
 
         if (current > value || play === undefined) {
           value = current;
-          play = jump;
+          play = [...jump];
         }
         if (value >= beta) {
           source.return();
@@ -75,15 +76,18 @@ export function analyze(
       return found;
     }
 
-    const found = next(findJumps(side));
+    const buf: number[] = [];
+    const found = next(findJumps(side, buf));
     if (!found) {
       // no plays => the side to move is mated. in negamax that's always a loss
       // for the mover; encode ply distance so shorter losses score better.
       const plies = maxDepth - level;
       const mated = -MATE + plies;
       if (level <= 0) {
-        value = hasAny(findMoves(side)) ? side * player.evaluate(board) : mated;
-      } else if (!next(findMoves(side))) {
+        value = hasAny(findMoves(side, buf))
+          ? side * player.evaluate(board)
+          : mated;
+      } else if (!next(findMoves(side, buf))) {
         value = mated;
       }
     }
