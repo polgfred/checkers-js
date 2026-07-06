@@ -11,6 +11,9 @@ import {
 const { RED } = SideType;
 const { EMPTY, RED_PIECE, RED_KING, WHT_PIECE, WHT_KING } = PieceType;
 
+const JUMP_TAG = 1;
+const MOVE_TAG = 2;
+
 export type Collector = number[];
 export type MoveGenerator = Generator<Collector, void, void>;
 
@@ -101,7 +104,7 @@ function isCrowned(p: PieceType, ny: number): boolean {
 }
 
 function* findJumps(board: BoardType, side: SideType): MoveGenerator {
-  const buf: Collector = [];
+  const buf: Collector = [JUMP_TAG];
   const bottom = side === RED ? 0 : 7;
 
   // loop through playable squares
@@ -113,12 +116,10 @@ function* findJumps(board: BoardType, side: SideType): MoveGenerator {
       if (isFriendly(side, p)) {
         // checking for jumps is inherently recursive - as long as you find them,
         // you have to keep looking, and only termimal positions are valid
-        buf[0] = 0; // score
-        buf[1] = 0; // jump
-        buf[2] = 0; // legs
-        buf[3] = x;
-        buf[4] = y;
-        yield* nextJumps(board, side, buf, x, y);
+        buf.push(x, y);
+        yield* nextJumps(board, side, buf);
+        buf.pop();
+        buf.pop();
       }
     }
   }
@@ -127,10 +128,10 @@ function* findJumps(board: BoardType, side: SideType): MoveGenerator {
 function* nextJumps(
   board: BoardType,
   side: SideType,
-  buf: Collector,
-  x: number,
-  y: number
+  buf: Collector
 ): MoveGenerator {
+  const x = buf[buf.length - 2];
+  const y = buf[buf.length - 1];
   const p = board[y][x];
 
   // loop over directions (dx, dy) from the current square
@@ -156,15 +157,12 @@ function* nextJumps(
           board[y][x] = EMPTY;
           board[my][mx] = EMPTY;
           board[ny][nx] = crowned ? crownPiece(p) : p;
-          const legs = ++buf[2];
-          const pos = 2 * legs + 3;
-          buf[pos] = nx;
-          buf[pos + 1] = ny;
+          buf.push(nx, ny);
 
           // if we're crowned, don't look any further
           if (!crowned) {
             // see if there are any further jumps from here
-            for (const j of nextJumps(board, side, buf, nx, ny)) {
+            for (const j of nextJumps(board, side, buf)) {
               found = true;
               yield j;
             }
@@ -172,9 +170,10 @@ function* nextJumps(
 
           // we're at a terminal position
           if (!found) yield buf;
+          buf.pop();
+          buf.pop();
         } finally {
           // put things back where we found them
-          --buf[2];
           board[y][x] = p;
           board[my][mx] = m;
           board[ny][nx] = EMPTY;
@@ -186,17 +185,13 @@ function* nextJumps(
 
 function* findMoves(board: BoardType, side: SideType): MoveGenerator {
   const bottom = side === RED ? 0 : 7;
-  const buf: Collector = [];
+  const buf: Collector = [MOVE_TAG];
 
   // loop through playable squares
   for (let y = bottom; inBounds(y); y += side) {
     for (let x = bottom; inBounds(x); x += side) {
       const p = board[y][x];
-      buf[0] = 0; // score
-      buf[1] = 1; // move
-      buf[2] = 0; // legs
-      buf[3] = x;
-      buf[4] = y;
+      buf.push(x, y);
 
       // see if it's our piece
       if (isFriendly(side, p)) {
@@ -216,10 +211,10 @@ function* findMoves(board: BoardType, side: SideType): MoveGenerator {
                 // move the piece
                 board[y][x] = EMPTY;
                 board[ny][nx] = crowned ? crownPiece(p) : p;
-                buf[2] = 1;
-                buf[5] = nx;
-                buf[6] = ny;
+                buf.push(nx, ny);
                 yield buf;
+                buf.pop();
+                buf.pop();
               } finally {
                 // put things back where we found them
                 board[y][x] = p;
@@ -229,6 +224,10 @@ function* findMoves(board: BoardType, side: SideType): MoveGenerator {
           }
         }
       }
+
+      // pop off the starting coords
+      buf.pop();
+      buf.pop();
     }
   }
 }
@@ -280,7 +279,7 @@ function doPlay(board: BoardType, side: SideType, play: PlayType) {
 function buildTree(board: BoardType, side: SideType) {
   const tree = {} as TreeType;
 
-  const addPath = (coords: [number, number][]) => {
+  const addPath = (coords: number[][]) => {
     let node = tree;
     for (const [x, y] of coords) {
       const key = `${x},${y}`;
@@ -289,34 +288,33 @@ function buildTree(board: BoardType, side: SideType) {
     }
   };
 
-  findPlays(board, side).forEach((buf) =>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  for (const [_tag, ...coords] of findPlays(board, side)) {
     addPath(
-      Array.from({ length: buf[2] + 1 }).map((_, i) => [
-        buf[2 * i + 3],
-        buf[2 * i + 4],
-      ])
-    )
-  );
+      Array.from({ length: coords.length / 2 }).map((_, i) =>
+        coords.slice(2 * i, 2 * i + 2)
+      )
+    );
+  }
 
   return tree;
 }
 
-export function convertBuffer(buf: Buffer): PlayType {
-  let [, kind, legs, x, y, nx, ny, ...rest] = buf;
-  switch (kind) {
-    case 0:
+export function convertPlay(buf: Readonly<Collector>): PlayType {
+  let [tag, ...coords] = buf;
+  const [x, y, nx, ny] = coords.slice(0, 4);
+  switch (tag) {
+    case JUMP_TAG:
       return {
         kind: 'jump',
         start: [x, y],
-        steps: Array.from({ length: legs }).map((_, i) => {
-          const [mx, my] = [(x + nx) >> 1, (y + ny) >> 1];
-          const step = [nx, ny, mx, my] as const;
-          [x, y] = [nx, ny];
-          [nx, ny] = rest.slice(2 * i);
-          return step;
+        steps: Array.from({ length: coords.length / 2 - 1 }).map((_, i) => {
+          const [x, y, nx, ny] = coords.slice(2 * i, 2 * i + 4);
+          const [mx, my] = [(x + nx) / 2, (y + ny) / 2];
+          return [nx, ny, mx, my] as const;
         }),
       };
-    case 1:
+    case MOVE_TAG:
       return {
         kind: 'move',
         start: [x, y],

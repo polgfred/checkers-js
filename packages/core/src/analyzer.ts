@@ -1,8 +1,8 @@
 import { makeDefaultEvaluator } from './default-evaluator';
 import {
-  convertBuffer,
+  convertPlay,
   makeRules,
-  type Buffer,
+  type Collector,
   type MoveGenerator,
 } from './rules';
 import type { BoardType, PlayType, SideType } from './types';
@@ -34,10 +34,10 @@ export function analyze(
   player = makeDefaultEvaluator()
 ): readonly [number, PlayType | null] {
   const { findJumps, findMoves } = makeRules(board);
-  let play: Buffer | null = null;
+  let play: Collector | null = null;
 
   const score = loop(0, side);
-  return [score, play ? convertBuffer(play) : null];
+  return [score, play ? convertPlay(play) : null];
 
   function loop(level: number, side: SideType, alpha = -MATE, beta = +MATE) {
     // @ts-expect-error side flip
@@ -53,13 +53,14 @@ export function analyze(
     function next(source: MoveGenerator) {
       let found = false;
 
-      for (const jump of source) {
+      for (const coll of source) {
         found = true;
 
         const current = -loop(level + 1, opp, -beta, -alpha);
         if (current > value) {
           value = current;
-          if (level === 0) play = [...jump];
+          // we're at the root: save the play so we can return it
+          if (level === 0) play = [...coll];
         }
         if (value >= beta) {
           source.return();
