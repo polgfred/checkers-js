@@ -22,7 +22,7 @@ function duration(action: () => void, times: number) {
 }
 
 describe('Performance', () => {
-  describe('moves', () => {
+  describe('initial setup', () => {
     it('should find the moves from this position', () => {
       const { findMoves } = makeRules(newBoard());
       const nsec = duration(() => {
@@ -46,7 +46,7 @@ describe('Performance', () => {
     });
   });
 
-  describe('jumps', () => {
+  describe('contrived multi-jump position', () => {
     // prettier-ignore
     const initialData = reverseBoard([
       [ 0,  0,  0,  0,  0,  0,  0,  0 ],
