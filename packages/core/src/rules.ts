@@ -121,60 +121,66 @@ function* findJumps(
         buf[2] = 0; // legs
         buf[3] = x;
         buf[4] = y;
-        yield* nextJumps(x, y);
+        yield* nextJumps(board, side, buf, x, y);
       }
     }
   }
+}
 
-  function* nextJumps(x: number, y: number): MoveGenerator {
-    const p = board[y][x];
+function* nextJumps(
+  board: BoardType,
+  side: SideType,
+  buf: Buffer,
+  x: number,
+  y: number
+): MoveGenerator {
+  const p = board[y][x];
 
-    // loop over directions (dx, dy) from the current square
-    for (const [dx, dy] of getDirs(p)) {
-      // calculate middle and landing coordinates
-      const mx = x + dx;
-      const my = y + dy;
-      const nx = mx + dx;
-      const ny = my + dy;
+  // loop over directions (dx, dy) from the current square
+  for (const [dx, dy] of getDirs(p)) {
+    // calculate middle and landing coordinates
+    const mx = x + dx;
+    const my = y + dy;
+    const nx = mx + dx;
+    const ny = my + dy;
 
-      // see if jump is on the board
-      if (inBounds(nx | ny)) {
-        const m = board[my][mx];
-        const n = board[ny][nx];
+    // see if jump is on the board
+    if (inBounds(nx | ny)) {
+      const m = board[my][mx];
+      const n = board[ny][nx];
 
-        // see if the middle piece is an opponent and the landing is open
-        if (n === EMPTY && isEnemy(side, m)) {
-          const crowned = !isKing(side, p) && isCrowned(side, ny);
-          let found = false;
+      // see if the middle piece is an opponent and the landing is open
+      if (n === EMPTY && isEnemy(side, m)) {
+        const crowned = !isKing(side, p) && isCrowned(side, ny);
+        let found = false;
 
-          // keep track of the coordinates, and move the piece
-          try {
-            board[y][x] = EMPTY;
-            board[my][mx] = EMPTY;
-            board[ny][nx] = crowned ? crownPiece(p) : p;
-            const legs = ++buf[2];
-            const pos = 2 * legs + 3;
-            buf[pos] = nx;
-            buf[pos + 1] = ny;
+        // keep track of the coordinates, and move the piece
+        try {
+          board[y][x] = EMPTY;
+          board[my][mx] = EMPTY;
+          board[ny][nx] = crowned ? crownPiece(p) : p;
+          const legs = ++buf[2];
+          const pos = 2 * legs + 3;
+          buf[pos] = nx;
+          buf[pos + 1] = ny;
 
-            // if we're crowned, don't look any further
-            if (!crowned) {
-              // see if there are any further jumps from here
-              for (const j of nextJumps(nx, ny)) {
-                found = true;
-                yield j;
-              }
+          // if we're crowned, don't look any further
+          if (!crowned) {
+            // see if there are any further jumps from here
+            for (const j of nextJumps(board, side, buf, nx, ny)) {
+              found = true;
+              yield j;
             }
-
-            // we're at a terminal position
-            if (!found) yield buf;
-          } finally {
-            // put things back where we found them
-            --buf[2];
-            board[y][x] = p;
-            board[my][mx] = m;
-            board[ny][nx] = EMPTY;
           }
+
+          // we're at a terminal position
+          if (!found) yield buf;
+        } finally {
+          // put things back where we found them
+          --buf[2];
+          board[y][x] = p;
+          board[my][mx] = m;
+          board[ny][nx] = EMPTY;
         }
       }
     }
