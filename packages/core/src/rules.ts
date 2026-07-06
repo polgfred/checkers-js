@@ -11,17 +11,17 @@ import {
 const { RED } = SideType;
 const { EMPTY, RED_PIECE, RED_KING, WHT_PIECE, WHT_KING } = PieceType;
 
-export type Buffer = number[];
-export type MoveGenerator = Generator<Buffer, void, void>;
+export type Collector = number[];
+export type MoveGenerator = Generator<Collector, void, void>;
 
 export interface Rules {
   board: BoardType;
-  readonly findJumps: (side: SideType, buf?: Buffer) => MoveGenerator;
-  readonly findMoves: (side: SideType, buf?: Buffer) => MoveGenerator;
+  readonly findJumps: (side: SideType) => MoveGenerator;
+  readonly findMoves: (side: SideType) => MoveGenerator;
   readonly doJump: (side: SideType, jump: JumpType) => void;
   readonly doMove: (side: SideType, move: MoveType) => void;
   readonly doPlay: (side: SideType, play: PlayType) => void;
-  readonly buildTree: (side: SideType, buf?: Buffer) => TreeType;
+  readonly buildTree: (side: SideType) => TreeType;
 }
 
 // search directions (dx, dy) for each piece type
@@ -100,11 +100,8 @@ function isCrowned(p: PieceType, ny: number): boolean {
   }
 }
 
-function* findJumps(
-  board: BoardType,
-  side: SideType,
-  buf: Buffer
-): MoveGenerator {
+function* findJumps(board: BoardType, side: SideType): MoveGenerator {
+  const buf: Collector = [];
   const bottom = side === RED ? 0 : 7;
 
   // loop through playable squares
@@ -130,7 +127,7 @@ function* findJumps(
 function* nextJumps(
   board: BoardType,
   side: SideType,
-  buf: Buffer,
+  buf: Collector,
   x: number,
   y: number
 ): MoveGenerator {
@@ -187,12 +184,9 @@ function* nextJumps(
   }
 }
 
-function* findMoves(
-  board: BoardType,
-  side: SideType,
-  buf: Buffer
-): MoveGenerator {
+function* findMoves(board: BoardType, side: SideType): MoveGenerator {
   const bottom = side === RED ? 0 : 7;
+  const buf: Collector = [];
 
   // loop through playable squares
   for (let y = bottom; inBounds(y); y += side) {
@@ -239,14 +233,14 @@ function* findMoves(
   }
 }
 
-function* findPlays(board: BoardType, side: SideType, buf: Buffer) {
+function* findPlays(board: BoardType, side: SideType) {
   // you have to jump if you can
   let found = false;
-  for (const jump of findJumps(board, side, buf)) {
+  for (const jump of findJumps(board, side)) {
     found = true;
     yield jump;
   }
-  if (!found) yield* findMoves(board, side, buf);
+  if (!found) yield* findMoves(board, side);
 }
 
 function doJump(board: BoardType, side: SideType, jump: JumpType) {
@@ -283,7 +277,7 @@ function doPlay(board: BoardType, side: SideType, play: PlayType) {
   }
 }
 
-function buildTree(board: BoardType, side: SideType, buf: Buffer) {
+function buildTree(board: BoardType, side: SideType) {
   const tree = {} as TreeType;
 
   const addPath = (coords: [number, number][]) => {
@@ -295,7 +289,7 @@ function buildTree(board: BoardType, side: SideType, buf: Buffer) {
     }
   };
 
-  findPlays(board, side, buf).forEach(() =>
+  findPlays(board, side).forEach((buf) =>
     addPath(
       Array.from({ length: buf[2] + 1 }).map((_, i) => [
         buf[2 * i + 3],
@@ -337,11 +331,11 @@ export function convertBuffer(buf: Buffer): PlayType {
 export function makeRules(board: BoardType): Rules {
   return {
     board,
-    findJumps: (side, buf = []) => findJumps(board, side, buf),
-    findMoves: (side, buf = []) => findMoves(board, side, buf),
+    findJumps: (side) => findJumps(board, side),
+    findMoves: (side) => findMoves(board, side),
     doJump: (side, jump) => doJump(board, side, jump),
     doMove: (side, move) => doMove(board, side, move),
     doPlay: (side, play) => doPlay(board, side, play),
-    buildTree: (side, buf = []) => buildTree(board, side, buf),
+    buildTree: (side) => buildTree(board, side),
   };
 }

@@ -73,17 +73,14 @@ export function analyze(
       return found;
     }
 
-    const buf: number[] = [];
-    const found = next(findJumps(side, buf));
+    const found = next(findJumps(side));
     if (!found) {
       // no plays => the side to move is mated. in negamax that's always a loss
       // for the mover; encode ply distance so shorter losses score better.
       const mated = -MATE + level;
       if (level >= maxDepth) {
-        value = hasAny(findMoves(side, buf))
-          ? side * player.evaluate(board)
-          : mated;
-      } else if (!next(findMoves(side, buf))) {
+        value = hasAny(findMoves(side)) ? side * player.evaluate(board) : mated;
+      } else if (!next(findMoves(side))) {
         value = mated;
       }
     }
