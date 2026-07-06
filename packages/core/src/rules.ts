@@ -23,7 +23,6 @@ export interface Rules {
   readonly findMoves: (side: SideType) => MoveGenerator;
   readonly doJump: (side: SideType, jump: JumpType) => void;
   readonly doMove: (side: SideType, move: MoveType) => void;
-  readonly doPlay: (side: SideType, play: PlayType) => void;
   readonly buildTree: (side: SideType) => TreeType;
 }
 
@@ -265,17 +264,6 @@ function doMove(board: BoardType, side: SideType, move: MoveType) {
   board[ny][nx] = crowned ? crownPiece(p) : p;
 }
 
-function doPlay(board: BoardType, side: SideType, play: PlayType) {
-  switch (play.kind) {
-    case 'jump':
-      doJump(board, side, play);
-      break;
-    case 'move':
-      doMove(board, side, play);
-      break;
-  }
-}
-
 function buildTree(board: BoardType, side: SideType) {
   const tree = {} as TreeType;
 
@@ -333,7 +321,6 @@ export function makeRules(board: BoardType): Rules {
     findMoves: (side) => findMoves(board, side),
     doJump: (side, jump) => doJump(board, side, jump),
     doMove: (side, move) => doMove(board, side, move),
-    doPlay: (side, play) => doPlay(board, side, play),
     buildTree: (side) => buildTree(board, side),
   };
 }

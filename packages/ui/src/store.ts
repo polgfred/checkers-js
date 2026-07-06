@@ -2,6 +2,7 @@ import { useState, useSyncExternalStore } from 'preact/compat';
 
 import {
   type BoardType,
+  copyBoard,
   makeRules,
   newBoard,
   type PlayType,
@@ -35,6 +36,7 @@ export type GameStore = {
 
 function createGameStore() {
   let rules: Rules;
+  let side: SideType;
   let hist: History;
   let snapshot: GameSnapshot;
 
@@ -42,9 +44,9 @@ function createGameStore() {
 
   function readSnapshot() {
     return {
-      board: rules.getBoard(),
-      side: rules.getSide(),
-      plays: rules.buildTree(),
+      board: copyBoard(rules.board),
+      side,
+      plays: rules.buildTree(side),
       hist: [...hist],
     };
   }
@@ -62,9 +64,12 @@ function createGameStore() {
   }
 
   function handlePlay(play: PlayType) {
-    const moveSide = rules.getSide();
-    rules.doPlay(play);
-    if (moveSide === RED) {
+    if (play.kind === 'jump') {
+      rules.doJump(side, play);
+    } else {
+      rules.doMove(side, play);
+    }
+    if (side === RED) {
       hist.push([play, null]);
     } else if (hist.length > 0) {
       const last = hist[hist.length - 1];
@@ -74,7 +79,8 @@ function createGameStore() {
   }
 
   function startGame() {
-    rules = makeRules(newBoard(), RED);
+    rules = makeRules(newBoard());
+    side = RED;
     hist = [];
     publish();
   }
