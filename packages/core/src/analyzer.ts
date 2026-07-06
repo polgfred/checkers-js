@@ -36,56 +36,51 @@ export function analyze(
   const { findJumps, findMoves } = makeRules(board);
   let play: Collector | null = null;
 
-  const score = loop(0, side);
+  const score = loop(side, 0, -MATE, +MATE);
   return [score, play ? convertPlay(play) : null];
 
-  function loop(level: number, side: SideType, alpha = -MATE, beta = +MATE) {
+  function any(source: MoveGenerator) {
+    // get the first move (if any) and abort
+    const { done } = source.next();
+    source.return();
+    return !done;
+  }
+
+  function loop(side: SideType, level: number, alpha: number, beta: number) {
     // @ts-expect-error side flip
     const opp: SideType = -side;
-    let value = -MATE - 1;
 
-    function hasAny(source: MoveGenerator) {
-      const { done } = source.next();
-      source.return();
-      return !done;
-    }
-
-    function next(source: MoveGenerator) {
-      let found = false;
-
+    function next(source: MoveGenerator): number | null {
+      let value: number | null = null;
       for (const coll of source) {
-        found = true;
-
-        const current = -loop(level + 1, opp, -beta, -alpha);
-        if (current > value) {
+        // negamax
+        const current = -loop(opp, level + 1, -beta, -alpha);
+        if (value === null || current > value) {
           value = current;
           // we're at the root: save the play so we can return it
           if (level === 0) play = [...coll];
         }
+        // pruning
         if (value >= beta) {
+          // abort the generator and break out
           source.return();
           break;
         }
-        if (value > alpha) {
-          alpha = value;
-        }
+        if (value > alpha) alpha = value;
       }
-
-      return found;
+      return value;
     }
 
-    const found = next(findJumps(side));
-    if (!found) {
-      // no plays => the side to move is mated. in negamax that's always a loss
-      // for the mover; encode ply distance so shorter losses score better.
-      const mated = -MATE + level;
-      if (level >= maxDepth) {
-        value = hasAny(findMoves(side)) ? side * player.evaluate(board) : mated;
-      } else if (!next(findMoves(side))) {
-        value = mated;
-      }
+    // always search for jumps
+    let val = next(findJumps(side));
+    if (val === null) {
+      const moves = findMoves(side);
+      // search for moves until max depth, otherwise run the evaluator
+      if (level < maxDepth) val = next(moves);
+      else if (any(moves)) val = side * player.evaluate(board);
     }
 
-    return value;
+    // encode the ply with a win (shorter is better)
+    return val ?? -MATE + level;
   }
 }
