@@ -12,7 +12,7 @@ import styles from './styles.module.css';
 import type { Coords } from './types';
 import { usePlayer } from './use-player';
 
-const { RED } = SideType;
+const { RED, WHT } = SideType;
 
 export type GetMove = (
   board: BoardType,
@@ -52,7 +52,7 @@ export function Game({ getMove }: GameProps) {
 
   // get the computer's move if it's white to play
   useEffect(() => {
-    if (side === SideType.WHT) {
+    if (side === WHT) {
       getMove(board, side).then((play) => {
         if (play) handlePlay(play);
       });
