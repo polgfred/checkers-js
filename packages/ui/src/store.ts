@@ -75,6 +75,8 @@ function createGameStore() {
       const last = hist[hist.length - 1];
       last[1] = play;
     }
+    // @ts-expect-error side flip
+    side = -side;
     publish();
   }
 
