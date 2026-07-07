@@ -27,60 +27,96 @@ export function mateInfo(
   };
 }
 
+function any(source: MoveGenerator) {
+  // get the first move (if any) and abort
+  const { done } = source.next();
+  source.return();
+  return !done;
+}
+
 export function analyze(
   board: BoardType,
   side: SideType,
   maxDepth = LEVEL,
   player = makeDefaultEvaluator()
 ): readonly [number, PlayType | null] {
-  const { findJumps, findMoves } = makeRules(board);
+  const { findJumps, findMoves, iteratePlays } = makeRules(board);
   let play: Collector | null = null;
+  let result = collect(findJumps(side)) ?? collect(findMoves(side));
+  if (result === null) return [-MATE, null];
 
-  const score = loop(side, 0, -MATE, +MATE);
-  return [score, play ? convertPlay(play) : null];
-
-  function any(source: MoveGenerator) {
-    // get the first move (if any) and abort
-    const { done } = source.next();
-    source.return();
-    return !done;
+  const [estimate, plays] = result;
+  const delta = 100;
+  let score = best(
+    side,
+    maxDepth,
+    estimate - delta,
+    estimate + delta,
+    iteratePlays(side, plays)
+  );
+  if (
+    score !== null &&
+    (score <= estimate - delta || score >= estimate + delta)
+  ) {
+    score = best(side, maxDepth, -MATE, +MATE, iteratePlays(side, plays));
   }
+  return [score ?? -MATE, play ? convertPlay(play) : null];
 
-  function loop(side: SideType, level: number, alpha: number, beta: number) {
+  function collect(source: MoveGenerator) {
     // @ts-expect-error side flip
     const opp: SideType = -side;
 
-    function next(source: MoveGenerator): number | null {
-      let value: number | null = null;
-      for (const coll of source) {
-        // negamax
-        const current = -loop(opp, level + 1, -beta, -alpha);
-        if (value === null || current > value) {
-          value = current;
-          // we're at the root: save the play so we can return it
-          if (level === 0) play = [...coll];
-        }
-        // pruning
-        if (value >= beta) {
-          // abort the generator and break out
-          source.return();
-          break;
-        }
-        if (value > alpha) alpha = value;
-      }
-      return value;
-    }
+    const top = source
+      .map<[number, Collector]>((coll) => [
+        -lazy(opp, 3, -MATE, +MATE),
+        [...coll],
+      ])
+      .toArray();
 
+    if (top.length === 0) return null;
+    const sorted = top.sort((a, b) => b[0] - a[0]);
+    return [sorted[0][0], sorted.map((play) => play[1])] as const;
+  }
+
+  function lazy(side: SideType, level: number, alpha: number, beta: number) {
     // always search for jumps
-    let val = next(findJumps(side));
+    let val = best(side, level, alpha, beta, findJumps(side));
     if (val === null) {
       const moves = findMoves(side);
       // search for moves until max depth, otherwise run the evaluator
-      if (level < maxDepth) val = next(moves);
+      if (level > 0) val = best(side, level, alpha, beta, moves);
       else if (any(moves)) val = side * player.evaluate(board);
     }
 
     // encode the ply with a win (shorter is better)
-    return val ?? -MATE + level;
+    return val ?? -MATE + maxDepth - level;
+  }
+
+  function best(
+    side: SideType,
+    level: number,
+    alpha: number,
+    beta: number,
+    source: MoveGenerator
+  ): number | null {
+    // @ts-expect-error side flip
+    const opp: SideType = -side;
+    let value: number | null = null;
+    for (const coll of source) {
+      // negamax
+      const current = -lazy(opp, level - 1, -beta, -alpha);
+      if (value === null || current > value) {
+        value = current;
+        if (level === maxDepth) play = [...coll];
+      }
+      // pruning
+      if (value >= beta) {
+        // abort the generator and break out
+        source.return();
+        break;
+      }
+      if (value > alpha) alpha = value;
+    }
+    return value;
   }
 }
