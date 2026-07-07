@@ -8,7 +8,7 @@ import {
   type TreeType,
 } from './types';
 
-const { RED } = SideType;
+const { RED, WHT } = SideType;
 const { EMPTY, RED_PIECE, RED_KING, WHT_PIECE, WHT_KING } = PieceType;
 
 const JUMP_TAG = 1;
@@ -92,11 +92,11 @@ function crownPiece(p: PieceType): PieceType {
   }
 }
 
-function isCrowned(p: PieceType, ny: number): boolean {
-  switch (p) {
-    case RED_PIECE:
+function isCrowned(side: SideType, ny: number): boolean {
+  switch (side) {
+    case RED:
       return ny === 7;
-    case WHT_PIECE:
+    case WHT:
       return ny === 0;
     default:
       return false;
