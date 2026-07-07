@@ -21,6 +21,7 @@ export interface Rules {
   board: BoardType;
   readonly findJumps: (side: SideType) => MoveGenerator;
   readonly findMoves: (side: SideType) => MoveGenerator;
+  readonly iteratePlays: (side: SideType, plays: Collector[]) => MoveGenerator;
   readonly doJump: (side: SideType, jump: JumpType) => void;
   readonly doMove: (side: SideType, move: MoveType) => void;
   readonly buildTree: (side: SideType) => TreeType;
@@ -241,6 +242,77 @@ function* findPlays(board: BoardType, side: SideType) {
   if (!found) yield* findMoves(board, side);
 }
 
+function* iterateLeg(
+  board: BoardType,
+  side: SideType,
+  play: Collector,
+  x: number,
+  y: number,
+  i: number
+): MoveGenerator {
+  if (i >= play.length) {
+    // yield the play and unwind back up
+    yield play;
+    return;
+  }
+  const p = board[y][x];
+  const nx = play[i];
+  const ny = play[i + 1];
+  const mx = (x + nx) / 2;
+  const my = (y + ny) / 2;
+  const mp = board[my][mx];
+  const crowned = !isKing(side, p) && isCrowned(side, ny);
+  const np = crowned ? crownPiece(p) : p;
+
+  board[y][x] = EMPTY;
+  board[my][mx] = EMPTY;
+  board[ny][nx] = np;
+
+  try {
+    yield* iterateLeg(board, side, play, nx, ny, i + 2);
+  } finally {
+    board[y][x] = p;
+    board[my][mx] = mp;
+    board[ny][nx] = EMPTY;
+  }
+}
+
+function* iteratePlays(
+  board: BoardType,
+  side: SideType,
+  plays: readonly Collector[]
+): MoveGenerator {
+  for (const play of plays) {
+    const [tag] = play;
+    switch (tag) {
+      case JUMP_TAG:
+        {
+          const [, x, y] = play;
+          yield* iterateLeg(board, side, play, x, y, 3);
+        }
+        break;
+      case MOVE_TAG:
+        {
+          let [, x, y, nx, ny] = play;
+          const p = board[y][x];
+          const crowned = !isKing(side, p) && isCrowned(side, ny);
+          const np = crowned ? crownPiece(p) : p;
+
+          board[y][x] = EMPTY;
+          board[ny][nx] = np;
+
+          try {
+            yield play;
+          } finally {
+            board[y][x] = p;
+            board[ny][nx] = EMPTY;
+          }
+        }
+        break;
+    }
+  }
+}
+
 function doJump(board: BoardType, side: SideType, jump: JumpType) {
   const [x, y] = jump.start;
   const [fx, fy] = jump.steps[jump.steps.length - 1];
@@ -319,6 +391,7 @@ export function makeRules(board: BoardType): Rules {
     board,
     findJumps: (side) => findJumps(board, side),
     findMoves: (side) => findMoves(board, side),
+    iteratePlays: (side, plays) => iteratePlays(board, side, plays),
     doJump: (side, jump) => doJump(board, side, jump),
     doMove: (side, move) => doMove(board, side, move),
     buildTree: (side) => buildTree(board, side),
