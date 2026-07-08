@@ -21,7 +21,7 @@ export interface Rules {
   board: BoardType;
   readonly findJumps: (side: SideType) => MoveGenerator;
   readonly findMoves: (side: SideType) => MoveGenerator;
-  readonly iteratePlays: (side: SideType, plays: Collector[]) => MoveGenerator;
+  readonly iteratePlays: (plays: Collector[]) => MoveGenerator;
   readonly doJump: (jump: JumpType) => void;
   readonly doMove: (move: MoveType) => void;
   readonly buildTree: (side: SideType) => TreeType;
@@ -240,7 +240,6 @@ function* findPlays(board: BoardType, side: SideType) {
 
 function* iterateLeg(
   board: BoardType,
-  side: SideType,
   play: Collector,
   x: number,
   y: number,
@@ -251,6 +250,7 @@ function* iterateLeg(
     yield play;
     return;
   }
+
   const p = board[y][x];
   const nx = play[i];
   const ny = play[i + 1];
@@ -264,7 +264,7 @@ function* iterateLeg(
   board[ny][nx] = np;
 
   try {
-    yield* iterateLeg(board, side, play, nx, ny, i + 2);
+    yield* iterateLeg(board, play, nx, ny, i + 2);
   } finally {
     board[y][x] = p;
     board[my][mx] = mp;
@@ -274,7 +274,6 @@ function* iterateLeg(
 
 function* iteratePlays(
   board: BoardType,
-  side: SideType,
   plays: readonly Collector[]
 ): MoveGenerator {
   for (const play of plays) {
@@ -283,15 +282,14 @@ function* iteratePlays(
       case JUMP_TAG:
         {
           const [, x, y] = play;
-          yield* iterateLeg(board, side, play, x, y, 3);
+          yield* iterateLeg(board, play, x, y, 3);
         }
         break;
       case MOVE_TAG:
         {
           let [, x, y, nx, ny] = play;
           const p = board[y][x];
-          const crowned = isCrowned(p, ny);
-          const np = crowned ? crownPiece(p) : p;
+          const np = isCrowned(p, ny) ? crownPiece(p) : p;
 
           board[y][x] = EMPTY;
           board[ny][nx] = np;
@@ -382,7 +380,7 @@ export function makeRules(board: BoardType): Rules {
     board,
     findJumps: (side) => findJumps(board, side),
     findMoves: (side) => findMoves(board, side),
-    iteratePlays: (side, plays) => iteratePlays(board, side, plays),
+    iteratePlays: (plays) => iteratePlays(board, plays),
     doJump: (jump) => doJump(board, jump),
     doMove: (move) => doMove(board, move),
     buildTree: (side) => buildTree(board, side),

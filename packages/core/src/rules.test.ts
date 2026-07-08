@@ -128,7 +128,7 @@ describe('Rules', () => {
       const { findMoves, iteratePlays } = makeRules(newBoard());
       const plays = snapshot(findMoves(RED));
 
-      const iterated = [...iteratePlays(RED, plays)].map(convertPlay);
+      const iterated = [...iteratePlays(plays)].map(convertPlay);
       expect(iterated).toEqual(plays.map(convertPlay));
     });
 
@@ -139,7 +139,7 @@ describe('Rules', () => {
       // sanity: we're actually exercising a multi-leg jump (the 3-leg one)
       expect(Math.max(...plays.map((p) => p.length))).toBeGreaterThan(5);
 
-      const iterated = [...iteratePlays(RED, plays)].map(convertPlay);
+      const iterated = [...iteratePlays(plays)].map(convertPlay);
       expect(iterated).toEqual(plays.map(convertPlay));
     });
 
@@ -150,7 +150,8 @@ describe('Rules', () => {
       const plays = snapshot(findJumps(RED));
 
       // drain the generator
-      for (const _ of iteratePlays(RED, plays)) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      for (const _ of iteratePlays(plays)) {
         /* execute each play in turn */
       }
 
@@ -163,7 +164,7 @@ describe('Rules', () => {
       const plays = snapshot(findJumps(RED));
 
       let count = 0;
-      for (const coll of iteratePlays(RED, plays)) {
+      for (const coll of iteratePlays(plays)) {
         const play = convertPlay(coll);
 
         // oracle: apply the same play to a fresh board via doJump/doMove
@@ -196,7 +197,7 @@ describe('Rules', () => {
       const { findMoves, iteratePlays } = makeRules(board);
       const plays = snapshot(findMoves(RED));
 
-      for (const coll of iteratePlays(RED, plays)) {
+      for (const coll of iteratePlays(plays)) {
         const play = convertPlay(coll);
         expect(play.kind).toBe('move');
         if (play.kind !== 'move') continue;

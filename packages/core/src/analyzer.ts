@@ -52,13 +52,13 @@ export function analyze(
     maxDepth,
     estimate - delta,
     estimate + delta,
-    iteratePlays(side, plays)
+    iteratePlays(plays)
   );
   if (
     score !== null &&
     (score <= estimate - delta || score >= estimate + delta)
   ) {
-    score = best(side, maxDepth, -MATE, +MATE, iteratePlays(side, plays));
+    score = best(side, maxDepth, -MATE, +MATE, iteratePlays(plays));
   }
   return [score ?? -MATE, play ? convertPlay(play) : null];
 
