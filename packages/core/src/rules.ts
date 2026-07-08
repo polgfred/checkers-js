@@ -11,17 +11,13 @@ import {
 const { RED } = SideType;
 const { EMPTY, RED_PIECE, RED_KING, WHT_PIECE, WHT_KING } = PieceType;
 
-const JUMP_TAG = 1;
-const MOVE_TAG = 2;
-
-export type Collector = number[];
-export type MoveGenerator = Generator<Collector, void, void>;
+export type MoveGenerator = Generator<PlayType, void, void>;
 
 export interface Rules {
   board: BoardType;
   readonly findJumps: (side: SideType) => MoveGenerator;
   readonly findMoves: (side: SideType) => MoveGenerator;
-  readonly iteratePlays: (plays: Collector[]) => MoveGenerator;
+  readonly iteratePlays: (plays: PlayType[]) => MoveGenerator;
   readonly doJump: (jump: JumpType) => void;
   readonly doMove: (move: MoveType) => void;
   readonly buildTree: (side: SideType) => TreeType;
@@ -111,7 +107,11 @@ function* findJumps(board: BoardType, side: SideType): MoveGenerator {
       if (isFriendly(side, p)) {
         // checking for jumps is inherently recursive - as long as you find them,
         // you have to keep looking, and only termimal positions are valid
-        yield* nextJumps(board, side, [JUMP_TAG, x, y]);
+        yield* nextJumps(board, side, x, y, {
+          kind: 'jump',
+          start: [x, y],
+          steps: [],
+        });
       }
     }
   }
@@ -120,10 +120,10 @@ function* findJumps(board: BoardType, side: SideType): MoveGenerator {
 function* nextJumps(
   board: BoardType,
   side: SideType,
-  buf: Collector
+  x: number,
+  y: number,
+  jump: JumpType
 ): MoveGenerator {
-  const x = buf[buf.length - 2];
-  const y = buf[buf.length - 1];
   const p = board[y][x];
 
   // loop over directions (dx, dy) from the current square
@@ -142,7 +142,11 @@ function* nextJumps(
       // see if the middle piece is an opponent and the landing is open
       if (n === EMPTY && isEnemy(side, m)) {
         const crowned = isCrowned(p, ny);
-        const next: Collector = [...buf, nx, ny];
+        const next: JumpType = {
+          kind: 'jump',
+          start: jump.start,
+          steps: [...jump.steps, [nx, ny, mx, my]],
+        };
         let found = false;
 
         // keep track of the coordinates, and move the piece
@@ -154,7 +158,7 @@ function* nextJumps(
           // if we're crowned, don't look any further
           if (!crowned) {
             // see if there are any further jumps from here
-            for (const j of nextJumps(board, side, next)) {
+            for (const j of nextJumps(board, side, nx, ny, next)) {
               found = true;
               yield j;
             }
@@ -199,7 +203,11 @@ function* findMoves(board: BoardType, side: SideType): MoveGenerator {
                 // move the piece
                 board[y][x] = EMPTY;
                 board[ny][nx] = crowned ? crownPiece(p) : p;
-                yield [MOVE_TAG, x, y, nx, ny];
+                yield {
+                  kind: 'move',
+                  start: [x, y],
+                  end: [nx, ny],
+                };
               } finally {
                 // put things back where we found them
                 board[y][x] = p;
@@ -223,24 +231,30 @@ function* findPlays(board: BoardType, side: SideType) {
   if (!found) yield* findMoves(board, side);
 }
 
-function* iterateLeg(
+function* iteratePlays(
   board: BoardType,
-  play: Collector,
-  x: number,
-  y: number,
-  i: number
+  plays: readonly PlayType[]
 ): MoveGenerator {
-  if (i >= play.length) {
-    // yield the play and unwind back up
-    yield play;
-    return;
+  for (const play of plays) {
+    switch (play.kind) {
+      case 'jump':
+        yield* iterateJump(board, play, 0);
+        break;
+      case 'move':
+        yield* iterateMove(board, play);
+        break;
+    }
   }
+}
 
+function* iterateJump(
+  board: BoardType,
+  jump: JumpType,
+  step: number
+): MoveGenerator {
+  const [x, y] = step === 0 ? jump.start : jump.steps[step - 1];
+  const [nx, ny, mx, my] = jump.steps[step];
   const p = board[y][x];
-  const nx = play[i];
-  const ny = play[i + 1];
-  const mx = (x + nx) / 2;
-  const my = (y + ny) / 2;
   const mp = board[my][mx];
   const np = isCrowned(p, ny) ? crownPiece(p) : p;
 
@@ -249,7 +263,8 @@ function* iterateLeg(
   board[ny][nx] = np;
 
   try {
-    yield* iterateLeg(board, play, nx, ny, i + 2);
+    if (step === jump.steps.length - 1) yield jump;
+    else yield* iterateJump(board, jump, step + 1);
   } finally {
     board[y][x] = p;
     board[my][mx] = mp;
@@ -257,37 +272,20 @@ function* iterateLeg(
   }
 }
 
-function* iteratePlays(
-  board: BoardType,
-  plays: readonly Collector[]
-): MoveGenerator {
-  for (const play of plays) {
-    const [tag] = play;
-    switch (tag) {
-      case JUMP_TAG:
-        {
-          const [, x, y] = play;
-          yield* iterateLeg(board, play, x, y, 3);
-        }
-        break;
-      case MOVE_TAG:
-        {
-          let [, x, y, nx, ny] = play;
-          const p = board[y][x];
-          const np = isCrowned(p, ny) ? crownPiece(p) : p;
+function* iterateMove(board: BoardType, move: MoveType): MoveGenerator {
+  const [x, y] = move.start;
+  const [nx, ny] = move.end;
+  const p = board[y][x];
+  const np = isCrowned(p, ny) ? crownPiece(p) : p;
 
-          board[y][x] = EMPTY;
-          board[ny][nx] = np;
+  board[y][x] = EMPTY;
+  board[ny][nx] = np;
 
-          try {
-            yield play;
-          } finally {
-            board[y][x] = p;
-            board[ny][nx] = EMPTY;
-          }
-        }
-        break;
-    }
+  try {
+    yield move;
+  } finally {
+    board[y][x] = p;
+    board[ny][nx] = EMPTY;
   }
 }
 
@@ -313,50 +311,22 @@ function doMove(board: BoardType, move: MoveType) {
 function buildTree(board: BoardType, side: SideType) {
   const tree = {} as TreeType;
 
-  const addPath = (coords: number[][]) => {
+  for (const play of findPlays(board, side)) {
     let node = tree;
-    for (const [x, y] of coords) {
-      const key = `${x},${y}`;
+    // starting coords
+    const [x, y] = play.start;
+    const key = `${x},${y}`;
+    node[key] ??= {};
+    node = node[key];
+    // leg/ending coords
+    for (const [nx, ny] of play.kind === 'jump' ? play.steps : [play.end]) {
+      const key = `${nx},${ny}`;
       node[key] ??= {};
       node = node[key];
     }
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  for (const [_tag, ...coords] of findPlays(board, side)) {
-    addPath(
-      Array.from({ length: coords.length / 2 }).map((_, i) =>
-        coords.slice(2 * i, 2 * i + 2)
-      )
-    );
   }
 
   return tree;
-}
-
-export function convertPlay(buf: Readonly<Collector>): PlayType {
-  let [tag, ...coords] = buf;
-  const [x, y, nx, ny] = coords.slice(0, 4);
-  switch (tag) {
-    case JUMP_TAG:
-      return {
-        kind: 'jump',
-        start: [x, y],
-        steps: Array.from({ length: coords.length / 2 - 1 }).map((_, i) => {
-          const [x, y, nx, ny] = coords.slice(2 * i, 2 * i + 4);
-          const [mx, my] = [(x + nx) / 2, (y + ny) / 2];
-          return [nx, ny, mx, my] as const;
-        }),
-      };
-    case MOVE_TAG:
-      return {
-        kind: 'move',
-        start: [x, y],
-        end: [nx, ny],
-      };
-    default:
-      throw new Error(`malformed play buffer: ${buf}`);
-  }
 }
 
 // `board` will be mutated by the rules engine, so make a copy first

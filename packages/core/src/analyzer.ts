@@ -1,10 +1,5 @@
 import { makeDefaultEvaluator } from './default-evaluator';
-import {
-  convertPlay,
-  makeRules,
-  type Collector,
-  type MoveGenerator,
-} from './rules';
+import { makeRules, type MoveGenerator } from './rules';
 import type { BoardType, PlayType, SideType } from './types';
 
 // how many levels deep to search the tree
@@ -41,7 +36,7 @@ export function analyze(
   player = makeDefaultEvaluator()
 ): readonly [number, PlayType | null] {
   const { findJumps, findMoves, iteratePlays } = makeRules(board);
-  let play: Collector | null = null;
+  let play: PlayType | null = null;
   let result = collect(findJumps(side)) ?? collect(findMoves(side));
   if (result === null) return [-MATE, null];
 
@@ -60,14 +55,14 @@ export function analyze(
   ) {
     score = best(side, maxDepth, -MATE, +MATE, iteratePlays(plays));
   }
-  return [score ?? -MATE, play ? convertPlay(play) : null];
+  return [score ?? -MATE, play];
 
   function collect(source: MoveGenerator) {
     // @ts-expect-error side flip
     const opp: SideType = -side;
 
     // collect and sort the top level moves
-    const top: [number, Collector][] = [];
+    const top: [number, PlayType][] = [];
     for (const coll of source) {
       const current = -lazy(opp, 3, -MATE, +MATE);
       top.push([current, coll]);

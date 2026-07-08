@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { convertPlay, makeRules } from './rules';
+import { makeRules } from './rules';
 import { PieceType, SideType, type BoardType } from './types';
 import { copyBoard, dumpBoard, newBoard, reverseBoard } from './utils';
 
@@ -16,7 +16,7 @@ describe('Rules', () => {
 
     it('should find the moves from this position', () => {
       const { findMoves } = makeRules(newBoard());
-      const moves = [...findMoves(RED).map(convertPlay)];
+      const moves = [...findMoves(RED)];
 
       expect(moves.length).toBe(7);
       // prettier-ignore
@@ -33,7 +33,7 @@ describe('Rules', () => {
 
     it('should find the jumps from this position', () => {
       const { findJumps } = makeRules(newBoard());
-      const jumps = [...findJumps(RED).map(convertPlay)];
+      const jumps = [...findJumps(RED)];
 
       expect(jumps.length).toBe(0);
     });
@@ -59,7 +59,7 @@ describe('Rules', () => {
 
     it('should find the jumps from this position', () => {
       const { findJumps } = makeRules(copyBoard(initialData));
-      const jumps = [...findJumps(RED).map(convertPlay)];
+      const jumps = [...findJumps(RED)];
 
       expect(jumps.length).toBe(3);
       expect(jumps).toEqual([
@@ -120,8 +120,8 @@ describe('Rules', () => {
       const { findMoves, iteratePlays } = makeRules(newBoard());
       const plays = [...findMoves(RED)];
 
-      const iterated = [...iteratePlays(plays)].map(convertPlay);
-      expect(iterated).toEqual(plays.map(convertPlay));
+      const iterated = [...iteratePlays(plays)];
+      expect(iterated).toEqual(plays);
     });
 
     it('should replay the same jumps that findJumps produced, including multi-leg', () => {
@@ -129,10 +129,12 @@ describe('Rules', () => {
       const plays = [...findJumps(RED)];
 
       // sanity: we're actually exercising a multi-leg jump (the 3-leg one)
-      expect(Math.max(...plays.map((p) => p.length))).toBeGreaterThan(5);
+      expect(
+        Math.max(...plays.map((p) => (p.kind === 'jump' ? p.steps.length : 1)))
+      ).toBe(3);
 
-      const iterated = [...iteratePlays(plays)].map(convertPlay);
-      expect(iterated).toEqual(plays.map(convertPlay));
+      const iterated = [...iteratePlays(plays)];
+      expect(iterated).toEqual(plays);
     });
 
     it('should restore the board after iterating all the plays', () => {
@@ -156,9 +158,7 @@ describe('Rules', () => {
       const plays = [...findJumps(RED)];
 
       let count = 0;
-      for (const coll of iteratePlays(plays)) {
-        const play = convertPlay(coll);
-
+      for (const play of iteratePlays(plays)) {
         // oracle: apply the same play to a fresh board via doJump/doMove
         const oracle = makeRules(copyBoard(jumpData));
         if (play.kind === 'jump') oracle.doJump(play);
@@ -189,8 +189,7 @@ describe('Rules', () => {
       const { findMoves, iteratePlays } = makeRules(board);
       const plays = [...findMoves(RED)];
 
-      for (const coll of iteratePlays(plays)) {
-        const play = convertPlay(coll);
+      for (const play of iteratePlays(plays)) {
         expect(play.kind).toBe('move');
         if (play.kind !== 'move') continue;
         const [nx, ny] = play.end;
