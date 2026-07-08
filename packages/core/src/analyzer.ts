@@ -66,12 +66,12 @@ export function analyze(
     // @ts-expect-error side flip
     const opp: SideType = -side;
 
-    const top = source
-      .map<[number, Collector]>((coll) => [
-        -lazy(opp, 3, -MATE, +MATE),
-        [...coll],
-      ])
-      .toArray();
+    // collect and sort the top level moves
+    const top: [number, Collector][] = [];
+    for (const coll of source) {
+      const current = -lazy(opp, 3, -MATE, +MATE);
+      top.push([current, [...coll]]);
+    }
 
     if (top.length === 0) return null;
     const sorted = top.sort((a, b) => b[0] - a[0]);
