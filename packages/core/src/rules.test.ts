@@ -168,8 +168,8 @@ describe('Rules', () => {
 
         // oracle: apply the same play to a fresh board via doJump/doMove
         const oracle = makeRules(copyBoard(jumpData));
-        if (play.kind === 'jump') oracle.doJump(RED, play);
-        else oracle.doMove(RED, play);
+        if (play.kind === 'jump') oracle.doJump(play);
+        else oracle.doMove(play);
 
         expect(dumpBoard(board)).toBe(dumpBoard(oracle.board));
         count++;

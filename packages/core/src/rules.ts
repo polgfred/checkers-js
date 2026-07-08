@@ -8,7 +8,7 @@ import {
   type TreeType,
 } from './types';
 
-const { RED, WHT } = SideType;
+const { RED } = SideType;
 const { EMPTY, RED_PIECE, RED_KING, WHT_PIECE, WHT_KING } = PieceType;
 
 const JUMP_TAG = 1;
@@ -22,8 +22,8 @@ export interface Rules {
   readonly findJumps: (side: SideType) => MoveGenerator;
   readonly findMoves: (side: SideType) => MoveGenerator;
   readonly iteratePlays: (side: SideType, plays: Collector[]) => MoveGenerator;
-  readonly doJump: (side: SideType, jump: JumpType) => void;
-  readonly doMove: (side: SideType, move: MoveType) => void;
+  readonly doJump: (jump: JumpType) => void;
+  readonly doMove: (move: MoveType) => void;
   readonly buildTree: (side: SideType) => TreeType;
 }
 
@@ -69,10 +69,6 @@ function inBounds(n: number): boolean {
   return (n & ~7) === 0;
 }
 
-function isKing(side: SideType, p: PieceType): boolean {
-  return p === 2 * side;
-}
-
 function isFriendly(side: SideType, p: PieceType): boolean {
   return p === side || p === 2 * side;
 }
@@ -92,11 +88,11 @@ function crownPiece(p: PieceType): PieceType {
   }
 }
 
-function isCrowned(side: SideType, ny: number): boolean {
-  switch (side) {
-    case RED:
+function isCrowned(piece: PieceType, ny: number): boolean {
+  switch (piece) {
+    case RED_PIECE:
       return ny === 7;
-    case WHT:
+    case WHT_PIECE:
       return ny === 0;
     default:
       return false;
@@ -149,7 +145,7 @@ function* nextJumps(
 
       // see if the middle piece is an opponent and the landing is open
       if (n === EMPTY && isEnemy(side, m)) {
-        const crowned = !isKing(side, p) && isCrowned(side, ny);
+        const crowned = isCrowned(p, ny);
         let found = false;
 
         // keep track of the coordinates, and move the piece
@@ -205,7 +201,7 @@ function* findMoves(board: BoardType, side: SideType): MoveGenerator {
           if (inBounds(nx | ny)) {
             // see if the landing is open
             if (board[ny][nx] === EMPTY) {
-              const crowned = !isKing(side, p) && isCrowned(side, ny);
+              const crowned = isCrowned(p, ny);
 
               try {
                 // move the piece
@@ -261,8 +257,7 @@ function* iterateLeg(
   const mx = (x + nx) / 2;
   const my = (y + ny) / 2;
   const mp = board[my][mx];
-  const crowned = !isKing(side, p) && isCrowned(side, ny);
-  const np = crowned ? crownPiece(p) : p;
+  const np = isCrowned(p, ny) ? crownPiece(p) : p;
 
   board[y][x] = EMPTY;
   board[my][mx] = EMPTY;
@@ -295,7 +290,7 @@ function* iteratePlays(
         {
           let [, x, y, nx, ny] = play;
           const p = board[y][x];
-          const crowned = !isKing(side, p) && isCrowned(side, ny);
+          const crowned = isCrowned(p, ny);
           const np = crowned ? crownPiece(p) : p;
 
           board[y][x] = EMPTY;
@@ -313,27 +308,23 @@ function* iteratePlays(
   }
 }
 
-function doJump(board: BoardType, side: SideType, jump: JumpType) {
+function doJump(board: BoardType, jump: JumpType) {
   const [x, y] = jump.start;
   const [fx, fy] = jump.steps[jump.steps.length - 1];
   const p = board[y][x];
-  const crowned = isCrowned(side, fy);
 
   board[y][x] = EMPTY;
-  for (const [, , mx, my] of jump.steps) {
-    board[my][mx] = EMPTY;
-  }
-  board[fy][fx] = crowned ? crownPiece(p) : p;
+  for (const [, , mx, my] of jump.steps) board[my][mx] = EMPTY;
+  board[fy][fx] = isCrowned(p, fy) ? crownPiece(p) : p;
 }
 
-function doMove(board: BoardType, side: SideType, move: MoveType) {
+function doMove(board: BoardType, move: MoveType) {
   const [x, y] = move.start;
   const [nx, ny] = move.end;
   const p = board[y][x];
-  const crowned = isCrowned(side, ny);
 
   board[y][x] = EMPTY;
-  board[ny][nx] = crowned ? crownPiece(p) : p;
+  board[ny][nx] = isCrowned(p, ny) ? crownPiece(p) : p;
 }
 
 function buildTree(board: BoardType, side: SideType) {
@@ -392,8 +383,8 @@ export function makeRules(board: BoardType): Rules {
     findJumps: (side) => findJumps(board, side),
     findMoves: (side) => findMoves(board, side),
     iteratePlays: (side, plays) => iteratePlays(board, side, plays),
-    doJump: (side, jump) => doJump(board, side, jump),
-    doMove: (side, move) => doMove(board, side, move),
+    doJump: (jump) => doJump(board, jump),
+    doMove: (move) => doMove(board, move),
     buildTree: (side) => buildTree(board, side),
   };
 }
