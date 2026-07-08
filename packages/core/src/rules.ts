@@ -100,7 +100,6 @@ function isCrowned(piece: PieceType, ny: number): boolean {
 }
 
 function* findJumps(board: BoardType, side: SideType): MoveGenerator {
-  const buf: Collector = [JUMP_TAG];
   const bottom = side === RED ? 0 : 7;
 
   // loop through playable squares
@@ -112,10 +111,7 @@ function* findJumps(board: BoardType, side: SideType): MoveGenerator {
       if (isFriendly(side, p)) {
         // checking for jumps is inherently recursive - as long as you find them,
         // you have to keep looking, and only termimal positions are valid
-        buf.push(x, y);
-        yield* nextJumps(board, side, buf);
-        buf.pop();
-        buf.pop();
+        yield* nextJumps(board, side, [JUMP_TAG, x, y]);
       }
     }
   }
@@ -146,6 +142,7 @@ function* nextJumps(
       // see if the middle piece is an opponent and the landing is open
       if (n === EMPTY && isEnemy(side, m)) {
         const crowned = isCrowned(p, ny);
+        const next: Collector = [...buf, nx, ny];
         let found = false;
 
         // keep track of the coordinates, and move the piece
@@ -153,21 +150,18 @@ function* nextJumps(
           board[y][x] = EMPTY;
           board[my][mx] = EMPTY;
           board[ny][nx] = crowned ? crownPiece(p) : p;
-          buf.push(nx, ny);
 
           // if we're crowned, don't look any further
           if (!crowned) {
             // see if there are any further jumps from here
-            for (const j of nextJumps(board, side, buf)) {
+            for (const j of nextJumps(board, side, next)) {
               found = true;
               yield j;
             }
           }
 
           // we're at a terminal position
-          if (!found) yield buf;
-          buf.pop();
-          buf.pop();
+          if (!found) yield next;
         } finally {
           // put things back where we found them
           board[y][x] = p;
@@ -181,13 +175,11 @@ function* nextJumps(
 
 function* findMoves(board: BoardType, side: SideType): MoveGenerator {
   const bottom = side === RED ? 0 : 7;
-  const buf: Collector = [MOVE_TAG];
 
   // loop through playable squares
   for (let y = bottom; inBounds(y); y += side) {
     for (let x = bottom; inBounds(x); x += side) {
       const p = board[y][x];
-      buf.push(x, y);
 
       // see if it's our piece
       if (isFriendly(side, p)) {
@@ -207,10 +199,7 @@ function* findMoves(board: BoardType, side: SideType): MoveGenerator {
                 // move the piece
                 board[y][x] = EMPTY;
                 board[ny][nx] = crowned ? crownPiece(p) : p;
-                buf.push(nx, ny);
-                yield buf;
-                buf.pop();
-                buf.pop();
+                yield [MOVE_TAG, x, y, nx, ny];
               } finally {
                 // put things back where we found them
                 board[y][x] = p;
@@ -220,10 +209,6 @@ function* findMoves(board: BoardType, side: SideType): MoveGenerator {
           }
         }
       }
-
-      // pop off the starting coords
-      buf.pop();
-      buf.pop();
     }
   }
 }

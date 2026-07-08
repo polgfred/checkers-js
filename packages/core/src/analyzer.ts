@@ -70,7 +70,7 @@ export function analyze(
     const top: [number, Collector][] = [];
     for (const coll of source) {
       const current = -lazy(opp, 3, -MATE, +MATE);
-      top.push([current, [...coll]]);
+      top.push([current, coll]);
     }
 
     if (top.length === 0) return null;
@@ -107,7 +107,7 @@ export function analyze(
       const current = -lazy(opp, level - 1, -beta, -alpha);
       if (value === null || current > value) {
         value = current;
-        if (level === maxDepth) play = [...coll];
+        if (level === maxDepth) play = coll;
       }
       // pruning
       if (value >= beta) {

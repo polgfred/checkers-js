@@ -1,19 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { convertPlay, makeRules, type Collector } from './rules';
+import { convertPlay, makeRules } from './rules';
 import { PieceType, SideType, type BoardType } from './types';
 import { copyBoard, dumpBoard, newBoard, reverseBoard } from './utils';
 
 const { RED } = SideType;
 const { EMPTY, RED_PIECE, RED_KING } = PieceType;
-
-// findJumps/findMoves reuse a single scratch buffer, so snapshot each yielded
-// play into its own array to get a list of pre-calculated plays.
-function snapshot(source: Iterable<Collector>): Collector[] {
-  const plays: Collector[] = [];
-  for (const play of source) plays.push([...play]);
-  return plays;
-}
 
 describe('Rules', () => {
   describe('moves', () => {
@@ -126,7 +118,7 @@ describe('Rules', () => {
 
     it('should replay the same moves that findMoves produced', () => {
       const { findMoves, iteratePlays } = makeRules(newBoard());
-      const plays = snapshot(findMoves(RED));
+      const plays = [...findMoves(RED)];
 
       const iterated = [...iteratePlays(plays)].map(convertPlay);
       expect(iterated).toEqual(plays.map(convertPlay));
@@ -134,7 +126,7 @@ describe('Rules', () => {
 
     it('should replay the same jumps that findJumps produced, including multi-leg', () => {
       const { findJumps, iteratePlays } = makeRules(copyBoard(jumpData));
-      const plays = snapshot(findJumps(RED));
+      const plays = [...findJumps(RED)];
 
       // sanity: we're actually exercising a multi-leg jump (the 3-leg one)
       expect(Math.max(...plays.map((p) => p.length))).toBeGreaterThan(5);
@@ -147,7 +139,7 @@ describe('Rules', () => {
       const board = copyBoard(jumpData);
       const before = dumpBoard(board);
       const { findJumps, iteratePlays } = makeRules(board);
-      const plays = snapshot(findJumps(RED));
+      const plays = [...findJumps(RED)];
 
       // drain the generator
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -161,7 +153,7 @@ describe('Rules', () => {
     it('should present the executed position at yield time (matches doJump/doMove)', () => {
       const board = copyBoard(jumpData);
       const { findJumps, iteratePlays } = makeRules(board);
-      const plays = snapshot(findJumps(RED));
+      const plays = [...findJumps(RED)];
 
       let count = 0;
       for (const coll of iteratePlays(plays)) {
@@ -195,7 +187,7 @@ describe('Rules', () => {
 
       const board = copyBoard(crownData);
       const { findMoves, iteratePlays } = makeRules(board);
-      const plays = snapshot(findMoves(RED));
+      const plays = [...findMoves(RED)];
 
       for (const coll of iteratePlays(plays)) {
         const play = convertPlay(coll);
