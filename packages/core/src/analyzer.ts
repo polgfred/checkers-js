@@ -29,49 +29,55 @@ function any(source: MoveGenerator) {
   return !done;
 }
 
+const defaultEvaluator = makeDefaultEvaluator();
+
 export function analyze(
   board: BoardType,
   side: SideType,
   maxDepth = LEVEL,
-  player = makeDefaultEvaluator()
+  evaluate = defaultEvaluator.evaluate
 ): readonly [number, PlayType | null] {
   const { findJumps, findMoves, iteratePlays } = makeRules(board);
-  let play: PlayType | null = null;
-  let result = collect(findJumps(side)) ?? collect(findMoves(side));
-  if (result === null) return [-MATE, null];
 
-  const [estimate, plays] = result;
+  // top-level ID: could theoretically generalize this
+  let plays = findJumps(side).toArray();
+  if (!plays.length) plays = findMoves(side).toArray();
+  if (!plays.length) return [-MATE, null];
+
+  // aspiration half-width around the previous iteration's score
   const delta = 100;
-  let score = best(
-    side,
-    maxDepth,
-    estimate - delta,
-    estimate + delta,
-    iteratePlays(plays)
-  );
-  if (
-    score !== null &&
-    (score <= estimate - delta || score >= estimate + delta)
-  ) {
-    score = best(side, maxDepth, -MATE, +MATE, iteratePlays(plays));
-  }
-  return [score ?? -MATE, play];
 
-  function collect(source: MoveGenerator) {
-    // @ts-expect-error side flip
-    const opp: SideType = -side;
+  let score: number | null = null;
+  let play: PlayType | null = null;
+  let rootLevel = 0;
+  for (rootLevel = 1; rootLevel <= maxDepth; rootLevel++) {
+    // window centered on the last score; full width on the first pass
+    let alpha = score === null ? -MATE : Math.max(score - delta, -MATE);
+    let beta = score === null ? +MATE : Math.min(score + delta, +MATE);
 
-    // collect and sort the top level moves
-    const top: [number, PlayType][] = [];
-    for (const coll of source) {
-      const current = -lazy(opp, 3, -MATE, +MATE);
-      top.push([current, coll]);
+    // a narrow window can fail, returning only a bound; re-search the failed
+    // side out to the mate bound until the value lands inside the window
+    let s: number | null;
+    while (true) {
+      s = best(side, rootLevel, alpha, beta, iteratePlays(plays));
+      if (s === null) break;
+      if (s <= alpha) alpha = -MATE;
+      else if (s >= beta) beta = +MATE;
+      else break;
     }
+    score = s;
 
-    if (top.length === 0) return null;
-    const sorted = top.sort((a, b) => b[0] - a[0]);
-    return [sorted[0][0], sorted.map((play) => play[1])] as const;
+    // the window held, so `play` is the real best move — float it to the front
+    if (play) {
+      const found = plays.indexOf(play);
+      if (found !== -1) {
+        plays.splice(found, 1);
+        plays.unshift(play);
+      }
+    }
   }
+
+  return [score ?? -MATE, play];
 
   function lazy(side: SideType, level: number, alpha: number, beta: number) {
     // always search for jumps
@@ -80,11 +86,11 @@ export function analyze(
       const moves = findMoves(side);
       // search for moves until max depth, otherwise run the evaluator
       if (level > 0) val = best(side, level, alpha, beta, moves);
-      else if (any(moves)) val = side * player.evaluate(board);
+      else if (any(moves)) val = side * evaluate(board);
     }
 
     // encode the ply with a win (shorter is better)
-    return val ?? -MATE + maxDepth - level;
+    return val ?? -MATE + rootLevel - level;
   }
 
   function best(
@@ -102,7 +108,7 @@ export function analyze(
       const current = -lazy(opp, level - 1, -beta, -alpha);
       if (value === null || current > value) {
         value = current;
-        if (level === maxDepth) play = coll;
+        if (level === rootLevel) play = coll;
       }
       // pruning
       if (value >= beta) {

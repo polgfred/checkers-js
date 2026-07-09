@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "vitest run",
+    "bench": "npx tsx src/analyzer.bench.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint ./src"
   }
