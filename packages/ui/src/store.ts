@@ -53,9 +53,7 @@ function createGameStore() {
 
   function subscribe(listener: () => void) {
     events.addEventListener('change', listener);
-    return () => {
-      events.removeEventListener('change', listener);
-    };
+    return () => events.removeEventListener('change', listener);
   }
 
   function publish() {
@@ -64,14 +62,10 @@ function createGameStore() {
   }
 
   function handlePlay(play: PlayType) {
-    if (play.kind === 'jump') {
-      rules.doJump(side, play);
-    } else {
-      rules.doMove(side, play);
-    }
-    if (side === RED) {
-      hist.push([play, null]);
-    } else if (hist.length > 0) {
+    if (play.kind === 'jump') rules.doJump(play);
+    else rules.doMove(play);
+    if (side === RED) hist.push([play, null]);
+    else if (hist.length > 0) {
       const last = hist[hist.length - 1];
       last[1] = play;
     }
