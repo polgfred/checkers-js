@@ -14,7 +14,7 @@ type AnalyzeRequest = {
 
 declare const self: Worker;
 
-const evaluator = makeDefaultEvaluator();
+const { evaluate } = makeDefaultEvaluator();
 
 self.addEventListener(
   'message',
@@ -22,7 +22,7 @@ self.addEventListener(
     const { board, side, maxDepth } = ev.data;
     // re-pack arrays after structured cloning
     const board2 = copyBoard(board);
-    const [, move] = analyze(board2, side, maxDepth, evaluator);
+    const [, move] = analyze(board2, side, maxDepth, evaluate);
     self.postMessage({ move: move ?? null });
   },
   false

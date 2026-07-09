@@ -86,7 +86,7 @@ describe('Performance', () => {
 
     it('should return a move and score from this position', () => {
       const start = hrtime.bigint();
-      const [, move] = analyze(copyBoard(initialData), WHT);
+      const [, move] = analyze(copyBoard(initialData), WHT, 12);
       const end = hrtime.bigint();
       console.log('analyze', end - start);
       expect(move).toEqual({
