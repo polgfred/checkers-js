@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { makeRules } from './rules';
-import { PieceType, SideType, type BoardType } from './types';
+import { PieceType, SideType } from './types';
 import { copyBoard, dumpBoard, newBoard, reverseBoard } from './utils';
 
 const { RED } = SideType;
@@ -172,18 +172,18 @@ describe('Rules', () => {
     });
 
     it('should crown a piece that reaches the back rank at yield time, then restore it', () => {
-      // board[y][x]: a lone RED piece one row below its back rank (y=7)
+      // a lone RED piece one row below its back rank (y=7)
       // prettier-ignore
-      const crownData = [
-        [ 0, 0, 0, 0, 0, 0, 0, 0 ], // y=0
+      const crownData = reverseBoard([
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 1, 0, 0, 0, 0, 0 ],
         [ 0, 0, 0, 0, 0, 0, 0, 0 ],
         [ 0, 0, 0, 0, 0, 0, 0, 0 ],
         [ 0, 0, 0, 0, 0, 0, 0, 0 ],
         [ 0, 0, 0, 0, 0, 0, 0, 0 ],
         [ 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 1, 0, 0, 0, 0, 0 ], // y=6, x=2: RED_PIECE
-        [ 0, 0, 0, 0, 0, 0, 0, 0 ], // y=7: back rank
-      ] as unknown as BoardType;
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      ]);
 
       const board = copyBoard(crownData);
       const { findMoves, iteratePlays } = makeRules(board);
