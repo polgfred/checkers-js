@@ -1,10 +1,24 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { fileURLToPath } from 'node:url';
 
-// https://vitejs.dev/config
+import preact from '@preact/preset-vite';
+import { defineConfig } from 'vite';
+
+const coreSrc = fileURLToPath(
+  new URL('../../packages/core/src/index.ts', import.meta.url)
+);
+const uiSrc = fileURLToPath(
+  new URL('../../packages/ui/src/index.ts', import.meta.url)
+);
+
 export default defineConfig({
+  plugins: [preact()],
+  resolve: {
+    alias: {
+      '@checkers/core': coreSrc,
+      '@checkers/ui': uiSrc,
+    },
+  },
   build: {
     assetsInlineLimit: 0,
   },
-  plugins: [react()],
 });
