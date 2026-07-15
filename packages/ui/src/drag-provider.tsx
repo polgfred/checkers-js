@@ -11,7 +11,7 @@ import type { Coords, PieceAtCoords } from './types';
 type Source = PieceAtCoords;
 
 type DragContextValue = {
-  source: PieceAtCoords | null;
+  source: Source | null;
   target: Coords | null;
   origin: Coords | null;
   startDrag: (source: Source, event: PointerEvent) => void;
@@ -37,7 +37,7 @@ export function DragProvider({
   onDrop,
   children,
 }: {
-  onDrop: (source: Coords, target: Coords) => void;
+  onDrop: (source: Source, target: Coords) => void;
   children: ReactNode;
 }) {
   const [source, setSource] = useState<Source | null>(null);
